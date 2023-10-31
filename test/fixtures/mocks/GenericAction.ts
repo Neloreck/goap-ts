@@ -1,4 +1,4 @@
-import { Action } from "@/planner/Action";
+import { Action } from "@/Action";
 import { IUnit } from "@/unit/IUnit";
 
 export class GenericAction<T = unknown> extends Action<T> {

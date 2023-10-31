@@ -1,6 +1,6 @@
-import { Action } from "@/planner/Action";
+import { Action } from "@/Action";
 import { GraphNode } from "@/planner/GraphNode";
-import { State } from "@/state/State";
+import { State } from "@/State";
 import { Optional, Queue } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 import { IWeightedGraph, PathFactory, WeightedEdge, WeightedPath } from "@/utils/graph";

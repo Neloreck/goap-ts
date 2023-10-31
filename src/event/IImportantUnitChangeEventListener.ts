@@ -1,4 +1,4 @@
-import { State } from "@/state/State";
+import { State } from "@/State";
 
 export interface IImportantUnitChangeEventListener {
   /**

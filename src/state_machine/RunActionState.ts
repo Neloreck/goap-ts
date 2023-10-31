@@ -1,7 +1,7 @@
+import { Action } from "@/Action";
 import { NotPerformableActionException } from "@/error/NotPerformableActionException";
-import { Action } from "@/planner/Action";
-import { FiniteStateMachine } from "@/state/FiniteStateMachine";
-import { MoveToState } from "@/state/MoveToState";
+import { FiniteStateMachine } from "@/state_machine/FiniteStateMachine";
+import { MoveToState } from "@/state_machine/MoveToState";
 import { Queue } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 import { queuePeek } from "@/utils";
@@ -25,7 +25,7 @@ export class RunActionState implements IFiniteStateMachineState {
   }
 
   /**
-   * Cycle trough all actions until an invalid one or the end of the Queue is reached.
+   * Cycle through all actions until an invalid one or the end of the Queue is reached.
    * A false return type here causes the FSM to pop the state from its stack.
    */
   public runAction(unit: IUnit): boolean {

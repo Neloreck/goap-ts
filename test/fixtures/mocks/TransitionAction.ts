@@ -1,6 +1,6 @@
 import { GenericAction } from "#/fixtures/mocks/GenericAction";
 
-import { State } from "@/state/State";
+import { State } from "@/State";
 
 export class TransitionAction<T = unknown> extends GenericAction<T> {
   public constructor(target: T) {

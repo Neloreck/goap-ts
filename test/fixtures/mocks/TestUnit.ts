@@ -1,4 +1,4 @@
-import { Action } from "@/planner/Action";
+import { Action } from "@/Action";
 import { Queue } from "@/types";
 import { Unit } from "@/unit/Unit";
 

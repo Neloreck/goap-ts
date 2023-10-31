@@ -1,4 +1,4 @@
-import { Action } from "@/planner/Action";
+import { Action } from "@/Action";
 import { Optional, Queue } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 

@@ -1,7 +1,7 @@
 import { describe, it } from "@jest/globals";
 
+import { Action } from "@/Action";
 import { DefaultAgent } from "@/agent";
-import { Action } from "@/planner/Action";
 import { AnyObject, Queue } from "@/types";
 import { Unit } from "@/unit/Unit";
 

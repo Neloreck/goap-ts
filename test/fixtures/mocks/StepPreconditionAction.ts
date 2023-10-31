@@ -1,6 +1,6 @@
 import { GenericAction } from "#/fixtures/mocks/GenericAction";
 
-import { State } from "@/state/State";
+import { State } from "@/State";
 import { IUnit } from "@/unit/IUnit";
 
 export class StepPreconditionAction<T = unknown> extends GenericAction<T> {

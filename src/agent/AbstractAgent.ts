@@ -1,10 +1,10 @@
+import { Action } from "@/Action";
 import { IAgent } from "@/agent/IAgent";
-import { Action } from "@/planner/Action";
 import { IPlanner } from "@/planner/IPlanner";
-import { FiniteStateMachine } from "@/state/FiniteStateMachine";
-import { IdleState } from "@/state/IdleState";
-import { RunActionState } from "@/state/RunActionState";
-import { State } from "@/state/State";
+import { State } from "@/State";
+import { FiniteStateMachine } from "@/state_machine/FiniteStateMachine";
+import { IdleState } from "@/state_machine/IdleState";
+import { RunActionState } from "@/state_machine/RunActionState";
 import { Queue } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 import { Unit } from "@/unit/Unit";
@@ -68,10 +68,16 @@ export abstract class AbstractAgent implements IAgent {
     this.fsm.pushStack(this.idleState);
   }
 
-  public onPlanFailed(actions: Queue<Action>): void {
-    this.unit.goapPlanFailed(actions);
+  /**
+   * Handle plan fail event.
+   */
+  public onPlanFailed(plan: Queue<Action>): void {
+    this.unit.goapPlanFailed(plan);
   }
 
+  /**
+   * Handle plan finished event.
+   */
   public onPlanFinished(): void {
     this.unit.goapPlanFinished();
   }

@@ -1,5 +1,5 @@
-import { Action } from "@/planner/Action";
-import { State } from "@/state/State";
+import { Action } from "@/Action";
+import { State } from "@/State";
 import { AnyObject, Queue } from "@/types";
 
 export interface IUnit {
@@ -23,15 +23,16 @@ export interface IUnit {
    */
   goapPlanFinished(): void;
   /**
-   * General update from the Agent. Called in a loop until the program ends.
+   * General update from the Agent.
+   * Called in a loop until the program ends.
    */
   update(): void;
   /**
-   * Function to move to a specific location. Gets called by the moveToState
-   * when the unit has to move to a certain target.
+   * Function to move to a specific location.
+   * Gets called by the moveToState when the unit has to move to a certain target.
    *
-   * @param target - the target the unit has to move to.
-   * @return if the unit was able to move.
+   * @param target - the target the unit has to move to
+   * @returns if the unit was able to move
    */
   moveTo(target: AnyObject): boolean;
 }

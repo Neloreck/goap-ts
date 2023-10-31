@@ -1,5 +1,5 @@
-import { Action } from "@/planner/Action";
-import { State } from "@/state/State";
+import { Action } from "@/Action";
+import { State } from "@/State";
 import { Optional } from "@/types";
 import { WeightedEdge, WeightedPath } from "@/utils/graph";
 

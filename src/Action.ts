@@ -1,4 +1,4 @@
-import { State } from "@/state/State";
+import { State } from "@/State";
 import { Optional } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 
@@ -12,18 +12,23 @@ export abstract class Action<T = any> {
   private effects: Set<State> = new Set();
 
   /**
-   * @param target - the target of the action.
+   * @param target - the target of the action
    */
   public constructor(target: T) {
     this.target = target;
   }
 
   /**
-   * Checks if the current action of the GoapAction Queue is finished. Gets
-   * called until it returns true.
+   * Function used to reset an action. Gets called once the Action finishes or,
+   * if the unit class was used, when the Stack on the FSM gets reset.
+   */
+  public abstract reset(): void;
+
+  /**
+   * Checks if the current action of the action queue is finished. Gets called until it returns true.
    *
    * @param unit - the unit the action is checked for
-   * @returns success of the action, returning true causes the swap to the next action in the Queue
+   * @returns success of the action, returning true causes the swap to the next action in the queue
    */
   public abstract isDone(unit: IUnit): boolean;
 
@@ -68,9 +73,8 @@ export abstract class Action<T = any> {
   public abstract generateCostRelativeToTarget(unit: IUnit): number;
 
   /**
-   * Gets called to determine if the preconditions of an action are met. If
-   * they are not, the action will not be taken in consideration for the
-   * generation of the action graph.
+   * Gets called to determine if the preconditions of an action are met.
+   * If they are not, the action will not be taken in consideration for the generation of the action graph.
    *
    * @param unit - the unit the action is being executed from
    * @returns if the action can be taken in the first place
@@ -78,8 +82,7 @@ export abstract class Action<T = any> {
   public abstract checkProceduralPrecondition(unit: IUnit): boolean;
 
   /**
-   * Defines if the unit needs to be in a certain range in relation to the
-   * target to execute the action.
+   * Defines if the unit needs to be in a certain range in relation to the target to execute the action.
    *
    * @param unit - the unit the action is being executed from
    * @return if the action requires the unit to be in a certain range near the target
@@ -94,12 +97,6 @@ export abstract class Action<T = any> {
    * @return if the unit is in range to execute the action
    */
   public abstract isInRange(unit: IUnit): boolean;
-
-  /**
-   * Function used to reset an action. Gets called once the Action finishes
-   * or, if the unit class was used, when the Stack on the FSM gets reset.
-   */
-  public abstract reset(): void;
 
   public getPreconditions(): Set<State> {
     return this.preconditions;
@@ -194,11 +191,11 @@ export abstract class Action<T = any> {
    * @return if the effect was removed.
    */
   public removeEffect(effectOrState: string | State): boolean {
-    const target = typeof effectOrState === "string" ? effectOrState : effectOrState.effect;
+    const effectId: string = typeof effectOrState === "string" ? effectOrState : effectOrState.effect;
     let stateToBeRemoved: Optional<State> = null;
 
     for (const state of this.effects) {
-      if (state.effect === target) {
+      if (state.effect === effectId) {
         stateToBeRemoved = state;
       }
     }
