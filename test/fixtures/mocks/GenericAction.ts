@@ -1,7 +1,7 @@
-import { Action } from "@/Action";
+import { AbstractAction } from "@/AbstractAction";
 import { IUnit } from "@/unit/IUnit";
 
-export class GenericAction<T = unknown> extends Action<T> {
+export class GenericAction<T = unknown> extends AbstractAction<T> {
   public generateBaseCost(unit: IUnit): number {
     return 0;
   }

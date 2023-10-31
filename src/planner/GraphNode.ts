@@ -1,4 +1,4 @@
-import { Action } from "@/Action";
+import { AbstractAction } from "@/AbstractAction";
 import { State } from "@/State";
 import { Optional } from "@/types";
 import { WeightedEdge, WeightedPath } from "@/utils/graph";
@@ -7,14 +7,14 @@ import { WeightedEdge, WeightedPath } from "@/utils/graph";
  * Vertex on the used in graph for building of paths.
  */
 export class GraphNode {
-  public action: Optional<Action> = null;
+  public action: Optional<AbstractAction> = null;
   public preconditions: Set<State>;
   public effects: Set<State>;
 
   public pathsToThisNode: Array<WeightedPath<GraphNode, WeightedEdge>> = [];
   private states: Map<WeightedPath<GraphNode, WeightedEdge>, Set<State>> = new Map();
 
-  public constructor(action: Optional<Action>);
+  public constructor(action: Optional<AbstractAction>);
   public constructor(preconditions: Set<State>, effects: Set<State>);
 
   /**
@@ -23,8 +23,8 @@ export class GraphNode {
    * @param effects - the set of effects the node has on the graph.
    *   Effects get added together along the graph to hopefully meet a goalState.
    */
-  public constructor(preconditionsOrAction: Set<State> | Action, effects?: Set<State>) {
-    if (preconditionsOrAction instanceof Action) {
+  public constructor(preconditionsOrAction: Set<State> | AbstractAction, effects?: Set<State>) {
+    if (preconditionsOrAction instanceof AbstractAction) {
       this.preconditions = preconditionsOrAction.getPreconditions();
       this.effects = preconditionsOrAction.getEffects();
       this.action = preconditionsOrAction;

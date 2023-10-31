@@ -4,6 +4,11 @@
 export type Optional<T> = T | null;
 
 /**
+ * Generic maybe object.
+ */
+export type Maybe<T> = T | null | undefined;
+
+/**
  * Any object from JS record variant.
  */
 export type AnyObject = Record<string, any>;

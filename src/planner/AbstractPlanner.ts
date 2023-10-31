@@ -1,4 +1,4 @@
-import { Action } from "@/Action";
+import { AbstractAction } from "@/AbstractAction";
 import { GraphNode } from "@/planner/GraphNode";
 import { State } from "@/State";
 import { Optional, Queue } from "@/types";
@@ -28,8 +28,8 @@ export abstract class AbstractPlanner {
    * @returns a generated plan (queue) of actions, that the unit has to perform to achieve the desired state OR null,
    *   if no plan was generated
    */
-  public plan(unit: IUnit): Queue<Action> {
-    let createdPlan: Queue<Action> = null;
+  public plan(unit: IUnit): Queue<AbstractAction> {
+    let createdPlan: Queue<AbstractAction> = null;
 
     this.unit = unit;
     this.startNode = new GraphNode(null);
@@ -137,8 +137,8 @@ export abstract class AbstractPlanner {
    *
    * @return all possible actions which are actually available for the unit.
    */
-  protected extractPossibleActions(): Set<Action> {
-    const possibleActions: Set<Action> = new Set();
+  protected extractPossibleActions(): Set<AbstractAction> {
+    const possibleActions: Set<AbstractAction> = new Set();
 
     try {
       for (const action of this.unit.getAvailableActions()) {
@@ -394,7 +394,7 @@ export abstract class AbstractPlanner {
    * @param graph - the graph of goap actions the unit has to take in order to achieve a goal
    * @returns the Queue of goap actions which has the lowest cost to archive a goal
    */
-  protected searchGraphForActionQueue(graph: IWeightedGraph<GraphNode, WeightedEdge>): Optional<Queue<Action>> {
+  protected searchGraphForActionQueue(graph: IWeightedGraph<GraphNode, WeightedEdge>): Optional<Queue<AbstractAction>> {
     for (let i = 0; i < this.endNodes.length; i++) {
       AbstractPlanner.sortPathsLeadingToNode(this.endNodes[i]);
 
@@ -431,8 +431,8 @@ export abstract class AbstractPlanner {
     path: WeightedPath<GraphNode, WeightedEdge>,
     startNode: GraphNode,
     endNode: GraphNode
-  ): Queue<Action> {
-    const actionQueue: Queue<Action> = [];
+  ): Queue<AbstractAction> {
+    const actionQueue: Queue<AbstractAction> = [];
 
     for (const node of path.getVertexList()) {
       if (node !== startNode && node !== endNode) {

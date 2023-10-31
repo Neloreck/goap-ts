@@ -7,9 +7,9 @@ export interface IFiniteStateMachineState {
    * Catches Exceptions for the FSM State to check if a plan has failed.
    *
    * @param unit - the unit which action is being run
-   * @return if the action is still running (true) or is completed (false)
+   * @returns whether the action is still running or is completed
    *
    * @throws error
    */
-  runAction(unit: IUnit): boolean;
+  execute(unit: IUnit): boolean;
 }

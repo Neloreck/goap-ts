@@ -1,23 +1,23 @@
-import { Action } from "@/Action";
+import { AbstractAction } from "@/AbstractAction";
 import { State } from "@/State";
 import { AnyObject, Queue } from "@/types";
 
 export interface IUnit {
   getWorldState(): Set<State>;
   getGoalState(): Array<State>;
-  getAvailableActions(): Set<Action>;
+  getAvailableActions(): Set<AbstractAction>;
   /**
    * Gets called when a plan was found by the planner.
    *
    * @param actions - the actions the unit hat to take in order to archive the goal.
    */
-  goapPlanFound(actions: Queue<Action>): void;
+  goapPlanFound(actions: Queue<AbstractAction>): void;
   /**
    * Gets called when a plan failed to execute.
    *
    * @param actions - the remaining actions in the action Queue that failed.
    */
-  goapPlanFailed(actions: Queue<Action>): void;
+  goapPlanFailed(actions: Queue<AbstractAction>): void;
   /**
    * Gets called when a plan was finished.
    */

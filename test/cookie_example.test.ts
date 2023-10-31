@@ -1,21 +1,21 @@
 import { describe, it } from "@jest/globals";
 
-import { Action } from "@/Action";
+import { AbstractAction } from "@/AbstractAction";
 import { DefaultAgent } from "@/agent";
 import { AnyObject, Queue } from "@/types";
 import { Unit } from "@/unit/Unit";
 
 describe("cookie GOAP planning example", () => {
   class CustomUnit extends Unit {
-    public goapPlanFailed(actions: Array<Action>): void;
-    public goapPlanFailed(actions: Queue<Action>): void;
-    public goapPlanFailed(actions: Array<Action> | Queue<Action>): void {}
+    public goapPlanFailed(actions: Array<AbstractAction>): void;
+    public goapPlanFailed(actions: Queue<AbstractAction>): void;
+    public goapPlanFailed(actions: Array<AbstractAction> | Queue<AbstractAction>): void {}
 
     public goapPlanFinished(): void {}
 
-    public goapPlanFound(actions: Array<Action>): void;
-    public goapPlanFound(actions: Queue<Action>): void;
-    public goapPlanFound(actions: Array<Action> | Queue<Action>): void {}
+    public goapPlanFound(actions: Array<AbstractAction>): void;
+    public goapPlanFound(actions: Queue<AbstractAction>): void;
+    public goapPlanFound(actions: Array<AbstractAction> | Queue<AbstractAction>): void {}
 
     public moveTo(target: AnyObject): boolean {
       return false;

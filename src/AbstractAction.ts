@@ -5,7 +5,7 @@ import { IUnit } from "@/unit/IUnit";
 /**
  * Superclass for all actions a unit can perform
  */
-export abstract class Action<T = any> {
+export abstract class AbstractAction<T = any> {
   public target: T;
 
   private preconditions: Set<State> = new Set();
@@ -19,8 +19,8 @@ export abstract class Action<T = any> {
   }
 
   /**
-   * Function used to reset an action. Gets called once the Action finishes or,
-   * if the unit class was used, when the Stack on the FSM gets reset.
+   * Function used to reset an action. Gets called once the Action finishes or, if the unit class was used,
+   * when the Stack on the FSM gets reset.
    */
   public abstract reset(): void;
 
@@ -36,21 +36,18 @@ export abstract class Action<T = any> {
    * Gets called when the action is going to be executed by the Unit.
    *
    * @param unit - the unit that is trying to execute the action
-   * @return if the action was successful
+   * @returns if the action was successful
    */
   public abstract performAction(unit: IUnit): boolean;
 
   /**
-   * This function will be called for each GoapAction in the generation of
-   * each Graph to determine the cost for each node in the graph. The two
-   * functions called in this function have to be implemented by the Subclass
-   * to get the sum of both costs. Differentiating between the base cost and
-   * the cost relative to the target gives a proper representation of the work
-   * the unit has to do i.e. if it has to travel a large distance to reach its
-   * target.
+   * This function will be called for each GoapAction in the generation of each Graph to determine the cost for each
+   * node in the graph. The two functions called in this function have to be implemented by the Subclass to get the sum
+   * of both costs. Differentiating between the base cost and the cost relative to the target gives a proper
+   * representation of the work the unit has to do i.e. if it has to travel a large distance to reach its target.
    *
    * @param unit - the unit whose action cost is being calculated
-   * @return the calculated action cost
+   * @returns the calculated action cost
    */
   public generateCost(unit: IUnit): number {
     return this.generateBaseCost(unit) + this.generateCostRelativeToTarget(unit);
@@ -60,7 +57,7 @@ export abstract class Action<T = any> {
    * Defines the base cost of the action.
    *
    * @param unit - the unit the action is being executed from
-   * @returns the base cost of the action which is added to the cost relative  to the target
+   * @returns the base cost of the action which is added to the cost relative to the target
    */
   public abstract generateBaseCost(unit: IUnit): number;
 
@@ -188,7 +185,7 @@ export abstract class Action<T = any> {
 
   /**
    * @param effectOrState - the effect or state effect which is going to be removed
-   * @return if the effect was removed.
+   * @returns if the effect was removed
    */
   public removeEffect(effectOrState: string | State): boolean {
     const effectId: string = typeof effectOrState === "string" ? effectOrState : effectOrState.effect;

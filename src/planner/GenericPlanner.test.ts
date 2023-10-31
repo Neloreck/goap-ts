@@ -2,7 +2,7 @@ import { describe, expect, it, jest } from "@jest/globals";
 
 import { GenericAction, TestUnit } from "#/fixtures/mocks";
 
-import { Action } from "@/Action";
+import { AbstractAction } from "@/AbstractAction";
 import { GenericPlanner } from "@/planner/GenericPlanner";
 import { State } from "@/State";
 import { Queue } from "@/types";
@@ -56,7 +56,7 @@ describe("GenericPlanner class", () => {
 
     unit.addAvailableAction(action);
 
-    const plan: Queue<Action> = new GenericPlanner().plan(unit);
+    const plan: Queue<AbstractAction> = new GenericPlanner().plan(unit);
 
     expect(plan).not.toBeNull();
     expect(plan).toHaveLength(1);
@@ -85,7 +85,7 @@ describe("GenericPlanner class", () => {
     unit.addAvailableAction(new GenericAction(1));
     unit.addAvailableAction(new GenericAction(1));
 
-    const plan: Queue<Action> = new GenericPlanner().plan(unit);
+    const plan: Queue<AbstractAction> = new GenericPlanner().plan(unit);
 
     expect(plan).not.toBeNull();
     expect(plan).toHaveLength(2);
@@ -118,7 +118,7 @@ describe("GenericPlanner class", () => {
     jest.spyOn(firstExpensive, "generateBaseCost").mockImplementation(() => 100);
     jest.spyOn(firstCheap, "generateBaseCost").mockImplementation(() => 10);
 
-    const plan: Queue<Action> = new GenericPlanner().plan(unit);
+    const plan: Queue<AbstractAction> = new GenericPlanner().plan(unit);
 
     expect(plan).not.toBeNull();
     expect(plan).toHaveLength(2);
@@ -158,7 +158,7 @@ describe("GenericPlanner class", () => {
     unit.addAvailableAction(collectWoodAction);
     unit.addAvailableAction(getAxeAction);
 
-    const plan: Queue<Action> = new GenericPlanner().plan(unit);
+    const plan: Queue<AbstractAction> = new GenericPlanner().plan(unit);
 
     expect(plan).not.toBeNull();
     expect(plan).toHaveLength(4);

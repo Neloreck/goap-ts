@@ -1,4 +1,4 @@
-import { Action } from "@/Action";
+import { AbstractAction } from "@/AbstractAction";
 import { IPlanCreatedEventListener } from "@/event/IPlanCreatedEventListener";
 import { IPlanner } from "@/planner/IPlanner";
 import { IFiniteStateMachineState } from "@/state_machine/IFiniteStateMachineState";
@@ -8,6 +8,7 @@ import { removeFromArray } from "@/utils/array";
 
 /**
  * State on the FSM stack.
+ * Used for execution when plan is not available / empty.
  */
 export class IdleState implements IFiniteStateMachineState {
   private planner: IPlanner;
@@ -17,8 +18,8 @@ export class IdleState implements IFiniteStateMachineState {
     this.planner = planner;
   }
 
-  public runAction(unit: IUnit): boolean {
-    const plan: Queue<Action> = this.planner.plan(unit);
+  public execute(unit: IUnit): boolean {
+    const plan: Queue<AbstractAction> = this.planner.plan(unit);
 
     if (plan) {
       this.dispatchPlanCreatedEvent(plan);
@@ -36,7 +37,7 @@ export class IdleState implements IFiniteStateMachineState {
     removeFromArray(this.planCreatedListeners, listener);
   }
 
-  private dispatchPlanCreatedEvent(plan: Queue<Action>): void {
+  private dispatchPlanCreatedEvent(plan: Queue<AbstractAction>): void {
     for (const listener of this.planCreatedListeners) {
       listener.onPlanCreated(plan);
     }

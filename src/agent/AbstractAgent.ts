@@ -1,4 +1,4 @@
-import { Action } from "@/Action";
+import { AbstractAction } from "@/AbstractAction";
 import { IAgent } from "@/agent/IAgent";
 import { IPlanner } from "@/planner/IPlanner";
 import { State } from "@/State";
@@ -42,13 +42,12 @@ export abstract class AbstractAgent implements IAgent {
     this.fsm.update(this.unit);
   }
 
-  public getAssignedGoapUnit(): IUnit {
+  public getUnit(): IUnit {
     return this.unit;
   }
 
-  public onPlanCreated(plan: Queue<Action>): void {
+  public onPlanCreated(plan: Queue<AbstractAction>): void {
     this.unit.goapPlanFound(plan);
-
     this.fsm.popStack();
     this.fsm.pushStack(new RunActionState(this.fsm, plan));
   }
@@ -71,7 +70,7 @@ export abstract class AbstractAgent implements IAgent {
   /**
    * Handle plan fail event.
    */
-  public onPlanFailed(plan: Queue<Action>): void {
+  public onPlanFailed(plan: Queue<AbstractAction>): void {
     this.unit.goapPlanFailed(plan);
   }
 

@@ -1,4 +1,4 @@
-import { Action } from "@/Action";
+import { AbstractAction } from "@/AbstractAction";
 import { IImportantUnitChangeEventListener } from "@/event/IImportantUnitChangeEventListener";
 import { State } from "@/State";
 import { AnyObject, Optional } from "@/types";
@@ -11,18 +11,15 @@ import { removeFromArray } from "@/utils";
 export abstract class Unit implements IUnit {
   private goalState: Array<State> = [];
   private worldState: Set<State> = new Set();
-  private availableActions: Set<Action> = new Set();
+  private availableActions: Set<AbstractAction> = new Set();
 
   private importantUnitGoalChangeListeners: Array<AnyObject> = [];
 
   /**
-   * This function can be called by a subclass if the efforts of the unit
-   * trying to archive a specific goal should be paused to fulfill a more
-   * urgent goal. The GoapState is added to the main goal HashSet and changed
-   * by the GoapAgent.
-   * <p>
+   * This function can be called by a subclass if the efforts of the unit trying to archive a specific goal should be
+   * paused to fulfill a more urgent goal. The GoapState is added to the main goal HashSet and changed by the GoapAgent.
+   *
    * IMPORTANT:
-   * <p>
    * The function must only be called once per two update cycles. The reason
    * for this is that the function pushes an IdleState on the FSM Stack which
    * is transformed into an GoapAction Queue in the current cycle. Calling the
@@ -31,7 +28,7 @@ export abstract class Unit implements IUnit {
    * Unit to not perform any action since the RunActionState is now beneath
    * the newly pushed IdleState.
    *
-   * @param state - the new goal the unit tries to archive.
+   * @param state - the new goal the unit tries to archive
    */
   protected changeGoalImmediately(state: State): void {
     this.goalState.push(state);
@@ -139,21 +136,21 @@ export abstract class Unit implements IUnit {
     return this.goalState;
   }
 
-  public setAvailableActions(availableActions: Set<Action>): void {
+  public setAvailableActions(availableActions: Set<AbstractAction>): void {
     this.availableActions = availableActions;
   }
 
-  public addAvailableAction(action: Action): void {
+  public addAvailableAction(action: AbstractAction): void {
     if (!this.availableActions.has(action)) {
       this.availableActions.add(action);
     }
   }
 
-  public removeAvailableAction(action: Action): void {
+  public removeAvailableAction(action: AbstractAction): void {
     this.availableActions.delete(action);
   }
 
-  public getAvailableActions(): Set<Action> {
+  public getAvailableActions(): Set<AbstractAction> {
     return this.availableActions;
   }
 
@@ -177,11 +174,11 @@ export abstract class Unit implements IUnit {
     }
   }
 
-  public abstract goapPlanFailed(actions: Array<Action>): void;
+  public abstract goapPlanFailed(actions: Array<AbstractAction>): void;
 
   public abstract goapPlanFinished(): void;
 
-  public abstract goapPlanFound(actions: Array<Action>): void;
+  public abstract goapPlanFound(actions: Array<AbstractAction>): void;
 
   public abstract moveTo(target: AnyObject): boolean;
 
