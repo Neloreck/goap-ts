@@ -9,7 +9,8 @@ import { IWeightedGraph, PathFactory, WeightedEdge, WeightedPath } from "@/utils
  * Class for generating a queue of goap actions.
  */
 export abstract class AbstractPlanner {
-  private goapUnit: IUnit;
+  private unit: IUnit;
+
   private startNode: GraphNode;
   private endNodes: Array<GraphNode>;
 
@@ -23,14 +24,14 @@ export abstract class AbstractPlanner {
    * goals and their paths can be sorted according to these and the importance
    * of each goal with the weight provided by each node inside the graph.
    *
-   * @param goapUnit - the GoapUnit the plan gets generated for.
-   * @returns a generated plan (Queue) of GoapActions, that the GoapUnit has to perform
-   *   to archive the desired goalState OR null, if no plan was generated
+   * @param unit - the GOAP planner unit the plan gets generated for
+   * @returns a generated plan (queue) of actions, that the unit has to perform to achieve the desired state OR null,
+   *   if no plan was generated
    */
-  public plan(goapUnit: IUnit): Queue<Action> {
+  public plan(unit: IUnit): Queue<Action> {
     let createdPlan: Queue<Action> = null;
 
-    this.goapUnit = goapUnit;
+    this.unit = unit;
     this.startNode = new GraphNode(null);
     this.endNodes = [];
 
@@ -40,8 +41,8 @@ export abstract class AbstractPlanner {
       // The Integer.MaxValue indicates that the goal was passed by the changeGoalImmediatly function.
       // An empty Queue is returned instead of null because null would result in the IdleState to call this
       // function again. An empty Queue is finished in one cycle with no effect at all.
-      if (this.goapUnit.getGoalState()[0].importance === Infinity) {
-        const goalState: Array<State> = [this.goapUnit.getGoalState()[0]];
+      if (this.unit.getGoalState()[0].importance === Infinity) {
+        const goalState: Array<State> = [this.unit.getGoalState()[0]];
 
         createdPlan = this.searchGraphForActionQueue(this.createGraph(goalState));
 
@@ -49,7 +50,7 @@ export abstract class AbstractPlanner {
           createdPlan = [];
         }
 
-        this.goapUnit.getGoalState().shift();
+        this.unit.getGoalState().shift();
       } else {
         createdPlan = this.searchGraphForActionQueue(this.createGraph());
       }
@@ -61,13 +62,25 @@ export abstract class AbstractPlanner {
     return createdPlan;
   }
 
+  protected getUnit(): IUnit {
+    return this.unit;
+  }
+
+  protected getStartNode(): GraphNode {
+    return this.startNode;
+  }
+
+  protected getEndNodes(): Array<GraphNode> {
+    return this.endNodes;
+  }
+
   /**
    * Function for sorting a units goalStates (descending). The most important goal has the highest importance value.
    *
    * @return the sorted goal list of the unit
    */
   protected sortGoalStates(): Array<State> {
-    return this.goapUnit.getGoalState().sort((first, second) => first.importance - second.importance);
+    return this.unit.getGoalState().sort((first, second) => first.importance - second.importance);
   }
 
   /**
@@ -76,9 +89,7 @@ export abstract class AbstractPlanner {
    * @param goalState - list of states the action queue has to fulfill
    * @returns a DirectedWeightedGraph generated from all possible unit actions for a goal
    */
-  protected createGraph(
-    goalState: Array<State> = this.goapUnit.getGoalState()
-  ): IWeightedGraph<GraphNode, WeightedEdge> {
+  protected createGraph(goalState: Array<State> = this.unit.getGoalState()): IWeightedGraph<GraphNode, WeightedEdge> {
     const generatedGraph: IWeightedGraph<GraphNode, WeightedEdge> = this.generateGraphObject();
 
     this.addVertices(generatedGraph, goalState);
@@ -99,7 +110,7 @@ export abstract class AbstractPlanner {
     // unit tries to archive with its actions. Also the startNode has to
     // overwrite the existing GraphNode as an initialization of a new Object
     // would not be reflected to the function caller.
-    const start: GraphNode = new GraphNode(null, this.goapUnit.getWorldState());
+    const start: GraphNode = new GraphNode(null, this.unit.getWorldState());
 
     this.startNode.overwriteOwnProperties(start);
     graph.addVertex(this.startNode);
@@ -115,13 +126,9 @@ export abstract class AbstractPlanner {
       this.endNodes.push(end);
     }
 
-    const possibleActions: Set<Action> = this.extractPossibleActions();
-
     // Afterward all other possible actions have to be added as well.
-    if (possibleActions !== null) {
-      for (const goapAction of possibleActions) {
-        graph.addVertex(new GraphNode(goapAction));
-      }
+    for (const action of this.extractPossibleActions()) {
+      graph.addVertex(new GraphNode(action));
     }
   }
 
@@ -134,9 +141,9 @@ export abstract class AbstractPlanner {
     const possibleActions: Set<Action> = new Set();
 
     try {
-      for (const goapAction of this.goapUnit.getAvailableActions()) {
-        if (goapAction.checkProceduralPrecondition(this.goapUnit)) {
-          possibleActions.add(goapAction);
+      for (const action of this.unit.getAvailableActions()) {
+        if (action.checkProceduralPrecondition(this.unit)) {
+          possibleActions.add(action);
         }
       }
     } catch (error) {
@@ -334,7 +341,7 @@ export abstract class AbstractPlanner {
               node,
               otherNodeInGraph,
               new WeightedEdge(),
-              node.action.generateCost(this.goapUnit)
+              node.action.generateCost(this.unit)
             );
 
             otherNodeInGraph.addGraphPath(
@@ -434,17 +441,5 @@ export abstract class AbstractPlanner {
     }
 
     return actionQueue;
-  }
-
-  protected getGoapUnit(): IUnit {
-    return this.goapUnit;
-  }
-
-  protected getStartNode(): GraphNode {
-    return this.startNode;
-  }
-
-  protected getEndNodes(): Array<GraphNode> {
-    return this.endNodes;
   }
 }

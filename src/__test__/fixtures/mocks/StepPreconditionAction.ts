@@ -1,8 +1,8 @@
-import { ActionOne } from "@/__test__/fixtures/mocks/ActionOne";
+import { GenericAction } from "@/__test__/fixtures/mocks/GenericAction";
 import { State } from "@/state/State";
 import { IUnit } from "@/unit/IUnit";
 
-export class ActionTwo<T = unknown> extends ActionOne<T> {
+export class StepPreconditionAction<T = unknown> extends GenericAction<T> {
   public constructor(target: T) {
     super(target);
 

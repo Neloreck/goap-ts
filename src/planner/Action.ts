@@ -109,8 +109,8 @@ export abstract class Action<T = any> {
     return this.effects;
   }
 
-  protected addPrecondition(precondition: State): void;
-  protected addPrecondition(importance: number, effect: string, value: AnyObject): void;
+  public addPrecondition(precondition: State): void;
+  public addPrecondition(importance: number, effect: string, value: T): void;
 
   /**
    * Overloaded function for convenience.
@@ -119,8 +119,8 @@ export abstract class Action<T = any> {
    * @param effect - the effect of the precondition being added.
    * @param value - the value of the precondition being added.
    */
-  protected addPrecondition(importance: number | State, effect?: string, value?: AnyObject): void {
-    const precondition: State = importance instanceof State ? importance : new State(importance, effect, value);
+  public addPrecondition(importance: number | State, effect?: string, value?: T): void {
+    const precondition: State<T> = importance instanceof State ? importance : new State(importance, effect, value);
 
     let alreadyInList: boolean = false;
 
@@ -143,7 +143,7 @@ export abstract class Action<T = any> {
    * @returns if the precondition was removed
    */
   protected removePrecondition(effect: string | State): boolean {
-    const target = typeof effect === "string" ? effect : effect.effect;
+    const target: string = typeof effect === "string" ? effect : effect.effect;
     let stateToBeRemoved: State = null;
 
     // todo: Optimize...
@@ -162,8 +162,8 @@ export abstract class Action<T = any> {
     }
   }
 
-  protected addEffect(effect: State): void;
-  protected addEffect(importance: number, effect: string, value: AnyObject): void;
+  public addEffect(effect: State): void;
+  public addEffect(importance: number, effect: string, value: T): void;
 
   /**
    * Overloaded function for convenience.
@@ -172,7 +172,7 @@ export abstract class Action<T = any> {
    * @param effect - the effect of the effect being added
    * @param value - the value of the effect being added
    */
-  protected addEffect(importanceOrState: number | State, effect?: string, value?: AnyObject): void {
+  public addEffect(importanceOrState: number | State, effect?: string, value?: T): void {
     const target: State =
       importanceOrState instanceof State ? importanceOrState : new State(importanceOrState, effect, value);
     let alreadyInList: boolean = false;
@@ -193,7 +193,7 @@ export abstract class Action<T = any> {
    * @param effectOrState - the effect or state effect which is going to be removed
    * @return if the effect was removed.
    */
-  protected removeEffect(effectOrState: string | State): boolean {
+  public removeEffect(effectOrState: string | State): boolean {
     const target = typeof effectOrState === "string" ? effectOrState : effectOrState.effect;
     let stateToBeRemoved: Optional<State> = null;
 

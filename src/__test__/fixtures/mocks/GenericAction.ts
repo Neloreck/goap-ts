@@ -1,7 +1,7 @@
 import { Action } from "@/planner/Action";
 import { IUnit } from "@/unit/IUnit";
 
-export class ActionOne<T = unknown> extends Action<T> {
+export class GenericAction<T = unknown> extends Action<T> {
   public generateBaseCost(unit: IUnit): number {
     return 0;
   }

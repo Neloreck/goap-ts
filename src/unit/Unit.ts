@@ -45,11 +45,11 @@ export abstract class Unit implements IUnit {
     this.dispatchNewImportantUnitStackResetEvent();
   }
 
-  protected setWorldState(worldState: Set<State>): void {
+  public setWorldState(worldState: Set<State>): void {
     this.worldState = worldState;
   }
 
-  protected addWorldState(newWorldState: State): void {
+  public addWorldState(newWorldState: State): void {
     let missing: boolean = true;
 
     for (const state of this.worldState) {
@@ -95,11 +95,11 @@ export abstract class Unit implements IUnit {
     return this.worldState;
   }
 
-  protected setGoalState(list: Array<State>): void {
+  public setGoalState(list: Array<State>): void {
     this.goalState = list;
   }
 
-  protected addGoalState(newGoalState: State): void {
+  public addGoalState(newGoalState: State): void {
     let missing: boolean = true;
 
     for (const state of this.goalState) {
@@ -115,7 +115,7 @@ export abstract class Unit implements IUnit {
     }
   }
 
-  protected removeGoalState(effect: string): void {
+  public removeGoalState(effect: string): void {
     let marked: Optional<State> = null;
 
     for (const state of this.goalState) {
@@ -131,25 +131,25 @@ export abstract class Unit implements IUnit {
     }
   }
 
-  protected removeGoalStat(goapState: State): void {
-    removeFromArray(this.goalState, goapState);
+  protected removeGoalStat(state: State): void {
+    removeFromArray(this.goalState, state);
   }
 
   public getGoalState(): Array<State> {
     return this.goalState;
   }
 
-  protected setAvailableActions(availableActions: Set<Action>): void {
+  public setAvailableActions(availableActions: Set<Action>): void {
     this.availableActions = availableActions;
   }
 
-  protected addAvailableAction(action: Action): void {
+  public addAvailableAction(action: Action): void {
     if (!this.availableActions.has(action)) {
       this.availableActions.add(action);
     }
   }
 
-  protected removeAvailableAction(action: Action): void {
+  public removeAvailableAction(action: Action): void {
     this.availableActions.delete(action);
   }
 
