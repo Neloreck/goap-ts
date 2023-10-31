@@ -1,5 +1,5 @@
 {
-  "name": "goap",
+  "name": "goap-ts",
   "version": "1.0.0",
   "description": "",
   "main": "previous_version/index.ts",
@@ -7,6 +7,7 @@
     "format": "prettier --write \"**/*.(js|ts|tsx|md)\" && eslint . --ext .ts,.tsx,.js --fix -c .eslintrc.json --cache --cache-location target/eslint/cache.json",
     "lint": "eslint . --ext .ts,.tsx,.js -c .eslintrc.json --cache --cache-location target/eslint/cache.json",
     "typecheck": "tsc -P ./tsconfig.json --noEmit",
+    "watch": "tsc -P ./tsconfig.json --noEmit --watch",
     "test": "jest",
     "build": "tsc --outDir ./target/lib"
   },

@@ -1,4 +1,5 @@
-import { DirectedGraph, Edge, Path, PathFactory } from "@/utils/graph";
+import { DirectedGraph, Edge, Path } from "@/utils/graph";
+import { generatePath } from "@/utils/path";
 
 /**
  * todo;
@@ -44,5 +45,5 @@ export function createBasicTestPath(vertexCount: number, edgeCount: number): Pat
     vertices.push(it);
   }
 
-  return PathFactory.generatePath(graph, vertices[0], vertices[vertices.length - 1], vertices, edges);
+  return generatePath(graph, vertices[0], vertices[vertices.length - 1], vertices, edges);
 }

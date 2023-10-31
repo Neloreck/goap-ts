@@ -4,6 +4,8 @@
     "noEmit": true,
     "resolveJsonModule": true,
     "noImplicitOverride": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
     "target": "esnext",
     "module": "commonjs",
     "moduleResolution": "node",

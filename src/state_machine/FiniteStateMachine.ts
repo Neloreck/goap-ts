@@ -4,7 +4,7 @@ import { IFiniteStateMachineState } from "@/state_machine/IFiniteStateMachineSta
 import { RunActionState } from "@/state_machine/RunActionState";
 import { Maybe, Queue, Stack } from "@/types";
 import { IUnit } from "@/unit/IUnit";
-import { removeFromArray, stackPeek } from "@/utils";
+import { removeFromArray, stackPeek } from "@/utils/array";
 
 export class FiniteStateMachine {
   private states: Stack<IFiniteStateMachineState> = [];

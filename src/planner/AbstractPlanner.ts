@@ -3,7 +3,8 @@ import { GraphNode } from "@/planner/GraphNode";
 import { State } from "@/State";
 import { Optional, Queue } from "@/types";
 import { IUnit } from "@/unit/IUnit";
-import { IWeightedGraph, PathFactory, WeightedEdge, WeightedPath } from "@/utils/graph";
+import { IWeightedGraph, WeightedEdge, WeightedPath } from "@/utils/graph";
+import { createWeightedPath } from "@/utils/path";
 
 /**
  * Class for generating a queue of goap actions.
@@ -210,7 +211,7 @@ export abstract class AbstractPlanner {
 
         // Add the path to the node to the GraphPath list in the node
         // since this is the first step inside the graph.
-        const graphPathToDefaultNode: WeightedPath<GraphNode, WeightedEdge> = PathFactory.generateWeightedPath(
+        const graphPathToDefaultNode: WeightedPath<GraphNode, WeightedEdge> = createWeightedPath(
           graph,
           this.startNode,
           graphNode,
@@ -383,7 +384,7 @@ export abstract class AbstractPlanner {
     vertices.push(nodeToAdd);
     edges.push(graph.getEdge(baseGraphPath.getEndVertex(), nodeToAdd));
 
-    return PathFactory.generateWeightedPath(graph, baseGraphPath.getStartVertex(), nodeToAdd, vertices, edges);
+    return createWeightedPath(graph, baseGraphPath.getStartVertex(), nodeToAdd, vertices, edges);
   }
 
   /**

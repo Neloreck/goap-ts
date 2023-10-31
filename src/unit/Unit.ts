@@ -3,7 +3,7 @@ import { IImportantUnitChangeEventListener } from "@/event/IImportantUnitChangeE
 import { State } from "@/State";
 import { AnyObject, Optional } from "@/types";
 import { IUnit } from "@/unit/IUnit";
-import { removeFromArray } from "@/utils";
+import { removeFromArray } from "@/utils/array";
 
 /**
  * The superclass for a unit using the agent.
