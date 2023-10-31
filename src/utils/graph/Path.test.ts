@@ -1,6 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 
-import { createBasicTestPath } from "@/__test__/fixtures/utils";
+import { createBasicTestPath } from "#/fixtures/utils";
+
 import { Edge } from "@/utils/graph/Edge";
 import { Path } from "@/utils/graph/Path";
 

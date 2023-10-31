@@ -25,6 +25,7 @@ module.exports = {
   coveragePathIgnorePatterns: ["/node_modules/"],
   moduleNameMapper: {
     "^@/(.*)": "<rootDir>/src/$1",
+    "^#/(.*)": "<rootDir>/test/$1",
   },
   verbose: true,
 };

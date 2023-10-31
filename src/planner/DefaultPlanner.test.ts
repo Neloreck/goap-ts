@@ -1,6 +1,7 @@
 import { describe, expect, it, jest } from "@jest/globals";
 
-import { GenericAction, TestUnit } from "@/__test__/fixtures/mocks";
+import { GenericAction, TestUnit } from "#/fixtures/mocks";
+
 import { Action } from "@/planner/Action";
 import { DefaultPlanner } from "@/planner/DefaultPlanner";
 import { State } from "@/state/State";

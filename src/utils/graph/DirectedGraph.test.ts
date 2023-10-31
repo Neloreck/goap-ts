@@ -1,6 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 
-import { createBasicConnectedTestGraph, createBasicTestGraph } from "@/__test__/fixtures/utils";
+import { createBasicConnectedTestGraph, createBasicTestGraph } from "#/fixtures/utils";
+
 import { DirectedGraph } from "@/utils/graph/DirectedGraph";
 import { Edge } from "@/utils/graph/Edge";
 

@@ -1,4 +1,5 @@
-import { GenericAction } from "@/__test__/fixtures/mocks/GenericAction";
+import { GenericAction } from "#/fixtures/mocks/GenericAction";
+
 import { State } from "@/state/State";
 import { IUnit } from "@/unit/IUnit";
 
