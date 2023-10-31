@@ -3,9 +3,9 @@ import { GraphNode } from "@/planner/GraphNode";
 import { DirectedWeightedGraph, IWeightedGraph, WeightedEdge } from "@/utils/graph";
 
 /**
- * The default implementation of the goap planner.
+ * The default implementation of the GOAP planner.
  */
-export class DefaultPlanner extends AbstractPlanner {
+export class GenericPlanner extends AbstractPlanner {
   protected override generateGraphObject<EdgeType extends WeightedEdge>(): IWeightedGraph<GraphNode, EdgeType> {
     return new DirectedWeightedGraph<GraphNode, EdgeType>();
   }

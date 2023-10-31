@@ -112,7 +112,7 @@ export abstract class AbstractPlanner {
     // would not be reflected to the function caller.
     const start: GraphNode = new GraphNode(null, this.unit.getWorldState());
 
-    this.startNode.overwriteOwnProperties(start);
+    this.startNode.overwriteFrom(start);
     graph.addVertex(this.startNode);
 
     for (const state of goalState) {

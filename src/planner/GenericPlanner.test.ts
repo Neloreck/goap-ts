@@ -3,12 +3,12 @@ import { describe, expect, it, jest } from "@jest/globals";
 import { GenericAction, TestUnit } from "#/fixtures/mocks";
 
 import { Action } from "@/planner/Action";
-import { DefaultPlanner } from "@/planner/DefaultPlanner";
+import { GenericPlanner } from "@/planner/GenericPlanner";
 import { State } from "@/state/State";
 import { Queue } from "@/types";
 import { Unit } from "@/unit/Unit";
 
-describe("DefaultPlanner class", () => {
+describe("GenericPlanner class", () => {
   const createTestUnit = () => {
     const unit: TestUnit = new TestUnit();
 
@@ -19,11 +19,11 @@ describe("DefaultPlanner class", () => {
   };
 
   it("should correctly initialize", () => {
-    expect(new DefaultPlanner()).toEqual({});
+    expect(new GenericPlanner()).toEqual({});
   });
 
   it("should correctly plan without anything", () => {
-    expect(new DefaultPlanner().plan(createTestUnit())).toBeNull();
+    expect(new GenericPlanner().plan(createTestUnit())).toBeNull();
   });
 
   it("should correctly plan with connection and not possible outcome", () => {
@@ -32,7 +32,7 @@ describe("DefaultPlanner class", () => {
 
     unit.addAvailableAction(action);
 
-    expect(new DefaultPlanner().plan(unit)).toBeNull();
+    expect(new GenericPlanner().plan(unit)).toBeNull();
   });
 
   it("should correctly plan with connection and with not possible scenario", () => {
@@ -44,7 +44,7 @@ describe("DefaultPlanner class", () => {
     action.addPrecondition(new State(0, "step", true));
     action.addEffect(new State(0, "goal", true));
 
-    expect(new DefaultPlanner().plan(unit)).toBeNull();
+    expect(new GenericPlanner().plan(unit)).toBeNull();
   });
 
   it("should correctly plan with single action to reach goal", () => {
@@ -56,7 +56,7 @@ describe("DefaultPlanner class", () => {
 
     unit.addAvailableAction(action);
 
-    const plan: Queue<Action> = new DefaultPlanner().plan(unit);
+    const plan: Queue<Action> = new GenericPlanner().plan(unit);
 
     expect(plan).not.toBeNull();
     expect(plan).toHaveLength(1);
@@ -85,7 +85,7 @@ describe("DefaultPlanner class", () => {
     unit.addAvailableAction(new GenericAction(1));
     unit.addAvailableAction(new GenericAction(1));
 
-    const plan: Queue<Action> = new DefaultPlanner().plan(unit);
+    const plan: Queue<Action> = new GenericPlanner().plan(unit);
 
     expect(plan).not.toBeNull();
     expect(plan).toHaveLength(2);
@@ -118,7 +118,7 @@ describe("DefaultPlanner class", () => {
     jest.spyOn(firstExpensive, "generateBaseCost").mockImplementation(() => 100);
     jest.spyOn(firstCheap, "generateBaseCost").mockImplementation(() => 10);
 
-    const plan: Queue<Action> = new DefaultPlanner().plan(unit);
+    const plan: Queue<Action> = new GenericPlanner().plan(unit);
 
     expect(plan).not.toBeNull();
     expect(plan).toHaveLength(2);
@@ -158,7 +158,7 @@ describe("DefaultPlanner class", () => {
     unit.addAvailableAction(collectWoodAction);
     unit.addAvailableAction(getAxeAction);
 
-    const plan: Queue<Action> = new DefaultPlanner().plan(unit);
+    const plan: Queue<Action> = new GenericPlanner().plan(unit);
 
     expect(plan).not.toBeNull();
     expect(plan).toHaveLength(4);

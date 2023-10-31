@@ -16,16 +16,16 @@ export class MoveToState implements IFiniteStateMachineState {
   /**
    * Move to the target of the currentAction until the unit is in range to perform the action itself.
    */
-  public runGoapAction(goapUnit: IUnit): boolean {
+  public runAction(unit: IUnit): boolean {
     let stillMoving: boolean = true;
 
     if (
-      (this.currentAction.requiresInRange(goapUnit) && this.currentAction.isInRange(goapUnit)) ||
+      (this.currentAction.requiresInRange(unit) && this.currentAction.isInRange(unit)) ||
       this.currentAction.target === null
     ) {
       stillMoving = false;
     } else {
-      goapUnit.moveTo(this.currentAction.target);
+      unit.moveTo(this.currentAction.target);
     }
 
     return stillMoving;

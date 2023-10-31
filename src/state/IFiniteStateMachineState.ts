@@ -11,5 +11,5 @@ export interface IFiniteStateMachineState {
    *
    * @throws error
    */
-  runGoapAction(unit: IUnit): boolean;
+  runAction(unit: IUnit): boolean;
 }

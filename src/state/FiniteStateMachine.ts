@@ -1,8 +1,8 @@
+import { IFiniteStateMachinePlanEventListener } from "@/event/IFiniteStateMachinePlanEventListener";
 import { Action } from "@/planner/Action";
 import { IFiniteStateMachineState } from "@/state/IFiniteStateMachineState";
 import { RunActionState } from "@/state/RunActionState";
 import { AnyObject, Queue, Stack } from "@/types";
-import { IFiniteStateMachinePlanEventListener } from "@/unit/IFiniteStateMachinePlanEventListener";
 import { IUnit } from "@/unit/IUnit";
 import { removeFromArray, stackPeek } from "@/utils";
 
@@ -11,15 +11,15 @@ export class FiniteStateMachine {
   private planEventListeners: Array<AnyObject> = [];
 
   /**
-   * Run through all action in the specific states. If an Exception occurs
-   * (mainly in RunActionState) the FSM assumes the plan failed. If an action
-   * state returns false the FSM assumes the plan finished.
+   * Run through all action in the specific states.
+   * If an Exception occurs (mainly in RunActionState) the FSM assumes the plan failed.
+   * If an action state returns false the FSM assumes the plan finished.
    *
    * @param unit - unit whose actions are getting cycled.
    */
   public update(unit: IUnit): void {
     try {
-      if (this.states.length > 0 && !stackPeek(this.states).runGoapAction(unit)) {
+      if (this.states.length > 0 && !stackPeek(this.states).runAction(unit)) {
         const state: IFiniteStateMachineState = this.states.pop();
 
         if (state instanceof RunActionState) {
@@ -53,23 +53,23 @@ export class FiniteStateMachine {
     return this.states.length > 0;
   }
 
-  public addPlanEventListener(listener: AnyObject): void {
+  public addPlanEventListener(listener: IFiniteStateMachinePlanEventListener): void {
     this.planEventListeners.push(listener);
   }
 
-  public removePlanEventListener(listener: AnyObject): void {
+  public removePlanEventListener(listener: IFiniteStateMachinePlanEventListener): void {
     removeFromArray(this.planEventListeners, listener);
   }
 
   private dispatchNewPlanFailedEvent(actions: Queue<Action>): void {
     for (const listener of this.planEventListeners) {
-      (listener as IFiniteStateMachinePlanEventListener).onPlanFailed(actions);
+      listener.onPlanFailed(actions);
     }
   }
 
   private dispatchNewPlanFinishedEvent(): void {
     for (const listener of this.planEventListeners) {
-      (listener as IFiniteStateMachinePlanEventListener).onPlanFinished();
+      listener.onPlanFinished();
     }
   }
 }

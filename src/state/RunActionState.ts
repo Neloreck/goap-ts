@@ -1,4 +1,4 @@
-import { UnperformableActionException } from "@/error/UnperformableActionException";
+import { NotPerformableActionException } from "@/error/NotPerformableActionException";
 import { Action } from "@/planner/Action";
 import { FiniteStateMachine } from "@/state/FiniteStateMachine";
 import { MoveToState } from "@/state/MoveToState";
@@ -28,7 +28,7 @@ export class RunActionState implements IFiniteStateMachineState {
    * Cycle trough all actions until an invalid one or the end of the Queue is reached.
    * A false return type here causes the FSM to pop the state from its stack.
    */
-  public runGoapAction(unit: IUnit): boolean {
+  public runAction(unit: IUnit): boolean {
     let workingOnQueue: boolean = false;
 
     try {
@@ -53,7 +53,7 @@ export class RunActionState implements IFiniteStateMachineState {
         if (currentAction.requiresInRange(unit) && !currentAction.isInRange(unit)) {
           this.fsm.pushStack(new MoveToState(currentAction));
         } else if (currentAction.checkProceduralPrecondition(unit) && !currentAction.performAction(unit)) {
-          throw new UnperformableActionException(currentAction.constructor.name);
+          throw new NotPerformableActionException(currentAction.constructor.name);
         }
 
         workingOnQueue = true;

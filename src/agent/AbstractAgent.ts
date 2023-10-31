@@ -12,39 +12,42 @@ import { Unit } from "@/unit/Unit";
 export abstract class AbstractAgent implements IAgent {
   private readonly fsm: FiniteStateMachine = new FiniteStateMachine();
   private readonly idleState: IdleState;
-  private readonly assignedGoapUnit: IUnit;
+  private readonly unit: IUnit;
 
   /**
-   * @param assignedUnit - the unit the agent works with
+   * @param unit - the unit the agent works with
    */
-  public constructor(assignedUnit: IUnit) {
-    this.assignedGoapUnit = assignedUnit;
+  public constructor(unit: IUnit) {
+    this.unit = unit;
     this.idleState = new IdleState(this.generatePlannerObject());
 
     // Only subclasses of the own unit are able to emit events
-    if (this.assignedGoapUnit instanceof Unit) {
-      this.assignedGoapUnit.addImportantUnitGoalChangeListener(this);
+    if (this.unit instanceof Unit) {
+      this.unit.addImportantUnitGoalChangeListener(this);
     }
 
-    this.idleState.addPlanCreatedListener(this);
+    this.idleState.addListener(this);
     this.fsm.addPlanEventListener(this);
   }
 
+  /**
+   * Handle update tick.
+   */
   public update(): void {
     if (!this.fsm.hasStates()) {
       this.fsm.pushStack(this.idleState);
     }
 
-    this.assignedGoapUnit.update();
-    this.fsm.update(this.assignedGoapUnit);
+    this.unit.update();
+    this.fsm.update(this.unit);
   }
 
   public getAssignedGoapUnit(): IUnit {
-    return this.assignedGoapUnit;
+    return this.unit;
   }
 
   public onPlanCreated(plan: Queue<Action>): void {
-    this.assignedGoapUnit.goapPlanFound(plan);
+    this.unit.goapPlanFound(plan);
 
     this.fsm.popStack();
     this.fsm.pushStack(new RunActionState(this.fsm, plan));
@@ -57,7 +60,7 @@ export abstract class AbstractAgent implements IAgent {
 
   public onImportantUnitStackResetChange(): void {
     // Reset all actions of the IUnit.
-    for (const action of this.assignedGoapUnit.getAvailableActions()) {
+    for (const action of this.unit.getAvailableActions()) {
       action.reset();
     }
 
@@ -66,11 +69,11 @@ export abstract class AbstractAgent implements IAgent {
   }
 
   public onPlanFailed(actions: Queue<Action>): void {
-    this.assignedGoapUnit.goapPlanFailed(actions);
+    this.unit.goapPlanFailed(actions);
   }
 
   public onPlanFinished(): void {
-    this.assignedGoapUnit.goapPlanFinished();
+    this.unit.goapPlanFinished();
   }
 
   /**

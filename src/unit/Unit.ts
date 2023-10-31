@@ -1,7 +1,7 @@
+import { IImportantUnitChangeEventListener } from "@/event/IImportantUnitChangeEventListener";
 import { Action } from "@/planner/Action";
 import { State } from "@/state/State";
 import { AnyObject, Optional } from "@/types";
-import { IImportantUnitChangeEventListener } from "@/unit/IImportantUnitChangeEventListener";
 import { IUnit } from "@/unit/IUnit";
 import { removeFromArray } from "@/utils";
 

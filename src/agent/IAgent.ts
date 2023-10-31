@@ -1,6 +1,6 @@
-import { IPlanCreatedEventListener } from "@/state/IPlanCreatedEventListener";
-import { IFiniteStateMachinePlanEventListener } from "@/unit/IFiniteStateMachinePlanEventListener";
-import { IImportantUnitChangeEventListener } from "@/unit/IImportantUnitChangeEventListener";
+import { IFiniteStateMachinePlanEventListener } from "@/event/IFiniteStateMachinePlanEventListener";
+import { IImportantUnitChangeEventListener } from "@/event/IImportantUnitChangeEventListener";
+import { IPlanCreatedEventListener } from "@/event/IPlanCreatedEventListener";
 
 export interface IAgent
   extends IImportantUnitChangeEventListener,

@@ -1,5 +1,5 @@
 import { State } from "@/state/State";
-import { AnyObject, Optional } from "@/types";
+import { Optional } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 
 /**
