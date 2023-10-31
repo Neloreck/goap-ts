@@ -8,10 +8,11 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "rootDir": ".",
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "lib": ["esnext"],
     "paths": {
-      "@/*": ["./*"],
+      "@/*": ["./src/*"],
+      "#/*": ["./test/*"],
     }
   },
   "ts-node": {

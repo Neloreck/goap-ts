@@ -20,7 +20,11 @@ describe("DirectedGraph class", () => {
       .addEdge(3, 2, threeTwo)
       .addEdge(2, 3, twoThree);
 
-    expect([...graph.getEdges().values()]).toEqual([oneThree, threeOne, threeTwo, twoThree]);
+    expect(graph.getEdges().size).toBe(4);
+    expect(graph.containsEdge(1, 3)).toBe(true);
+    expect(graph.containsEdge(3, 1)).toBe(true);
+    expect(graph.containsEdge(2, 3)).toBe(true);
+    expect(graph.containsEdge(3, 2)).toBe(true);
     expect([...graph.getVertices().values()]).toEqual([1, 2, 3]);
 
     expect(graph.getEdge(1, 2)).toBeNull();

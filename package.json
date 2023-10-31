@@ -6,7 +6,9 @@
   "scripts": {
     "format": "prettier --write \"**/*.(js|ts|tsx|md)\" && eslint . --ext .ts,.tsx,.js --fix -c .eslintrc.json --cache --cache-location target/eslint/cache.json",
     "lint": "eslint . --ext .ts,.tsx,.js -c .eslintrc.json --cache --cache-location target/eslint/cache.json",
-    "test": "jest"
+    "typecheck": "tsc -P ./tsconfig.json --noEmit",
+    "test": "jest",
+    "build": "tsc --outDir ./target/lib"
   },
   "author": "Neloreck",
   "license": "MIT",

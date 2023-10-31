@@ -1,0 +1,134 @@
+name: build-and-test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [19.x]
+        shard: [1]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      - run: npm ci
+      - run: npm run setup
+
+      - name: Restore jest cache
+        id: cache-jest-restore
+        uses: actions/cache/restore@v3
+        with:
+          path: /tmp/jest_rt
+          key: jest-${{ hashFiles('**/package-lock.json') }}-${{ matrix.shard }}
+
+      - run: npm run test -- --shard=${{ matrix.shard }}/${{ strategy.job-total }} --maxWorkers=100%
+
+      - name: Save jest cache
+        if: ${{ steps.cache-jest-restore.outputs.cache-hit != 'true' && github.event_name != 'pull_request' }}
+        id: cache-jest-save
+        uses: actions/cache/save@v3
+        with:
+          path: /tmp/jest_rt
+          key: ${{ steps.cache-jest-restore.outputs.cache-primary-key }}
+
+      - run: mv target/coverage_report/coverage-final.json target/coverage_report/${{matrix.shard}}.json
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: coverage-artifacts
+          path: target/coverage_report/${{matrix.shard}}.json
+
+  report-coverage:
+    runs-on: ubuntu-latest
+    needs: [test]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+        with:
+          name: coverage-artifacts
+          path: target/coverage_report
+
+      - name: Merge code coverage
+        run: npx nyc merge target/coverage_report/ target/coverage-report/coverage-final.json
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          files: ./target/coverage_report/coverage-final.json
+
+  check:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [19.x]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      - name: Restore eslint cache
+        id: cache-eslint-restore
+        uses: actions/cache/restore@v3
+        with:
+          path: target/eslint
+          key: eslint-${{ hashFiles('**/package-lock.json') }}-${{ matrix.shard }}
+
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+
+      - name: Save eslint cache
+        if: ${{ steps.cache-eslint-restore.outputs.cache-hit != 'true' && github.event_name != 'pull_request' }}
+        id: cache-eslint-save
+        uses: actions/cache/save@v3
+        with:
+          path: target/eslint
+          key: ${{ steps.cache-eslint-restore.outputs.cache-primary-key }}
+
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [19.x]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      - run: npm ci
+      - run: npm run build
