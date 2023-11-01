@@ -8,7 +8,7 @@ export abstract class AbstractAction<T = any> {
   private readonly preconditions: Set<State> = new Set();
   private readonly effects: Set<State> = new Set();
 
-  public readonly target: T;
+  public target: T;
 
   /**
    * @param target - the target of the action

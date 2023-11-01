@@ -34,7 +34,7 @@ export class DirectedGraph<VertexType, EdgeType extends Edge> implements IGraph<
    * @returns this
    */
   public addEdge(firstVertex: VertexType, secondVertex: VertexType, edge: EdgeType): typeof this {
-    this.content.get(firstVertex).set(secondVertex, edge);
+    (this.content.get(firstVertex) as Map<VertexType, EdgeType>).set(secondVertex, edge);
 
     return this;
   }
@@ -45,7 +45,7 @@ export class DirectedGraph<VertexType, EdgeType extends Edge> implements IGraph<
    * @returns this
    */
   public removeEdge(firstVertex: VertexType, secondVertex: VertexType): typeof this {
-    this.content.get(firstVertex).delete(secondVertex);
+    (this.content.get(firstVertex) as Map<VertexType, EdgeType>).delete(secondVertex);
 
     return this;
   }
@@ -56,7 +56,7 @@ export class DirectedGraph<VertexType, EdgeType extends Edge> implements IGraph<
    * @returns whether there is edge between two vertexes
    */
   public containsEdge(firstVertex: VertexType, secondVertex: VertexType): boolean {
-    return this.content.get(firstVertex).has(secondVertex);
+    return this.content.get(firstVertex)?.has(secondVertex) === true;
   }
 
   /**
@@ -85,6 +85,6 @@ export class DirectedGraph<VertexType, EdgeType extends Edge> implements IGraph<
    * @returns edge linking first and second vertex or null
    */
   public getEdge(firstVertex: VertexType, secondVertex: VertexType): Optional<EdgeType> {
-    return this.content.get(firstVertex).get(secondVertex) ?? null;
+    return this.content.get(firstVertex)?.get(secondVertex) ?? null;
   }
 }

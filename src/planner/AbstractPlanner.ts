@@ -50,9 +50,9 @@ export abstract class AbstractPlanner {
    * @returns a generated plan (queue) of actions, that the unit has to perform to achieve the desired state OR null,
    *   if no plan was generated
    */
-  public plan(unit: IUnit): Queue<AbstractAction> {
+  public plan(unit: IUnit): Optional<Queue<AbstractAction>> {
     this.unit = unit;
-    this.startNode = new GraphNode(null);
+    this.startNode = new GraphNode(new Set(), new Set());
     this.endNodes = [];
 
     try {
@@ -65,7 +65,9 @@ export abstract class AbstractPlanner {
       // function again. An empty Queue is finished in one cycle with no effect at all.
       // todo: Probably review this logics.
       if (goal[0].importance === Infinity) {
-        const createdPlan: Queue<AbstractAction> = this.searchGraphForActionQueue(this.createGraph([goal[0]]));
+        const createdPlan: Optional<Queue<AbstractAction>> = this.searchGraphForActionQueue(
+          this.createGraph([goal[0]])
+        );
 
         goal.shift();
 
@@ -108,9 +110,8 @@ export abstract class AbstractPlanner {
     // unit tries to archive with its actions. Also the startNode has to
     // overwrite the existing GraphNode as an initialization of a new Object
     // would not be reflected to the function caller.
-    const start: GraphNode = new GraphNode(null, this.unit.getWorldState());
+    this.startNode.copyFrom(new GraphNode(new Set(), this.unit.getWorldState()));
 
-    this.startNode.overwriteFrom(start);
     graph.addVertex(this.startNode);
 
     for (const state of goalState) {
@@ -118,7 +119,7 @@ export abstract class AbstractPlanner {
 
       goalStateHash.add(state);
 
-      const end: GraphNode = new GraphNode(goalStateHash, null);
+      const end: GraphNode = new GraphNode(goalStateHash, new Set());
 
       graph.addVertex(end);
       this.endNodes.push(end);
@@ -126,7 +127,7 @@ export abstract class AbstractPlanner {
 
     // Afterward all other possible actions have to be added as well.
     for (const action of this.extractPossibleActions()) {
-      graph.addVertex(new GraphNode(action));
+      graph.addVertex(new GraphNode(action.getPreconditions(), action.getEffects(), action));
     }
   }
 
@@ -169,7 +170,7 @@ export abstract class AbstractPlanner {
     // find a possible match between the combined effects of the path + the
     // worldState and the preconditions of the current node.
     while (nodesToWorkOn.length > 0) {
-      const node: GraphNode = nodesToWorkOn.shift();
+      const node: GraphNode = nodesToWorkOn.shift() as GraphNode;
 
       // Select only node to which a path can be created (-> targets!)
       if (node !== this.startNode && !this.endNodes.includes(node)) {
@@ -179,12 +180,10 @@ export abstract class AbstractPlanner {
   }
 
   /**
-   * Function for adding the edges to the graph which are the connection from
-   * the starting node to all default accessible nodes (= actions). These
-   * nodes either have no precondition or their preconditions are all in the
-   * effect HashSet of the starting node. These default edges are needed since
-   * all further connections rely on them as nodes in the further steps are
-   * not allowed to connect to the starting node anymore.
+   * Function for adding the edges to the graph which are the connection from the starting node to all default
+   * accessible nodes (= actions). These nodes either have no precondition or their preconditions are all in the
+   * effect HashSet of the starting node. These default edges are needed since all further connections rely on them
+   * as nodes in the further steps are not allowed to connect to the starting node anymore.
    *
    * @param graph - the graph the edges are getting added to
    * @param nodesToWorkOn - the Queue in which nodes which got connected are getting added to
@@ -206,13 +205,14 @@ export abstract class AbstractPlanner {
 
         // Add the path to the node to the GraphPath list in the node
         // since this is the first step inside the graph.
+        // todo: Can be null?
         const graphPathToDefaultNode: WeightedPath<GraphNode, WeightedEdge> = createWeightedPath(
           graph,
           this.startNode,
           graphNode,
           [this.startNode, graphNode],
-          [graph.getEdge(this.startNode, graphNode)]
-        );
+          [graph.getEdge(this.startNode, graphNode) as WeightedEdge]
+        ) as WeightedPath<GraphNode, WeightedEdge>;
 
         graphNode.addGraphPath(null, graphPathToDefaultNode);
       }
@@ -271,7 +271,7 @@ export abstract class AbstractPlanner {
   ): boolean {
     try {
       graph.addEdge(firstVertex, secondVertex, edge);
-      graph.setEdgeWeight(graph.getEdge(firstVertex, secondVertex), weight);
+      graph.setEdgeWeight(graph.getEdge(firstVertex, secondVertex) as WeightedEdge, weight);
 
       return true;
     } catch (error) {
@@ -299,15 +299,11 @@ export abstract class AbstractPlanner {
     let connected: boolean = false;
 
     for (const otherNodeInGraph of graph.getVertices()) {
-      // End nodes can not have a edge towards another node and the target
-      // node must not be itself. Also there must not already be an edge
-      // in the graph.
-      // && !graph.containsEdge(node, nodeInGraph) has to be added
-      // or loops occur which lead to a crash. This leads to the case
-      // where no
-      // alternative routes are being stored inside the pathsToThisNode
-      // list. This is because of the use of a Queue, which loses the
-      // memory of which nodes were already connected.
+      // End nodes can not have an edge towards another node and the target node must not be itself.
+      // Also, there must not already be an edge in the graph.
+      // && !graph.hasEdge(node, nodeInGraph) has to be added or loops occur which lead to a crash.
+      // This leads to the case where no alternative routes are being stored inside the pathsToThisNode list.
+      // This is because of the use of a queue, which loses the memory of which nodes were already connected.
       if (
         node !== otherNodeInGraph &&
         this.startNode !== otherNodeInGraph &&
@@ -327,12 +323,15 @@ export abstract class AbstractPlanner {
               node,
               otherNodeInGraph,
               new WeightedEdge(),
-              node.action.generateCost(this.unit)
+              (node.action as AbstractAction).generateCost(this.unit)
             );
 
             otherNodeInGraph.addGraphPath(
               pathToListNode,
-              AbstractPlanner.addNodeToGraphPath(graph, pathToListNode, otherNodeInGraph)
+              AbstractPlanner.addNodeToGraphPath(graph, pathToListNode, otherNodeInGraph) as WeightedPath<
+                GraphNode,
+                WeightedEdge
+              >
             );
 
             nodesToWorkOn.push(otherNodeInGraph);
@@ -362,12 +361,12 @@ export abstract class AbstractPlanner {
     graph: IWeightedGraph<GraphNode, WeightedEdge>,
     baseGraphPath: WeightedPath<GraphNode, WeightedEdge>,
     nodeToAdd: GraphNode
-  ): WeightedPath<GraphNode, WeightedEdge> {
+  ): Optional<WeightedPath<GraphNode, WeightedEdge>> {
     const vertices: Array<GraphNode> = Array.from(baseGraphPath.getVertexList());
     const edges: Array<WeightedEdge> = Array.from(baseGraphPath.getEdgeList());
 
     vertices.push(nodeToAdd);
-    edges.push(graph.getEdge(baseGraphPath.getEndVertex(), nodeToAdd));
+    edges.push(graph.getEdge(baseGraphPath.getEndVertex(), nodeToAdd) as WeightedEdge);
 
     return createWeightedPath(graph, baseGraphPath.getStartVertex(), nodeToAdd, vertices, edges);
   }
@@ -413,7 +412,7 @@ export abstract class AbstractPlanner {
 
     for (const node of path.getVertexList()) {
       if (node !== start && node !== end) {
-        actionQueue.push(node.action);
+        actionQueue.push(node.action as AbstractAction);
       }
     }
 

@@ -34,10 +34,10 @@ describe("DirectedGraph class", () => {
     expect(graph.getEdge(2, 3)).toBe(twoThree);
     expect(graph.getEdge(3, 2)).toBe(threeTwo);
 
-    expect(graph.getEdgeWeight(graph.getEdge(1, 3))).toBe(13);
-    expect(graph.getEdgeWeight(graph.getEdge(3, 1))).toBe(31);
-    expect(graph.getEdgeWeight(graph.getEdge(3, 2))).toBe(32);
-    expect(graph.getEdgeWeight(graph.getEdge(2, 3))).toBe(23);
+    expect(graph.getEdgeWeight(graph.getEdge(1, 3) as WeightedEdge)).toBe(13);
+    expect(graph.getEdgeWeight(graph.getEdge(3, 1) as WeightedEdge)).toBe(31);
+    expect(graph.getEdgeWeight(graph.getEdge(3, 2) as WeightedEdge)).toBe(32);
+    expect(graph.getEdgeWeight(graph.getEdge(2, 3) as WeightedEdge)).toBe(23);
   });
 
   it("should correctly set vertex weight", () => {

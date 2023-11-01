@@ -2,7 +2,7 @@ import { AbstractAction } from "@/AbstractAction";
 import { IPlanCreatedEventListener } from "@/event/IPlanCreatedEventListener";
 import { IPlanner } from "@/planner/IPlanner";
 import { IFiniteStateMachineState } from "@/state_machine/IFiniteStateMachineState";
-import { Queue } from "@/types";
+import { Optional, Queue } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 import { removeFromArray } from "@/utils/array";
 
@@ -23,7 +23,7 @@ export class IdleState implements IFiniteStateMachineState {
    * @param unit - target unit to execute state for
    */
   public execute(unit: IUnit): boolean {
-    const plan: Queue<AbstractAction> = this.planner.plan(unit);
+    const plan: Optional<Queue<AbstractAction>> = this.planner.plan(unit);
 
     if (plan) {
       this.dispatchPlanCreatedEvent(plan);

@@ -39,15 +39,15 @@ export class RunActionState implements IFiniteStateMachineState {
       // Find first action that is not done.
       // Shift all completed actions from the queue and reset them.
       while (this.plan.length) {
-        if (queuePeek(this.plan).isFinished(unit)) {
-          this.plan.shift().reset();
+        if ((queuePeek(this.plan) as AbstractAction).isFinished(unit)) {
+          (this.plan.shift() as AbstractAction).reset();
         } else {
           break;
         }
       }
 
       if (this.plan.length) {
-        const currentAction: AbstractAction = queuePeek(this.plan);
+        const currentAction: AbstractAction = queuePeek(this.plan) as AbstractAction;
 
         if (currentAction.target === null) {
           // todo: Propagate event with error handler.

@@ -109,7 +109,11 @@ export class FiniteStateMachine {
   public update(unit: IUnit): void {
     try {
       // When stack action execution is finished, pop latest action and notify listeners if needed.
-      if (this.states.length && !stackPeek(this.states).execute(unit) && this.states.pop() instanceof RunActionState) {
+      if (
+        this.states.length &&
+        !(stackPeek(this.states) as IFiniteStateMachineState).execute(unit) &&
+        this.states.pop() instanceof RunActionState
+      ) {
         this.dispatchNewPlanFinishedEvent();
       }
     } catch (error) {

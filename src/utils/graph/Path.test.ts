@@ -7,7 +7,7 @@ import { Path } from "@/utils/graph/Path";
 
 describe("Path class", () => {
   it("should be correctly created", () => {
-    const path: Path<number, Edge> = createBasicTestPath(5, 3);
+    const path: Path<number, Edge> = createBasicTestPath(5, 3) as Path<number, Edge>;
 
     expect(path.getVertexList()).toHaveLength(4);
     expect(path.getEdgeList()).toHaveLength(3);

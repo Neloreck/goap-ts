@@ -7,31 +7,24 @@ import { WeightedEdge, WeightedPath } from "@/utils/graph";
  * Vertex on the used in graph for building of paths.
  */
 export class GraphNode {
-  public action: Optional<AbstractAction> = null;
+  public action: Optional<AbstractAction>;
   public preconditions: Set<State>;
   public effects: Set<State>;
 
   public pathsToThisNode: Array<WeightedPath<GraphNode, WeightedEdge>> = [];
   private states: Map<WeightedPath<GraphNode, WeightedEdge>, Set<State>> = new Map();
 
-  public constructor(action: Optional<AbstractAction>);
-  public constructor(preconditions: Set<State>, effects: Set<State>);
-
   /**
-   * @param preconditionsOrAction - the set of preconditions the node has.
-   *   Each precondition has to be met before another node can be connected to this node.
-   * @param effects - the set of effects the node has on the graph.
-   *   Effects get added together along the graph to hopefully meet a goalState.
+   * @param preconditions - the set of preconditions the node has,
+   *   each precondition has to be met before another node can be connected to this node
+   * @param effects - the set of effects the node has on the graph,
+   *   effects get added together along the graph to hopefully meet a goalState
+   * @param action - action needed to perform for reaching of next state
    */
-  public constructor(preconditionsOrAction: Set<State> | AbstractAction, effects?: Set<State>) {
-    if (preconditionsOrAction instanceof AbstractAction) {
-      this.preconditions = preconditionsOrAction.getPreconditions();
-      this.effects = preconditionsOrAction.getEffects();
-      this.action = preconditionsOrAction;
-    } else {
-      this.preconditions = preconditionsOrAction;
-      this.effects = effects;
-    }
+  public constructor(preconditions: Set<State>, effects: Set<State>, action: Optional<AbstractAction> = null) {
+    this.preconditions = preconditions;
+    this.effects = effects;
+    this.action = action;
   }
 
   /**
@@ -39,7 +32,7 @@ export class GraphNode {
    *
    * @param node - the node whose properties are going to be copied
    */
-  public overwriteFrom(node: GraphNode): void {
+  public copyFrom(node: GraphNode): void {
     this.action = node.action;
     this.preconditions = node.preconditions;
     this.effects = node.effects;
@@ -54,7 +47,7 @@ export class GraphNode {
    * @param newPath - the path with which the node is accessed
    */
   public addGraphPath(
-    pathToPreviousNode: WeightedPath<GraphNode, WeightedEdge>,
+    pathToPreviousNode: Optional<WeightedPath<GraphNode, WeightedEdge>>,
     newPath: WeightedPath<GraphNode, WeightedEdge>
   ): void {
     const newPathNodeList: Array<GraphNode> = newPath.getVertexList();
@@ -99,7 +92,7 @@ export class GraphNode {
    * @returns the set of effects at the last node in the path
    */
   private addPathEffectsTogether(
-    pathToPreviousNode: WeightedPath<GraphNode, WeightedEdge>,
+    pathToPreviousNode: Optional<WeightedPath<GraphNode, WeightedEdge>>,
     path: WeightedPath<GraphNode, WeightedEdge>
   ): Set<State> {
     const statesToBeRemoved: Array<State> = [];
@@ -137,6 +130,6 @@ export class GraphNode {
    * @returns effects for provided path
    */
   public getEffectState(path: WeightedPath<GraphNode, WeightedEdge>): Set<State> {
-    return this.states.get(path);
+    return this.states.get(path) as Set<State>;
   }
 }
