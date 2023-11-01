@@ -88,4 +88,13 @@ describe("DirectedGraph class", () => {
     expect([...graph.getEdges().values()]).toEqual([]);
     expect([...graph.getVertices().values()]).toEqual([0, 1, 2]);
   });
+
+  it("should correctly add many vertices", () => {
+    const graph: DirectedGraph<number, Edge> = new DirectedGraph();
+
+    graph.addVertex(1).addVertex(2).addVertices([3, 4, 5]);
+
+    expect(graph.getVertices().size).toBe(5);
+    expect([...graph.getVertices().values()]).toEqual([1, 2, 3, 4, 5]);
+  });
 });

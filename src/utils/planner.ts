@@ -1,8 +1,8 @@
 import { AbstractAction } from "@/AbstractAction";
 import { GraphNode } from "@/planner/GraphNode";
 import { Property } from "@/Property";
-import { Optional, Queue } from "@/types";
-import { IWeightedGraph, WeightedEdge, WeightedPath } from "@/utils/graph";
+import { Optional } from "@/types";
+import { IWeightedGraph, Path, WeightedEdge, WeightedPath } from "@/utils/graph";
 import { createWeightedPath } from "@/utils/path";
 
 /**
@@ -14,19 +14,19 @@ import { createWeightedPath } from "@/utils/path";
  * @returns a queue in which all actions from the given path are listed
  */
 export function extractActionsFromGraphPath(
-  path: WeightedPath<GraphNode, WeightedEdge>,
+  path: Path<GraphNode, WeightedEdge>,
   start: GraphNode,
   end: GraphNode
-): Queue<AbstractAction> {
-  const actionQueue: Queue<AbstractAction> = [];
+): Array<AbstractAction> {
+  const queue: Array<AbstractAction> = [];
 
   for (const node of path.getVertexList()) {
     if (node !== start && node !== end) {
-      actionQueue.push(node.action as AbstractAction);
+      queue.push(node.action as AbstractAction);
     }
   }
 
-  return actionQueue;
+  return queue;
 }
 
 /**
@@ -50,33 +50,6 @@ export function addNodeToGraphPath(
   edges.push(graph.getEdge(baseGraphPath.getEndVertex(), nodeToAdd) as WeightedEdge);
 
   return createWeightedPath(graph, baseGraphPath.getStartVertex(), nodeToAdd, vertices, edges);
-}
-
-/**
- * Convenience function for adding a weighted edge to an existing Graph.
- *
- * @param graph - the Graph the edge is added to
- * @param firstVertex - start vertex
- * @param secondVertex - target vertex
- * @param edge - edge reference
- * @param weight - the weight of the edge being created
- * @return if the creation of the edge was successful or not
- */
-export function addEgdeWithWeigth<V, E extends WeightedEdge>(
-  graph: IWeightedGraph<V, E>,
-  firstVertex: V,
-  secondVertex: V,
-  edge: E,
-  weight: number
-): boolean {
-  try {
-    graph.addEdge(firstVertex, secondVertex, edge);
-    graph.setEdgeWeight(graph.getEdge(firstVertex, secondVertex) as WeightedEdge, weight);
-
-    return true;
-  } catch (error) {
-    return false;
-  }
 }
 
 /**

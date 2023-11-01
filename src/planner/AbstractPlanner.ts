@@ -5,12 +5,7 @@ import { Optional, Queue } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 import { IWeightedGraph, WeightedEdge, WeightedPath } from "@/utils/graph";
 import { createWeightedPath } from "@/utils/path";
-import {
-  addEgdeWithWeigth,
-  addNodeToGraphPath,
-  areAllPreconditionsMet,
-  extractActionsFromGraphPath,
-} from "@/utils/planner";
+import { addNodeToGraphPath, areAllPreconditionsMet, extractActionsFromGraphPath } from "@/utils/planner";
 
 /**
  * Class for generating a queue of goap actions.
@@ -194,7 +189,7 @@ export abstract class AbstractPlanner {
         (graphNode.preconditions.length === 0 ||
           areAllPreconditionsMet(graphNode.preconditions, this.startNode.effects))
       ) {
-        addEgdeWithWeigth(graph, this.startNode, graphNode, new WeightedEdge(), 0);
+        graph.addEdge(this.startNode, graphNode, new WeightedEdge(0));
 
         if (!nodesToWorkOn.includes(graphNode)) {
           nodesToWorkOn.push(graphNode);
@@ -251,12 +246,10 @@ export abstract class AbstractPlanner {
           if (areAllPreconditionsMet(otherNodeInGraph.preconditions, node.getEffectState(pathToListNode))) {
             connected = true;
 
-            addEgdeWithWeigth(
-              graph,
+            graph.addEdge(
               node,
               otherNodeInGraph,
-              new WeightedEdge(),
-              (node.action as AbstractAction).generateCost(this.unit)
+              new WeightedEdge((node.action as AbstractAction).generateCost(this.unit))
             );
 
             otherNodeInGraph.addGraphPath(

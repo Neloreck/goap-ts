@@ -65,13 +65,11 @@ describe("AbstractAction class", () => {
 
     expect(action.getPreconditions()).toEqual([]);
 
-    action.addPrecondition(first);
-    action.addPrecondition(second);
+    action.addPrecondition(first).addPrecondition(second);
 
     expect(action.getPreconditions()).toEqual([first, second]);
 
-    action.addPrecondition(first);
-    action.addPrecondition(second);
+    action.addPrecondition(first).addPrecondition(second);
 
     expect(action.getPreconditions()).toEqual([first, second]);
   });
@@ -84,8 +82,7 @@ describe("AbstractAction class", () => {
 
     expect(action.getPreconditions()).toEqual([]);
 
-    action.addPrecondition(first);
-    action.addPrecondition(second);
+    action.addPrecondition(first).addPrecondition(second);
 
     expect(action.getPreconditions()).toEqual([first, second]);
 
@@ -114,13 +111,11 @@ describe("AbstractAction class", () => {
 
     expect(action.getEffects()).toEqual([]);
 
-    action.addEffect(first);
-    action.addEffect(second);
+    action.addEffect(first).addEffect(second);
 
     expect(action.getEffects()).toEqual([first, second]);
 
-    action.addEffect(first);
-    action.addEffect(second);
+    action.addEffect(first).addEffect(second);
 
     expect(action.getEffects()).toEqual([first, second]);
   });
@@ -133,8 +128,7 @@ describe("AbstractAction class", () => {
 
     expect(action.getEffects()).toEqual([]);
 
-    action.addEffect(first);
-    action.addEffect(second);
+    action.addEffect(first).addEffect(second);
 
     expect(action.getEffects()).toEqual([first, second]);
 
@@ -142,7 +136,7 @@ describe("AbstractAction class", () => {
 
     expect(action.getEffects()).toEqual([first]);
 
-    action.removeEffect(second.id);
+    action.removeEffect(second.id).removeEffect(second.id);
 
     expect(action.getEffects()).toEqual([first]);
 

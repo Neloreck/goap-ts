@@ -5,7 +5,7 @@ import { WeightedEdge } from "@/utils/graph/WeightedEdge";
 /**
  * A DirectedWeightedGraph using WeightedEdges as edges.
  */
-export class DirectedWeightedGraph<VertexType, EdgeType extends WeightedEdge>
+export class DirectedWeightedGraph<VertexType, EdgeType extends WeightedEdge = WeightedEdge>
   extends DirectedGraph<VertexType, EdgeType>
   implements IWeightedGraph<VertexType, EdgeType>
 {

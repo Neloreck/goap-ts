@@ -28,6 +28,18 @@ export class DirectedGraph<VertexType, EdgeType extends Edge> implements IGraph<
   }
 
   /**
+   * @param vertices - new vertices list to add in graph
+   * @returns this
+   */
+  public addVertices(vertices: Array<VertexType>): typeof this {
+    for (const vertex of vertices) {
+      this.content.set(vertex, new Map());
+    }
+
+    return this;
+  }
+
+  /**
    * @param firstVertex - vertex to set connection from
    * @param secondVertex - vertex to set connection to
    * @param edge - edge connecting two vertexes

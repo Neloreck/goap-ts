@@ -28,10 +28,12 @@ export abstract class AbstractAction<T = any> {
   /**
    * @param property - new precondition property to add
    */
-  public addPrecondition(property: Property): void {
+  public addPrecondition(property: Property): typeof this {
     if (this.preconditions.findIndex((it) => it.id === property.id) === -1) {
       this.preconditions.push(property);
     }
+
+    return this;
   }
 
   /**
@@ -40,16 +42,16 @@ export abstract class AbstractAction<T = any> {
    * @param id - the id of precondition which is going to be removed
    * @returns if the precondition was removed
    */
-  public removePrecondition(id: PropertyId): boolean {
+  public removePrecondition(id: PropertyId): typeof this {
     for (let it = 0; it < this.preconditions.length; it++) {
       if (this.preconditions[it].id === id) {
         this.preconditions.splice(it, 1);
 
-        return true;
+        return this;
       }
     }
 
-    return false;
+    return this;
   }
 
   /**
@@ -62,26 +64,28 @@ export abstract class AbstractAction<T = any> {
   /**
    * @param property - world precondition to remove from the action
    */
-  public addEffect(property: Property): void {
+  public addEffect(property: Property): typeof this {
     if (this.effects.findIndex((it) => it.id === property.id) === -1) {
       this.effects.push(property);
     }
+
+    return this;
   }
 
   /**
    * @param id - the id of effect which is going to be removed
    * @returns if the effect was removed
    */
-  public removeEffect(id: PropertyId): boolean {
+  public removeEffect(id: PropertyId): typeof this {
     for (let it = 0; it < this.effects.length; it++) {
       if (this.effects[it].id === id) {
         this.effects.splice(it, 1);
 
-        return true;
+        return this;
       }
     }
 
-    return false;
+    return this;
   }
   /**
    * Checks if the current action of the action queue is finished. Gets called until it returns true.
