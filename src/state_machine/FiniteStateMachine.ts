@@ -48,6 +48,20 @@ export class FiniteStateMachine {
   }
 
   /**
+   * @returns if no states exist in the execution stack
+   */
+  public isEmpty(): boolean {
+    return this.states.length === 0;
+  }
+
+  /**
+   * @returns list of listeners related to FSM events.
+   */
+  public getListeners(): Array<IFiniteStateMachinePlanEventListener> {
+    return this.planEventListeners;
+  }
+
+  /**
    * Add plan events listener.
    *
    * @param listener - object to subscribe for listening

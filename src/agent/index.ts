@@ -1,2 +1,2 @@
-export * from "@/agent/DefaultAgent";
+export * from "@/agent/GenericAgent";
 export * from "@/agent/AbstractAgent";

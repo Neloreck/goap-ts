@@ -30,6 +30,7 @@ describe("IdleState class", () => {
     state.addListener(listener);
 
     expect(state.execute(unit)).toBe(true);
+    expect(state.getListeners()).toEqual([listener]);
     expect(listener.onPlanCreated).not.toHaveBeenCalled();
 
     jest.spyOn(planner, "plan").mockImplementation(() => plan);
@@ -45,6 +46,7 @@ describe("IdleState class", () => {
     state.removeListener(listener);
 
     expect(state.execute(unit)).toBe(true);
+    expect(state.getListeners()).toEqual([]);
     expect(listener.onPlanCreated).toHaveBeenCalledTimes(2);
   });
 });

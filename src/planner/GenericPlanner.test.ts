@@ -6,7 +6,7 @@ import { AbstractAction } from "@/AbstractAction";
 import { GenericPlanner } from "@/planner/GenericPlanner";
 import { State } from "@/State";
 import { Queue } from "@/types";
-import { Unit } from "@/unit/Unit";
+import { AbstractUnit } from "@/unit/AbstractUnit";
 
 describe("GenericPlanner class", () => {
   const createTestUnit = () => {
@@ -27,7 +27,7 @@ describe("GenericPlanner class", () => {
   });
 
   it("should correctly plan with connection and not possible outcome", () => {
-    const unit: Unit = createTestUnit();
+    const unit: AbstractUnit = createTestUnit();
     const action: GenericAction = new GenericAction(1);
 
     unit.addAvailableAction(action);
@@ -36,7 +36,7 @@ describe("GenericPlanner class", () => {
   });
 
   it("should correctly plan with connection and with not possible scenario", () => {
-    const unit: Unit = createTestUnit();
+    const unit: AbstractUnit = createTestUnit();
     const action: GenericAction = new GenericAction(1);
 
     unit.addAvailableAction(action);
@@ -48,7 +48,7 @@ describe("GenericPlanner class", () => {
   });
 
   it("should correctly plan with single action to reach goal", () => {
-    const unit: Unit = createTestUnit();
+    const unit: AbstractUnit = createTestUnit();
     const action: GenericAction = new GenericAction(1);
 
     action.addPrecondition(new State(0, "goal", false));
@@ -64,7 +64,7 @@ describe("GenericPlanner class", () => {
   });
 
   it("should correctly plan with few actions in depth", () => {
-    const unit: Unit = createTestUnit();
+    const unit: AbstractUnit = createTestUnit();
 
     const first: GenericAction = new GenericAction(1);
     const second: GenericAction = new GenericAction(1);
@@ -93,7 +93,7 @@ describe("GenericPlanner class", () => {
   });
 
   it("should correctly plan with few actions in depth and different cost", () => {
-    const unit: Unit = createTestUnit();
+    const unit: AbstractUnit = createTestUnit();
 
     const firstExpensive: GenericAction = new GenericAction(1);
     const firstCheap: GenericAction = new GenericAction(1);

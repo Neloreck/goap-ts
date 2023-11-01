@@ -34,6 +34,13 @@ export class IdleState implements IFiniteStateMachineState {
   }
 
   /**
+   * @returns list of listeners related to plan creation events
+   */
+  public getListeners(): Array<IPlanCreatedEventListener> {
+    return this.planCreatedListeners;
+  }
+
+  /**
    * Add listener of plan creation event.
    *
    * @param listener - object listening for plan creation

@@ -3,30 +3,39 @@ import { State } from "@/State";
 import { AnyObject, Queue } from "@/types";
 
 export interface IUnit {
+  /**
+   * @returns current world state of the unit
+   */
   getWorldState(): Set<State>;
+  /**
+   * @returns goal state of the unit to reach
+   */
   getGoalState(): Array<State>;
+  /**
+   * @returns list of available actions for the unit
+   */
   getAvailableActions(): Set<AbstractAction>;
-  /**
-   * Gets called when a plan was found by the planner.
-   *
-   * @param actions - the actions the unit hat to take in order to archive the goal.
-   */
-  goapPlanFound(actions: Queue<AbstractAction>): void;
-  /**
-   * Gets called when a plan failed to execute.
-   *
-   * @param actions - the remaining actions in the action Queue that failed.
-   */
-  goapPlanFailed(actions: Queue<AbstractAction>): void;
-  /**
-   * Gets called when a plan was finished.
-   */
-  goapPlanFinished(): void;
   /**
    * General update from the Agent.
    * Called in a loop until the program ends.
    */
   update(): void;
+  /**
+   * Gets called when a plan was found by the planner.
+   *
+   * @param plan - the actions the unit hat to take in order to archive the goal
+   */
+  onGoapPlanFound(plan: Queue<AbstractAction>): void;
+  /**
+   * Gets called when a plan failed to execute.
+   *
+   * @param plan - the remaining actions in the action queue that failed
+   */
+  onGoapPlanFailed(plan: Queue<AbstractAction>): void;
+  /**
+   * Gets called when a plan was finished.
+   */
+  onGoapPlanFinished(): void;
   /**
    * Function to move to a specific location.
    * Gets called by the moveToState when the unit has to move to a certain target.
@@ -34,5 +43,5 @@ export interface IUnit {
    * @param target - the target the unit has to move to
    * @returns if the unit was able to move
    */
-  moveTo(target: AnyObject): boolean;
+  onMoveToTarget(target: AnyObject): boolean;
 }

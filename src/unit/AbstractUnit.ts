@@ -8,12 +8,12 @@ import { removeFromArray } from "@/utils/array";
 /**
  * The superclass for a unit using the agent.
  */
-export abstract class Unit implements IUnit {
+export abstract class AbstractUnit implements IUnit {
   private goalState: Array<State> = [];
   private worldState: Set<State> = new Set();
   private availableActions: Set<AbstractAction> = new Set();
 
-  private importantUnitGoalChangeListeners: Array<AnyObject> = [];
+  private importantUnitGoalChangeListeners: Array<IImportantUnitChangeEventListener> = [];
 
   /**
    * This function can be called by a subclass if the efforts of the unit trying to archive a specific goal should be
@@ -154,7 +154,11 @@ export abstract class Unit implements IUnit {
     return this.availableActions;
   }
 
-  public addImportantUnitGoalChangeListener(listener: AnyObject): void {
+  public getListeners(): Array<IImportantUnitChangeEventListener> {
+    return this.importantUnitGoalChangeListeners;
+  }
+
+  public addImportantUnitGoalChangeListener(listener: IImportantUnitChangeEventListener): void {
     this.importantUnitGoalChangeListeners.push(listener);
   }
 
@@ -164,23 +168,23 @@ export abstract class Unit implements IUnit {
 
   private dispatchNewImportantUnitGoalChangeEvent(newGoalState: State): void {
     for (const listener of this.importantUnitGoalChangeListeners) {
-      (listener as IImportantUnitChangeEventListener).onImportantUnitGoalChange(newGoalState);
+      listener.onImportantUnitGoalChange(newGoalState);
     }
   }
 
   private dispatchNewImportantUnitStackResetEvent(): void {
     for (const listener of this.importantUnitGoalChangeListeners) {
-      (listener as IImportantUnitChangeEventListener).onImportantUnitStackResetChange();
+      listener.onImportantUnitStackReset();
     }
   }
 
-  public abstract goapPlanFailed(actions: Array<AbstractAction>): void;
+  public abstract onGoapPlanFailed(actions: Array<AbstractAction>): void;
 
-  public abstract goapPlanFinished(): void;
+  public abstract onGoapPlanFinished(): void;
 
-  public abstract goapPlanFound(actions: Array<AbstractAction>): void;
+  public abstract onGoapPlanFound(actions: Array<AbstractAction>): void;
 
-  public abstract moveTo(target: AnyObject): boolean;
+  public abstract onMoveToTarget(target: AnyObject): boolean;
 
   public abstract update(): void;
 }

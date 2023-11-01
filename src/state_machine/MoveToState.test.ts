@@ -17,7 +17,7 @@ describe("MoveToState class", () => {
   it("should correctly execute when range is not required", () => {
     const action: AbstractAction = new GenericAction(1);
     const state: MoveToState = new MoveToState(action);
-    const unit: IUnit = { moveTo: jest.fn() } as unknown as IUnit;
+    const unit: IUnit = { onMoveToTarget: jest.fn() } as unknown as IUnit;
 
     jest.spyOn(action, "requiresInRange").mockImplementation(jest.fn(() => false));
     jest.spyOn(action, "isInRange").mockImplementation(jest.fn(() => false));
@@ -26,14 +26,14 @@ describe("MoveToState class", () => {
     expect(action.requiresInRange).toHaveBeenCalledTimes(1);
     expect(action.requiresInRange).toHaveBeenCalledWith(unit);
     expect(action.isInRange).not.toHaveBeenCalled();
-    expect(unit.moveTo).not.toHaveBeenCalled();
+    expect(unit.onMoveToTarget).not.toHaveBeenCalled();
   });
 
   it("should correctly execute when range is required but not in range", () => {
     const target: IUnit = {} as IUnit;
     const action: AbstractAction = new GenericAction(target);
     const state: MoveToState = new MoveToState(action);
-    const unit: IUnit = { moveTo: jest.fn() } as unknown as IUnit;
+    const unit: IUnit = { onMoveToTarget: jest.fn() } as unknown as IUnit;
 
     jest.spyOn(action, "requiresInRange").mockImplementation(jest.fn(() => true));
     jest.spyOn(action, "isInRange").mockImplementation(jest.fn(() => false));
@@ -43,15 +43,15 @@ describe("MoveToState class", () => {
     expect(action.requiresInRange).toHaveBeenCalledWith(unit);
     expect(action.isInRange).toHaveBeenCalledTimes(1);
     expect(action.isInRange).toHaveBeenCalledWith(unit);
-    expect(unit.moveTo).toHaveBeenCalledTimes(1);
-    expect(unit.moveTo).toHaveBeenCalledWith(target);
+    expect(unit.onMoveToTarget).toHaveBeenCalledTimes(1);
+    expect(unit.onMoveToTarget).toHaveBeenCalledWith(target);
   });
 
   it("should correctly execute when range is required and in range", () => {
     const target: IUnit = {} as IUnit;
     const action: AbstractAction = new GenericAction(target);
     const state: MoveToState = new MoveToState(action);
-    const unit: IUnit = { moveTo: jest.fn() } as unknown as IUnit;
+    const unit: IUnit = { onMoveToTarget: jest.fn() } as unknown as IUnit;
 
     jest.spyOn(action, "requiresInRange").mockImplementation(jest.fn(() => true));
     jest.spyOn(action, "isInRange").mockImplementation(jest.fn(() => true));
@@ -61,13 +61,13 @@ describe("MoveToState class", () => {
     expect(action.requiresInRange).toHaveBeenCalledWith(unit);
     expect(action.isInRange).toHaveBeenCalledTimes(1);
     expect(action.isInRange).toHaveBeenCalledWith(unit);
-    expect(unit.moveTo).not.toHaveBeenCalled();
+    expect(unit.onMoveToTarget).not.toHaveBeenCalled();
   });
 
   it("should correctly execute when range is required but not in range and target is missing", () => {
     const action: AbstractAction = new GenericAction({});
     const state: MoveToState = new MoveToState(action);
-    const unit: IUnit = { moveTo: jest.fn() } as unknown as IUnit;
+    const unit: IUnit = { onMoveToTarget: jest.fn() } as unknown as IUnit;
 
     jest.spyOn(action, "requiresInRange").mockImplementation(jest.fn(() => true));
     jest.spyOn(action, "isInRange").mockImplementation(jest.fn(() => false));
@@ -79,6 +79,6 @@ describe("MoveToState class", () => {
     expect(action.requiresInRange).toHaveBeenCalledWith(unit);
     expect(action.isInRange).toHaveBeenCalledTimes(1);
     expect(action.isInRange).toHaveBeenCalledWith(unit);
-    expect(unit.moveTo).not.toHaveBeenCalled();
+    expect(unit.onMoveToTarget).not.toHaveBeenCalled();
   });
 });

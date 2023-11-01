@@ -24,7 +24,7 @@ export class MoveToState implements IFiniteStateMachineState {
    */
   public execute(unit: IUnit): boolean {
     if (this.action.requiresInRange(unit) && !this.action.isInRange(unit) && this.action.target !== null) {
-      unit.moveTo(this.action.target);
+      unit.onMoveToTarget(this.action.target);
 
       return true;
     }

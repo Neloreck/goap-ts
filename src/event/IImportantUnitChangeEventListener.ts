@@ -14,5 +14,5 @@ export interface IImportantUnitChangeEventListener {
   /**
    * Event emitted by the unit if the actions on the FSM-Stack must reset.
    */
-  onImportantUnitStackResetChange(): void;
+  onImportantUnitStackReset(): void;
 }

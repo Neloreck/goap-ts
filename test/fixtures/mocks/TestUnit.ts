@@ -1,17 +1,19 @@
+import { jest } from "@jest/globals";
+
 import { AbstractAction } from "@/AbstractAction";
 import { Queue } from "@/types";
-import { Unit } from "@/unit/Unit";
+import { AbstractUnit } from "@/unit/AbstractUnit";
 
-export class TestUnit extends Unit {
-  public goapPlanFound(actions: Queue<AbstractAction>): void {}
+export class TestUnit extends AbstractUnit {
+  public onGoapPlanFound = jest.fn((actions: Queue<AbstractAction>): void => {});
 
-  public goapPlanFailed(actions: Queue<AbstractAction>): void {}
+  public onGoapPlanFailed = jest.fn((actions: Queue<AbstractAction>): void => {});
 
-  public goapPlanFinished(): void {}
+  public onGoapPlanFinished = jest.fn();
 
-  public update(): void {}
+  public update = jest.fn();
 
-  public moveTo(target: unknown): boolean {
+  public onMoveToTarget = jest.fn((target: unknown): boolean => {
     return false;
-  }
+  });
 }

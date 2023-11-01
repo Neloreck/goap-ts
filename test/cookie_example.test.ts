@@ -1,23 +1,23 @@
 import { describe, it } from "@jest/globals";
 
 import { AbstractAction } from "@/AbstractAction";
-import { DefaultAgent } from "@/agent";
+import { GenericAgent } from "@/agent";
 import { AnyObject, Queue } from "@/types";
-import { Unit } from "@/unit/Unit";
+import { AbstractUnit } from "@/unit/AbstractUnit";
 
 describe("cookie GOAP planning example", () => {
-  class CustomUnit extends Unit {
-    public goapPlanFailed(actions: Array<AbstractAction>): void;
-    public goapPlanFailed(actions: Queue<AbstractAction>): void;
-    public goapPlanFailed(actions: Array<AbstractAction> | Queue<AbstractAction>): void {}
+  class CustomUnit extends AbstractUnit {
+    public onGoapPlanFailed(actions: Array<AbstractAction>): void;
+    public onGoapPlanFailed(actions: Queue<AbstractAction>): void;
+    public onGoapPlanFailed(actions: Array<AbstractAction> | Queue<AbstractAction>): void {}
 
-    public goapPlanFinished(): void {}
+    public onGoapPlanFinished(): void {}
 
-    public goapPlanFound(actions: Array<AbstractAction>): void;
-    public goapPlanFound(actions: Queue<AbstractAction>): void;
-    public goapPlanFound(actions: Array<AbstractAction> | Queue<AbstractAction>): void {}
+    public onGoapPlanFound(actions: Array<AbstractAction>): void;
+    public onGoapPlanFound(actions: Queue<AbstractAction>): void;
+    public onGoapPlanFound(actions: Array<AbstractAction> | Queue<AbstractAction>): void {}
 
-    public moveTo(target: AnyObject): boolean {
+    public onMoveToTarget(target: AnyObject): boolean {
       return false;
     }
 
@@ -26,6 +26,6 @@ describe("cookie GOAP planning example", () => {
 
   it("should correctly handle planning of defined scenario", () => {
     const customGoapUnit: CustomUnit = new CustomUnit();
-    const agent = new DefaultAgent(customGoapUnit);
+    const agent = new GenericAgent(customGoapUnit);
   });
 });

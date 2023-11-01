@@ -29,12 +29,14 @@ describe("FiniteStateMachine class", () => {
     expect(fsm.getStack()).toEqual([]);
     expect(fsm.pop()).toBeUndefined();
     expect(fsm.hasAny()).toBe(false);
+    expect(fsm.isEmpty()).toBe(true);
 
     fsm.push(idleState);
     fsm.push(actState);
     fsm.push(moveToState);
 
     expect(fsm.hasAny()).toBe(true);
+    expect(fsm.isEmpty()).toBe(false);
     expect(fsm.getStack()).toEqual([idleState, actState, moveToState]);
     expect(fsm.pop()).toBe(moveToState);
     expect(fsm.getStack()).toEqual([idleState, actState]);
@@ -48,37 +50,41 @@ describe("FiniteStateMachine class", () => {
     fsm.push(idleState);
     fsm.push(actState);
 
+    expect(fsm.isEmpty()).toBe(false);
     expect(fsm.hasAny()).toBe(true);
     expect(fsm.getStack()).toEqual([idleState, actState]);
 
     fsm.clear();
 
+    expect(fsm.isEmpty()).toBe(true);
     expect(fsm.hasAny()).toBe(false);
     expect(fsm.getStack()).toEqual([]);
   });
 
   it("should correctly update when empty", () => {
     const fsm: FiniteStateMachine = new FiniteStateMachine();
-    const eventListener: IFiniteStateMachinePlanEventListener = { onPlanFailed: jest.fn(), onPlanFinished: jest.fn() };
+    const listener: IFiniteStateMachinePlanEventListener = { onPlanFailed: jest.fn(), onPlanFinished: jest.fn() };
     const unit: IUnit = {} as IUnit;
 
-    fsm.addEventListener(eventListener);
+    fsm.addEventListener(listener);
 
     fsm.update(unit);
     fsm.update(unit);
     fsm.update(unit);
 
-    expect(eventListener.onPlanFinished).not.toHaveBeenCalled();
-    expect(eventListener.onPlanFailed).not.toHaveBeenCalled();
+    expect(fsm.getListeners()).toEqual([listener]);
+
+    expect(listener.onPlanFinished).not.toHaveBeenCalled();
+    expect(listener.onPlanFailed).not.toHaveBeenCalled();
   });
 
   it("should correctly update and handle perform action emit event", () => {
     const fsm: FiniteStateMachine = new FiniteStateMachine();
-    const eventListener: IFiniteStateMachinePlanEventListener = { onPlanFailed: jest.fn(), onPlanFinished: jest.fn() };
+    const listener: IFiniteStateMachinePlanEventListener = { onPlanFailed: jest.fn(), onPlanFinished: jest.fn() };
     const actState: RunActionState = new RunActionState(fsm, [new GenericAction(2), new GenericAction(3)]);
     const unit: IUnit = {} as IUnit;
 
-    fsm.addEventListener(eventListener);
+    fsm.addEventListener(listener);
     fsm.push(actState);
 
     jest.spyOn(actState, "execute").mockImplementation(() => true);
@@ -86,17 +92,17 @@ describe("FiniteStateMachine class", () => {
     fsm.update(unit);
     fsm.update(unit);
 
-    expect(eventListener.onPlanFinished).not.toHaveBeenCalled();
-    expect(eventListener.onPlanFailed).not.toHaveBeenCalled();
+    expect(listener.onPlanFinished).not.toHaveBeenCalled();
+    expect(listener.onPlanFailed).not.toHaveBeenCalled();
     expect(fsm.getStack()).toEqual([actState]);
 
     jest.spyOn(actState, "execute").mockImplementation(() => false);
 
     fsm.update(unit);
 
-    expect(eventListener.onPlanFinished).toHaveBeenCalledTimes(1);
-    expect(eventListener.onPlanFinished).toHaveBeenCalled();
-    expect(eventListener.onPlanFailed).not.toHaveBeenCalled();
+    expect(listener.onPlanFinished).toHaveBeenCalledTimes(1);
+    expect(listener.onPlanFinished).toHaveBeenCalled();
+    expect(listener.onPlanFailed).not.toHaveBeenCalled();
     expect(fsm.getStack()).toEqual([]);
   });
 
@@ -119,6 +125,7 @@ describe("FiniteStateMachine class", () => {
       throw new Error("test-error");
     });
 
+    expect(fsm.getListeners()).toEqual([listener]);
     expect(fsm.getStack()).toEqual([idleState, actState, anotherActState]);
 
     fsm.update(unit);
@@ -137,6 +144,7 @@ describe("FiniteStateMachine class", () => {
     fsm.push(anotherActState);
     fsm.update(unit);
 
+    expect(fsm.getListeners()).toEqual([]);
     expect(listener.onPlanFailed).toHaveBeenCalledTimes(2);
   });
 
