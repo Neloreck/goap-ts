@@ -30,7 +30,7 @@ describe("GenericPlanner class", () => {
     const unit: AbstractUnit = createTestUnit();
     const action: GenericAction = new GenericAction(1);
 
-    unit.addAvailableAction(action);
+    unit.addAction(action);
 
     expect(new GenericPlanner().plan(unit)).toBeNull();
   });
@@ -39,7 +39,7 @@ describe("GenericPlanner class", () => {
     const unit: AbstractUnit = createTestUnit();
     const action: GenericAction = new GenericAction(1);
 
-    unit.addAvailableAction(action);
+    unit.addAction(action);
 
     action.addPrecondition(new State(0, "step", true));
     action.addEffect(new State(0, "goal", true));
@@ -54,7 +54,7 @@ describe("GenericPlanner class", () => {
     action.addPrecondition(new State(0, "goal", false));
     action.addEffect(new State(0, "goal", true));
 
-    unit.addAvailableAction(action);
+    unit.addAction(action);
 
     const plan: Queue<AbstractAction> = new GenericPlanner().plan(unit);
 
@@ -78,12 +78,12 @@ describe("GenericPlanner class", () => {
     second.addPrecondition(new State(0, "precondition", true));
     second.addEffect(new State(0, "goal", true));
 
-    unit.addAvailableAction(new GenericAction(1));
-    unit.addAvailableAction(new GenericAction(1));
-    unit.addAvailableAction(first);
-    unit.addAvailableAction(second);
-    unit.addAvailableAction(new GenericAction(1));
-    unit.addAvailableAction(new GenericAction(1));
+    unit.addAction(new GenericAction(1));
+    unit.addAction(new GenericAction(1));
+    unit.addAction(first);
+    unit.addAction(second);
+    unit.addAction(new GenericAction(1));
+    unit.addAction(new GenericAction(1));
 
     const plan: Queue<AbstractAction> = new GenericPlanner().plan(unit);
 
@@ -111,9 +111,9 @@ describe("GenericPlanner class", () => {
     second.addPrecondition(new State(0, "precondition", true));
     second.addEffect(new State(0, "goal", true));
 
-    unit.addAvailableAction(firstExpensive);
-    unit.addAvailableAction(firstCheap);
-    unit.addAvailableAction(second);
+    unit.addAction(firstExpensive);
+    unit.addAction(firstCheap);
+    unit.addAction(second);
 
     jest.spyOn(firstExpensive, "generateBaseCost").mockImplementation(() => 100);
     jest.spyOn(firstCheap, "generateBaseCost").mockImplementation(() => 10);
@@ -153,10 +153,10 @@ describe("GenericPlanner class", () => {
     setCampfireAction.addEffect(new State(0, "hasWood", false));
     setCampfireAction.addEffect(new State(0, "warm", true));
 
-    unit.addAvailableAction(chopWoodAction);
-    unit.addAvailableAction(setCampfireAction);
-    unit.addAvailableAction(collectWoodAction);
-    unit.addAvailableAction(getAxeAction);
+    unit.addAction(chopWoodAction);
+    unit.addAction(setCampfireAction);
+    unit.addAction(collectWoodAction);
+    unit.addAction(getAxeAction);
 
     const plan: Queue<AbstractAction> = new GenericPlanner().plan(unit);
 

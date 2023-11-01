@@ -14,7 +14,7 @@ export interface IUnit {
   /**
    * @returns list of available actions for the unit
    */
-  getAvailableActions(): Set<AbstractAction>;
+  getActions(): Set<AbstractAction>;
   /**
    * General update from the Agent.
    * Called in a loop until the program ends.

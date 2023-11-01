@@ -103,8 +103,8 @@ describe("AbstractAgent class", () => {
 
     agent.fsm.push(state);
 
-    unit.addAvailableAction(first);
-    unit.addAvailableAction(second);
+    unit.addAction(first);
+    unit.addAction(second);
 
     expect(agent.fsm.getStack()).toEqual([state]);
 

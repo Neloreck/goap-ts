@@ -5,10 +5,10 @@ import { IUnit } from "@/unit/IUnit";
  * Superclass for all actions a unit can perform
  */
 export abstract class AbstractAction<T = any> {
-  public target: T;
+  private readonly preconditions: Set<State> = new Set();
+  private readonly effects: Set<State> = new Set();
 
-  private preconditions: Set<State> = new Set();
-  private effects: Set<State> = new Set();
+  public readonly target: T;
 
   /**
    * @param target - the target of the action
@@ -25,12 +25,69 @@ export abstract class AbstractAction<T = any> {
   }
 
   /**
+   * Overloaded function for convenience.
+   *
+   * @param precondition - new precondition to add
+   */
+  public addPrecondition(precondition: State): void {
+    // todo: Check by `effect` field and not by reference.
+    this.preconditions.add(precondition);
+  }
+
+  /**
+   * Remove a precondition from the set.
+   *
+   * @param effect - the effect which is going to be removed
+   * @returns if the precondition was removed
+   */
+  public removePrecondition(effect: string | State): boolean {
+    const preconditionId: string = typeof effect === "string" ? effect : effect.effect;
+
+    for (const state of this.preconditions) {
+      if (state.effect === preconditionId) {
+        this.preconditions.delete(state);
+
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
    * @returns list of action effects
    */
   public getEffects(): Set<State> {
     return this.effects;
   }
 
+  /**
+   * Overloaded function for convenience.
+   *
+   * @param effect - world precondition to remove from the action
+   */
+  public addEffect(effect: State): void {
+    // todo: Check by `effect` field and not by reference.
+    this.effects.add(effect);
+  }
+
+  /**
+   * @param effect - the effect or state effect which is going to be removed
+   * @returns if the effect was removed
+   */
+  public removeEffect(effect: string | State): boolean {
+    const effectId: string = typeof effect === "string" ? effect : effect.effect;
+
+    for (const state of this.effects) {
+      if (state.effect === effectId) {
+        this.effects.delete(state);
+
+        return true;
+      }
+    }
+
+    return false;
+  }
   /**
    * Checks if the current action of the action queue is finished. Gets called until it returns true.
    *
@@ -107,62 +164,4 @@ export abstract class AbstractAction<T = any> {
    * @return if the unit is in range to execute the action
    */
   public abstract isInRange(unit: IUnit): boolean;
-
-  /**
-   * Overloaded function for convenience.
-   *
-   * @param precondition - new precondition to add
-   */
-  public addPrecondition(precondition: State): void {
-    // todo: Check by `effect` field and not by reference.
-    this.preconditions.add(precondition);
-  }
-
-  /**
-   * Remove a precondition from the set.
-   *
-   * @param effect - the effect which is going to be removed
-   * @returns if the precondition was removed
-   */
-  public removePrecondition(effect: string | State): boolean {
-    const preconditionId: string = typeof effect === "string" ? effect : effect.effect;
-
-    for (const state of this.preconditions) {
-      if (state.effect === preconditionId) {
-        this.preconditions.delete(state);
-
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  /**
-   * Overloaded function for convenience.
-   *
-   * @param effect - world precondition to remove from the action
-   */
-  public addEffect(effect: State): void {
-    // todo: Check by `effect` field and not by reference.
-    this.effects.add(effect);
-  }
-
-  /**
-   * @param effect - the effect or state effect which is going to be removed
-   * @returns if the effect was removed
-   */
-  public removeEffect(effect: string | State): boolean {
-    const effectId: string = typeof effect === "string" ? effect : effect.effect;
-
-    for (const state of this.effects) {
-      if (state.effect === effectId) {
-        this.effects.delete(state);
-
-        return true;
-      }
-    }
-
-    return false;
-  }
 }

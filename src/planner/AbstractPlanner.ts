@@ -142,7 +142,7 @@ export abstract class AbstractPlanner {
     const possibleActions: Set<AbstractAction> = new Set();
 
     try {
-      for (const action of this.unit.getAvailableActions()) {
+      for (const action of this.unit.getActions()) {
         if (action.checkProceduralPrecondition(this.unit)) {
           possibleActions.add(action);
         }

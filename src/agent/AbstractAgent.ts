@@ -30,7 +30,7 @@ export abstract class AbstractAgent implements IAgent {
 
     // Only subclasses of the own unit are able to emit events
     if (this.unit instanceof AbstractUnit) {
-      this.unit.addImportantUnitGoalChangeListener(this);
+      this.unit.addListener(this);
     }
 
     this.idleState.addListener(this);
@@ -80,7 +80,7 @@ export abstract class AbstractAgent implements IAgent {
    */
   public onImportantUnitStackReset(): void {
     // Reset all actions of the unit before removing them.
-    for (const action of this.unit.getAvailableActions()) {
+    for (const action of this.unit.getActions()) {
       action.reset();
     }
 
