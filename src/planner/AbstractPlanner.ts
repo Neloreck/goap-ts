@@ -11,77 +11,74 @@ import { createWeightedPath } from "@/utils/path";
  */
 export abstract class AbstractPlanner {
   private unit: IUnit;
-
   private startNode: GraphNode;
   private endNodes: Array<GraphNode>;
 
-  protected abstract generateGraphObject<EdgeType extends WeightedEdge>(): IWeightedGraph<GraphNode, EdgeType>;
+  /**
+   * @return unit with which planner is working
+   */
+  public getUnit(): IUnit {
+    return this.unit;
+  }
 
   /**
-   * Generate a plan (Queue of GoapActions) which is then performed by the
-   * assigned GoapUnit. A search algorithm is not needed as each node contains
-   * each path to itself. Therefore each goal contains a list of paths leading
-   * starting from the worldState through multiple node directly to it. The
-   * goals and their paths can be sorted according to these and the importance
-   * of each goal with the weight provided by each node inside the graph.
+   * @return start node of the planner path
+   */
+  public getStartNode(): GraphNode {
+    return this.startNode;
+  }
+
+  /**
+   * @return end nodes after planning
+   */
+  public getEndNodes(): Array<GraphNode> {
+    return this.endNodes;
+  }
+
+  /**
+   * Method to generate base graph used for plan building.
+   */
+  protected abstract createBaseGraph<EdgeType extends WeightedEdge>(): IWeightedGraph<GraphNode, EdgeType>;
+
+  /**
+   * Generate a plan (Queue of GoapActions) which is then performed by the assigned unit. A search algorithm is not
+   * needed as each node contains each path to itself. Therefore, each goal contains a list of paths leading starting
+   * from the worldState through multiple node directly to it. The goals and their paths can be sorted according to
+   * these and the importance of each goal with the weight provided by each node inside the graph.
    *
    * @param unit - the GOAP planner unit the plan gets generated for
    * @returns a generated plan (queue) of actions, that the unit has to perform to achieve the desired state OR null,
    *   if no plan was generated
    */
   public plan(unit: IUnit): Queue<AbstractAction> {
-    let createdPlan: Queue<AbstractAction> = null;
-
     this.unit = unit;
     this.startNode = new GraphNode(null);
     this.endNodes = [];
 
     try {
-      this.sortGoalStates();
+      const goal: Array<State> = this.unit.getGoalState();
+
+      goal.sort((first, second) => first.importance - second.importance);
 
       // The Integer.MaxValue indicates that the goal was passed by the changeGoalImmediatly function.
       // An empty Queue is returned instead of null because null would result in the IdleState to call this
       // function again. An empty Queue is finished in one cycle with no effect at all.
-      if (this.unit.getGoalState()[0].importance === Infinity) {
-        const goalState: Array<State> = [this.unit.getGoalState()[0]];
+      // todo: Probably review this logics.
+      if (goal[0].importance === Infinity) {
+        const createdPlan: Queue<AbstractAction> = this.searchGraphForActionQueue(this.createGraph([goal[0]]));
 
-        createdPlan = this.searchGraphForActionQueue(this.createGraph(goalState));
+        goal.shift();
 
-        if (createdPlan === null) {
-          createdPlan = [];
-        }
-
-        this.unit.getGoalState().shift();
+        return createdPlan ?? [];
       } else {
-        createdPlan = this.searchGraphForActionQueue(this.createGraph());
+        return this.searchGraphForActionQueue(this.createGraph());
       }
     } catch (error) {
       // e.printStackTrace();
       // todo: handle error
     }
 
-    return createdPlan;
-  }
-
-  protected getUnit(): IUnit {
-    return this.unit;
-  }
-
-  protected getStartNode(): GraphNode {
-    return this.startNode;
-  }
-
-  protected getEndNodes(): Array<GraphNode> {
-    return this.endNodes;
-  }
-
-  /**
-   * Function for sorting a units goalStates (descending). The most important goal has the highest importance value.
-   *
-   * @return the sorted goal list of the unit
-   */
-  protected sortGoalStates(): Array<State> {
-    return this.unit.getGoalState().sort((first, second) => first.importance - second.importance);
+    return null;
   }
 
   /**
@@ -91,7 +88,7 @@ export abstract class AbstractPlanner {
    * @returns a DirectedWeightedGraph generated from all possible unit actions for a goal
    */
   protected createGraph(goalState: Array<State> = this.unit.getGoalState()): IWeightedGraph<GraphNode, WeightedEdge> {
-    const generatedGraph: IWeightedGraph<GraphNode, WeightedEdge> = this.generateGraphObject();
+    const generatedGraph: IWeightedGraph<GraphNode, WeightedEdge> = this.createBaseGraph();
 
     this.addVertices(generatedGraph, goalState);
     this.addEdges(generatedGraph);
@@ -156,14 +153,12 @@ export abstract class AbstractPlanner {
   }
 
   /**
-   * Function for adding (all) edges in the provided graph based on the
-   * GoapUnits actions and their combined effects along the way. The way this
-   * is archived is by first adding all default nodes, whose preconditions are
-   * met by the effect of the beginning state (worldState). All further
-   * connections base on these first connected nodes in the Queue. Elements
-   * connected are getting added to a Queue which is then being worked on.
+   * Function for adding (all) edges in the provided graph based on the unit actions and their combined effects along
+   * the way. The way this is archived is by first adding all default nodes, whose preconditions are met by the effect
+   * of the beginning state (worldState). All further connections base on these first connected nodes in the queue.
+   * Elements connected are getting added to a Queue which is then being worked on.
    *
-   * @param graph - the graph the edges are being added to.
+   * @param graph - the graph the edges are being added to
    */
   protected addEdges(graph: IWeightedGraph<GraphNode, WeightedEdge>): void {
     const nodesToWorkOn: Queue<GraphNode> = [];
@@ -227,8 +222,8 @@ export abstract class AbstractPlanner {
   /**
    * Function for testing if all preconditions in a given set are also in another set (effects) with the same values.
    *
-   * @param preconditions - HashSet of states which are present.
-   * @param effects - HashSet of states which are required.
+   * @param preconditions - set of states which are present
+   * @param effects - set of states which are required
    * @return if all preconditions are met with the given effects
    */
   protected static areAllPreconditionsMet(preconditions: Set<State>, effects: Set<State>): boolean {
@@ -260,18 +255,12 @@ export abstract class AbstractPlanner {
   /**
    * Convenience function for adding a weighted edge to an existing Graph.
    *
-   * @param graph
-   *            the Graph the edge is added to.
-   * @param firstVertex
-   *            start vertex.
-   * @param secondVertex
-   *            target vertex.
-   * @param edge
-   *            edge reference.
-   * @param weight
-   *            the weight of the edge being created.
-   * @return true or false depending if the creation of the edge was
-   *         successful or not.
+   * @param graph - the Graph the edge is added to
+   * @param firstVertex - start vertex
+   * @param secondVertex - target vertex
+   * @param edge - edge reference
+   * @param weight - the weight of the edge being created
+   * @return if the creation of the edge was successful or not
    */
   protected static addEgdeWithWeigth<V, E extends WeightedEdge>(
     graph: IWeightedGraph<V, E>,
@@ -296,15 +285,11 @@ export abstract class AbstractPlanner {
    * Function for trying to connect a given node to all other nodes in the
    * graph besides the starting node.
    *
-   * @param graph
-   *            the graph in which the provided nodes are located.
-   * @param node
-   *            the node which is being connected to another node.
-   * @param nodesToWorkOn
-   *            the Queue to which any connected nodes are being added to work
-   *            on these connections in further iterations.
-   * @return true or false depending on if the node was connected to another
-   *         node.
+   * @param graph - the graph in which the provided nodes are located
+   * @param node - the node which is being connected to another node
+   * @param nodesToWorkOn - the Queue to which any connected nodes are being added to work on these connections in
+   *   further iterations
+   * @return if the node was connected to another node
    */
   protected tryToConnectNode(
     graph: IWeightedGraph<GraphNode, WeightedEdge>,
@@ -397,7 +382,7 @@ export abstract class AbstractPlanner {
    */
   protected searchGraphForActionQueue(graph: IWeightedGraph<GraphNode, WeightedEdge>): Optional<Queue<AbstractAction>> {
     for (let i = 0; i < this.endNodes.length; i++) {
-      AbstractPlanner.sortPathsLeadingToNode(this.endNodes[i]);
+      this.endNodes[i].pathsToThisNode.sort((first, second) => first.getTotalWeight() - second.getTotalWeight());
 
       for (let j = 0; j < this.endNodes[i].pathsToThisNode.length; j++) {
         return AbstractPlanner.extractActionsFromGraphPath(
@@ -412,31 +397,22 @@ export abstract class AbstractPlanner {
   }
 
   /**
-   * Sorting function for the paths leading to a node based on their combined edge weights (ascending).
+   * Function for extracting all actions from a path.
    *
-   * @param node - the node whose paths leading to it are being sorted
-   */
-  protected static sortPathsLeadingToNode(node: GraphNode): void {
-    node.pathsToThisNode.sort((first, second) => first.getTotalWeight() - second.getTotalWeight());
-  }
-
-  /**
-   * Function for extracting all Actions from a GraphPath.
-   *
-   * @param path - the Path from which the actions are being extracted.
-   * @param startNode - the starting node needs to be known as it contains no action.
-   * @param endNode - the end node needs to be known since it contains no action.
+   * @param path - the Path from which the actions are being extracted
+   * @param start - the starting node needs to be known as it contains no action
+   * @param end - the end node needs to be known since it contains no action
    * @returns a queue in which all actions from the given path are listed
    */
   protected static extractActionsFromGraphPath(
     path: WeightedPath<GraphNode, WeightedEdge>,
-    startNode: GraphNode,
-    endNode: GraphNode
+    start: GraphNode,
+    end: GraphNode
   ): Queue<AbstractAction> {
     const actionQueue: Queue<AbstractAction> = [];
 
     for (const node of path.getVertexList()) {
-      if (node !== startNode && node !== endNode) {
+      if (node !== start && node !== end) {
         actionQueue.push(node.action);
       }
     }

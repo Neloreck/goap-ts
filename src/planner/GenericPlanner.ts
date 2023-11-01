@@ -6,7 +6,7 @@ import { DirectedWeightedGraph, IWeightedGraph, WeightedEdge } from "@/utils/gra
  * The default implementation of the GOAP planner.
  */
 export class GenericPlanner extends AbstractPlanner {
-  protected override generateGraphObject<EdgeType extends WeightedEdge>(): IWeightedGraph<GraphNode, EdgeType> {
+  protected override createBaseGraph<EdgeType extends WeightedEdge>(): IWeightedGraph<GraphNode, EdgeType> {
     return new DirectedWeightedGraph<GraphNode, EdgeType>();
   }
 }
