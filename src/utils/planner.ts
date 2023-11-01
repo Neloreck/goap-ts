@@ -87,8 +87,6 @@ export function addEgdeWithWeigth<V, E extends WeightedEdge>(
  * @return if all preconditions are met with the given effects
  */
 export function areAllPreconditionsMet(preconditions: Array<Property>, effects: Array<Property>): boolean {
-  let preconditionsMet: boolean = true;
-
   for (const precondition of preconditions) {
     let currentPreconditionMet: boolean = false;
 
@@ -96,18 +94,17 @@ export function areAllPreconditionsMet(preconditions: Array<Property>, effects: 
       if (precondition.id === effect.id) {
         if (precondition.value === effect.value) {
           currentPreconditionMet = true;
+          break;
         } else {
-          preconditionsMet = false;
+          return false;
         }
       }
     }
 
-    if (!preconditionsMet || !currentPreconditionMet) {
-      preconditionsMet = false;
-
-      break;
+    if (!currentPreconditionMet) {
+      return false;
     }
   }
 
-  return preconditionsMet;
+  return true;
 }
