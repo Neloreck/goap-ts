@@ -3,7 +3,7 @@ import { describe, expect, it, jest } from "@jest/globals";
 import { TestUnit } from "#/fixtures/mocks";
 
 import { AbstractAction } from "@/AbstractAction";
-import { State } from "@/State";
+import { Property } from "@/Property";
 import { IUnit } from "@/unit/IUnit";
 
 describe("AbstractAction class", () => {
@@ -60,8 +60,8 @@ describe("AbstractAction class", () => {
   it("should correctly handle add preconditions", () => {
     const unit: TestUnit = new TestUnit();
     const action: Action = new Action(unit);
-    const first: State = new State(1, "test_1", true);
-    const second: State = new State(2, "test_2", false);
+    const first: Property = new Property("test_1", true);
+    const second: Property = new Property("test_2", false);
 
     expect([...action.getPreconditions()]).toEqual([]);
 
@@ -79,8 +79,8 @@ describe("AbstractAction class", () => {
   it("should correctly handle remove preconditions", () => {
     const unit: TestUnit = new TestUnit();
     const action: Action = new Action(unit);
-    const first: State = new State(1, "test_1", true);
-    const second: State = new State(2, "test_2", false);
+    const first: Property = new Property("test_1", true);
+    const second: Property = new Property("test_2", false);
 
     expect([...action.getPreconditions()]).toEqual([]);
 
@@ -109,8 +109,8 @@ describe("AbstractAction class", () => {
   it("should correctly handle add effects", () => {
     const unit: TestUnit = new TestUnit();
     const action: Action = new Action(unit);
-    const first: State = new State(1, "test_1", true);
-    const second: State = new State(2, "test_2", false);
+    const first: Property = new Property("test_1", true);
+    const second: Property = new Property("test_2", false);
 
     expect([...action.getEffects()]).toEqual([]);
 
@@ -128,8 +128,8 @@ describe("AbstractAction class", () => {
   it("should correctly handle remove effects", () => {
     const unit: TestUnit = new TestUnit();
     const action: Action = new Action(unit);
-    const first: State = new State(1, "test_1", true);
-    const second: State = new State(2, "test_2", false);
+    const first: Property = new Property("test_1", true);
+    const second: Property = new Property("test_2", false);
 
     expect([...action.getEffects()]).toEqual([]);
 

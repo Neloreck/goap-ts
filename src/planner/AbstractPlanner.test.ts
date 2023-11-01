@@ -5,7 +5,7 @@ import { GenericAction, TestUnit } from "#/fixtures/mocks";
 import { AbstractAction } from "@/AbstractAction";
 import { AbstractPlanner } from "@/planner/AbstractPlanner";
 import { GraphNode } from "@/planner/GraphNode";
-import { State } from "@/State";
+import { Property } from "@/Property";
 import { Queue } from "@/types";
 import { AbstractUnit } from "@/unit/AbstractUnit";
 import { DirectedWeightedGraph, IWeightedGraph, WeightedEdge } from "@/utils/graph";
@@ -14,8 +14,8 @@ describe("GenericPlanner class", () => {
   const createTestUnit = () => {
     const unit: TestUnit = new TestUnit();
 
-    unit.addWorldState(new State(0, "goal", false));
-    unit.addGoalState(new State(1, "goal", true));
+    unit.addWorldState(new Property("goal", false));
+    unit.addGoalState(new Property("goal", true));
 
     return unit;
   };
@@ -40,14 +40,14 @@ describe("GenericPlanner class", () => {
     const first: GenericAction = new GenericAction(1);
     const second: GenericAction = new GenericAction(1);
 
-    unit.addWorldState(new State(0, "precondition", false));
+    unit.addWorldState(new Property("precondition", false));
 
-    first.addPrecondition(new State(0, "precondition", false));
-    first.addEffect(new State(0, "precondition", true));
+    first.addPrecondition(new Property("precondition", false));
+    first.addEffect(new Property("precondition", true));
 
-    second.addPrecondition(new State(0, "goal", false));
-    second.addPrecondition(new State(0, "precondition", true));
-    second.addEffect(new State(0, "goal", true));
+    second.addPrecondition(new Property("goal", false));
+    second.addPrecondition(new Property("precondition", true));
+    second.addEffect(new Property("goal", true));
 
     unit.addAction(new GenericAction(1));
     unit.addAction(new GenericAction(1));
@@ -69,8 +69,8 @@ describe("GenericPlanner class", () => {
     expect(planner.getUnit()).toBe(unit);
     expect(endNodes).toHaveLength(1);
     expect(startNode.action).toBeNull();
-    expect(startNode.preconditions).toBeNull();
-    expect([...startNode.effects.values()]).toEqual([new State(0, "goal", false), new State(0, "precondition", false)]);
+    expect(startNode.preconditions.size).toBe(0);
+    expect([...startNode.effects.values()]).toEqual([new Property("goal", false), new Property("precondition", false)]);
   });
 
   it("should correctly plan with connection and not possible outcome", () => {
@@ -88,8 +88,8 @@ describe("GenericPlanner class", () => {
 
     unit.addAction(action);
 
-    action.addPrecondition(new State(0, "step", true));
-    action.addEffect(new State(0, "goal", true));
+    action.addPrecondition(new Property("step", true));
+    action.addEffect(new Property("goal", true));
 
     expect(new Planner().plan(unit)).toBeNull();
   });
@@ -98,8 +98,8 @@ describe("GenericPlanner class", () => {
     const unit: AbstractUnit = createTestUnit();
     const action: GenericAction = new GenericAction(1);
 
-    action.addPrecondition(new State(0, "goal", false));
-    action.addEffect(new State(0, "goal", true));
+    action.addPrecondition(new Property("goal", false));
+    action.addEffect(new Property("goal", true));
 
     unit.addAction(action);
 
@@ -116,14 +116,14 @@ describe("GenericPlanner class", () => {
     const first: GenericAction = new GenericAction(1);
     const second: GenericAction = new GenericAction(1);
 
-    unit.addWorldState(new State(0, "precondition", false));
+    unit.addWorldState(new Property("precondition", false));
 
-    first.addPrecondition(new State(0, "precondition", false));
-    first.addEffect(new State(0, "precondition", true));
+    first.addPrecondition(new Property("precondition", false));
+    first.addEffect(new Property("precondition", true));
 
-    second.addPrecondition(new State(0, "goal", false));
-    second.addPrecondition(new State(0, "precondition", true));
-    second.addEffect(new State(0, "goal", true));
+    second.addPrecondition(new Property("goal", false));
+    second.addPrecondition(new Property("precondition", true));
+    second.addEffect(new Property("goal", true));
 
     unit.addAction(new GenericAction(1));
     unit.addAction(new GenericAction(1));
@@ -147,17 +147,17 @@ describe("GenericPlanner class", () => {
     const firstCheap: GenericAction = new GenericAction(1);
     const second: GenericAction = new GenericAction(1);
 
-    unit.addWorldState(new State(0, "precondition", false));
+    unit.addWorldState(new Property("precondition", false));
 
-    firstExpensive.addPrecondition(new State(0, "precondition", false));
-    firstExpensive.addEffect(new State(0, "precondition", true));
+    firstExpensive.addPrecondition(new Property("precondition", false));
+    firstExpensive.addEffect(new Property("precondition", true));
 
-    firstCheap.addPrecondition(new State(0, "precondition", false));
-    firstCheap.addEffect(new State(0, "precondition", true));
+    firstCheap.addPrecondition(new Property("precondition", false));
+    firstCheap.addEffect(new Property("precondition", true));
 
-    second.addPrecondition(new State(0, "goal", false));
-    second.addPrecondition(new State(0, "precondition", true));
-    second.addEffect(new State(0, "goal", true));
+    second.addPrecondition(new Property("goal", false));
+    second.addPrecondition(new Property("precondition", true));
+    second.addEffect(new Property("goal", true));
 
     unit.addAction(firstExpensive);
     unit.addAction(firstCheap);
@@ -176,30 +176,30 @@ describe("GenericPlanner class", () => {
   it("should correctly plan with complex scenario", () => {
     const unit: TestUnit = new TestUnit();
 
-    unit.addGoalState(new State(1, "warm", true));
+    unit.addGoalState(new Property("warm", true));
 
     const getAxeAction: GenericAction = new GenericAction(1);
     const chopWoodAction: GenericAction = new GenericAction(1);
     const collectWoodAction: GenericAction = new GenericAction(1);
     const setCampfireAction: GenericAction = new GenericAction(1);
 
-    unit.addWorldState(new State(0, "hasAxe", false));
-    unit.addWorldState(new State(0, "hasWood", false));
-    unit.addWorldState(new State(0, "woodChopped", false));
-    unit.addWorldState(new State(0, "warm", false));
+    unit.addWorldState(new Property("hasAxe", false));
+    unit.addWorldState(new Property("hasWood", false));
+    unit.addWorldState(new Property("woodChopped", false));
+    unit.addWorldState(new Property("warm", false));
 
-    getAxeAction.addPrecondition(new State(0, "hasAxe", false));
-    getAxeAction.addEffect(new State(0, "hasAxe", true));
+    getAxeAction.addPrecondition(new Property("hasAxe", false));
+    getAxeAction.addEffect(new Property("hasAxe", true));
 
-    chopWoodAction.addPrecondition(new State(0, "hasAxe", true));
-    chopWoodAction.addEffect(new State(0, "woodChopped", true));
+    chopWoodAction.addPrecondition(new Property("hasAxe", true));
+    chopWoodAction.addEffect(new Property("woodChopped", true));
 
-    collectWoodAction.addPrecondition(new State(0, "woodChopped", true));
-    collectWoodAction.addEffect(new State(0, "hasWood", true));
+    collectWoodAction.addPrecondition(new Property("woodChopped", true));
+    collectWoodAction.addEffect(new Property("hasWood", true));
 
-    setCampfireAction.addPrecondition(new State(0, "hasWood", true));
-    setCampfireAction.addEffect(new State(0, "hasWood", false));
-    setCampfireAction.addEffect(new State(0, "warm", true));
+    setCampfireAction.addPrecondition(new Property("hasWood", true));
+    setCampfireAction.addEffect(new Property("hasWood", false));
+    setCampfireAction.addEffect(new Property("warm", true));
 
     unit.addAction(chopWoodAction);
     unit.addAction(setCampfireAction);

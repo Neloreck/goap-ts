@@ -1,4 +1,4 @@
-import { State } from "@/State";
+import { Property } from "@/Property";
 
 export interface IImportantUnitChangeEventListener {
   /**
@@ -8,9 +8,9 @@ export interface IImportantUnitChangeEventListener {
    * if no valid Queue is found (null not possible since that would result in the IdleState to try until one is found).
    * The empty queue causes the unit to proceed with its previous action.
    *
-   * @param newGoalState - the new goal that the unit is going to accomplish
+   * @param property - the new goal that the unit is going to accomplish
    */
-  onImportantUnitGoalChange(newGoalState: State): void;
+  onImportantUnitGoalChange(property: Property): void;
   /**
    * Event emitted by the unit if the actions on the FSM-Stack must reset.
    */

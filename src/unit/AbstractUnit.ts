@@ -1,6 +1,6 @@
 import { AbstractAction } from "@/AbstractAction";
 import { IImportantUnitChangeEventListener } from "@/event/IImportantUnitChangeEventListener";
-import { State } from "@/State";
+import { Property } from "@/Property";
 import { AnyObject, Optional } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 import { removeFromArray } from "@/utils/array";
@@ -9,8 +9,8 @@ import { removeFromArray } from "@/utils/array";
  * The superclass for a unit using the agent.
  */
 export abstract class AbstractUnit implements IUnit {
-  private goal: Array<State> = [];
-  private state: Set<State> = new Set();
+  private goal: Array<Property> = [];
+  private state: Set<Property> = new Set();
   private actions: Set<AbstractAction> = new Set();
   private listeners: Array<IImportantUnitChangeEventListener> = [];
 
@@ -25,17 +25,17 @@ export abstract class AbstractUnit implements IUnit {
    * which renders the Queue obsolete and causes the Unit to not perform any action since the RunActionState is now
    * beneath the newly pushed IdleState.
    *
-   * @param state - the new goal the unit tries to archive
+   * @param property - the new goal the unit tries to archive
    */
-  public changeGoalImmediately(state: State): void {
-    this.goal.push(state);
-    this.dispatchNewImportantUnitGoalChangeEvent(state);
+  public changeGoalImmediately(property: Property): void {
+    this.goal.push(property);
+    this.dispatchNewImportantUnitGoalChangeEvent(property);
   }
 
   /**
    * @returns current world state of the unit
    */
-  public getWorldState(): Set<State> {
+  public getWorldState(): Set<Property> {
     return this.state;
   }
 
@@ -44,20 +44,20 @@ export abstract class AbstractUnit implements IUnit {
    *
    * @param state - new state to override
    */
-  public setWorldState(state: Set<State>): void {
+  public setWorldState(state: Set<Property>): void {
     this.state = state;
   }
 
   /**
    * Add new world state field.
    *
-   * @param state
+   * @param property
    */
-  public addWorldState(state: State): void {
+  public addWorldState(property: Property): void {
     let missing: boolean = true;
 
     for (const existing of this.state) {
-      if (state.effect === existing.effect) {
+      if (property.effect === existing.effect) {
         missing = false;
 
         break;
@@ -65,7 +65,7 @@ export abstract class AbstractUnit implements IUnit {
     }
 
     if (missing) {
-      this.state.add(state);
+      this.state.add(property);
     }
   }
 
@@ -74,7 +74,7 @@ export abstract class AbstractUnit implements IUnit {
    */
   public removeWorldStateProperty(effect: string): void {
     // todo: Simplify.
-    let marked: Optional<State> = null;
+    let marked: Optional<Property> = null;
 
     for (const state of this.state) {
       if (effect === state.effect) {
@@ -92,7 +92,7 @@ export abstract class AbstractUnit implements IUnit {
   /**
    * @returns current goal properties list
    */
-  public getGoalState(): Array<State> {
+  public getGoalState(): Array<Property> {
     return this.goal;
   }
 
@@ -101,20 +101,20 @@ export abstract class AbstractUnit implements IUnit {
    *
    * @param goal - new properties list to set as goal
    */
-  public setGoalState(goal: Array<State>): void {
+  public setGoalState(goal: Array<Property>): void {
     this.goal = goal;
   }
 
   /**
    * Add property to current goal state.
    *
-   * @param newGoalState - new property to add
+   * @param newGoalProperty - new property to add
    */
-  public addGoalState(newGoalState: State): void {
+  public addGoalState(newGoalProperty: Property): void {
     let missing: boolean = true;
 
-    for (const state of this.goal) {
-      if (newGoalState.effect === state.effect) {
+    for (const property of this.goal) {
+      if (newGoalProperty.effect === property.effect) {
         missing = false;
 
         break;
@@ -122,7 +122,7 @@ export abstract class AbstractUnit implements IUnit {
     }
 
     if (missing) {
-      this.goal.push(newGoalState);
+      this.goal.push(newGoalProperty);
     }
   }
 
@@ -132,7 +132,7 @@ export abstract class AbstractUnit implements IUnit {
    * @param effect - identifier of the property to remove
    */
   public removeGoalState(effect: string): void {
-    let marked: Optional<State> = null;
+    let marked: Optional<Property> = null;
 
     for (const state of this.goal) {
       if (effect === state.effect) {
@@ -208,11 +208,11 @@ export abstract class AbstractUnit implements IUnit {
   /**
    * Dispatch event of current goal state change.
    *
-   * @param newGoalState - new goal property to add
+   * @param newGoalProperty - new goal property to add
    */
-  public dispatchNewImportantUnitGoalChangeEvent(newGoalState: State): void {
+  public dispatchNewImportantUnitGoalChangeEvent(newGoalProperty: Property): void {
     for (const listener of this.listeners) {
-      listener.onImportantUnitGoalChange(newGoalState);
+      listener.onImportantUnitGoalChange(newGoalProperty);
     }
   }
 

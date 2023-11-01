@@ -1,12 +1,12 @@
-import { State } from "@/State";
+import { Property } from "@/Property";
 import { IUnit } from "@/unit/IUnit";
 
 /**
  * Superclass for all actions a unit can perform
  */
 export abstract class AbstractAction<T = any> {
-  private readonly preconditions: Set<State> = new Set();
-  private readonly effects: Set<State> = new Set();
+  private readonly preconditions: Set<Property> = new Set();
+  private readonly effects: Set<Property> = new Set();
 
   public target: T;
 
@@ -20,18 +20,18 @@ export abstract class AbstractAction<T = any> {
   /**
    * @returns list of action preconditions
    */
-  public getPreconditions(): Set<State> {
+  public getPreconditions(): Set<Property> {
     return this.preconditions;
   }
 
   /**
    * Overloaded function for convenience.
    *
-   * @param precondition - new precondition to add
+   * @param property - new precondition property to add
    */
-  public addPrecondition(precondition: State): void {
+  public addPrecondition(property: Property): void {
     // todo: Check by `effect` field and not by reference.
-    this.preconditions.add(precondition);
+    this.preconditions.add(property);
   }
 
   /**
@@ -40,7 +40,7 @@ export abstract class AbstractAction<T = any> {
    * @param effect - the effect which is going to be removed
    * @returns if the precondition was removed
    */
-  public removePrecondition(effect: string | State): boolean {
+  public removePrecondition(effect: string | Property): boolean {
     const preconditionId: string = typeof effect === "string" ? effect : effect.effect;
 
     for (const state of this.preconditions) {
@@ -57,25 +57,25 @@ export abstract class AbstractAction<T = any> {
   /**
    * @returns list of action effects
    */
-  public getEffects(): Set<State> {
+  public getEffects(): Set<Property> {
     return this.effects;
   }
 
   /**
    * Overloaded function for convenience.
    *
-   * @param effect - world precondition to remove from the action
+   * @param property - world precondition to remove from the action
    */
-  public addEffect(effect: State): void {
+  public addEffect(property: Property): void {
     // todo: Check by `effect` field and not by reference.
-    this.effects.add(effect);
+    this.effects.add(property);
   }
 
   /**
    * @param effect - the effect or state effect which is going to be removed
    * @returns if the effect was removed
    */
-  public removeEffect(effect: string | State): boolean {
+  public removeEffect(effect: string | Property): boolean {
     const effectId: string = typeof effect === "string" ? effect : effect.effect;
 
     for (const state of this.effects) {

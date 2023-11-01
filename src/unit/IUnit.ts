@@ -1,16 +1,16 @@
 import { AbstractAction } from "@/AbstractAction";
-import { State } from "@/State";
+import { Property } from "@/Property";
 import { AnyObject, Queue } from "@/types";
 
 export interface IUnit {
   /**
    * @returns current world state of the unit
    */
-  getWorldState(): Set<State>;
+  getWorldState(): Set<Property>;
   /**
    * @returns goal state of the unit to reach
    */
-  getGoalState(): Array<State>;
+  getGoalState(): Array<Property>;
   /**
    * @returns list of available actions for the unit
    */

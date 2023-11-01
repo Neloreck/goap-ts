@@ -4,7 +4,7 @@ import { GenericAction } from "#/fixtures/mocks";
 
 import { AbstractAction } from "@/AbstractAction";
 import { IImportantUnitChangeEventListener } from "@/event/IImportantUnitChangeEventListener";
-import { State } from "@/State";
+import { Property } from "@/Property";
 import { Queue } from "@/types";
 import { AbstractUnit } from "@/unit/AbstractUnit";
 
@@ -34,10 +34,10 @@ describe("AbstractUnit class", () => {
 
   it("should correctly handle world state", () => {
     const unit: Unit = new Unit();
-    const exampleState: Set<State> = new Set([
-      new State(0, "a", true),
-      new State(0, "b", false),
-      new State(0, "c", false),
+    const exampleState: Set<Property> = new Set([
+      new Property("a", true),
+      new Property("b", false),
+      new Property("c", false),
     ]);
 
     expect(unit.getWorldState().size).toBe(0);
@@ -46,27 +46,27 @@ describe("AbstractUnit class", () => {
 
     expect(unit.getWorldState()).toBe(exampleState);
 
-    const state: State = new State(0, "d", true);
+    const property: Property = new Property("d", true);
 
-    unit.addWorldState(state);
-
-    expect(exampleState.size).toBe(4);
-    expect(exampleState.has(state)).toBe(true);
-
-    unit.addWorldState(new State(0, "d", true));
+    unit.addWorldState(property);
 
     expect(exampleState.size).toBe(4);
-    expect(exampleState.has(state)).toBe(true);
+    expect(exampleState.has(property)).toBe(true);
+
+    unit.addWorldState(new Property("d", true));
+
+    expect(exampleState.size).toBe(4);
+    expect(exampleState.has(property)).toBe(true);
 
     unit.removeWorldStateProperty("d");
 
     expect(exampleState.size).toBe(3);
-    expect(exampleState.has(state)).toBe(false);
+    expect(exampleState.has(property)).toBe(false);
 
     unit.removeWorldStateProperty("d");
 
     expect(exampleState.size).toBe(3);
-    expect(exampleState.has(state)).toBe(false);
+    expect(exampleState.has(property)).toBe(false);
 
     unit.removeWorldStateProperty("a");
     unit.removeWorldStateProperty("b");
@@ -77,7 +77,7 @@ describe("AbstractUnit class", () => {
 
   it("should correctly handle goal state", () => {
     const unit: Unit = new Unit();
-    const exampleState: Array<State> = [new State(0, "a", true), new State(0, "b", false), new State(0, "c", false)];
+    const exampleState: Array<Property> = [new Property("a", true), new Property("b", false), new Property("c", false)];
 
     expect(unit.getGoalState()).toHaveLength(0);
 
@@ -85,27 +85,27 @@ describe("AbstractUnit class", () => {
 
     expect(unit.getGoalState()).toBe(exampleState);
 
-    const state: State = new State(0, "d", true);
+    const property: Property = new Property("d", true);
 
-    unit.addGoalState(state);
-
-    expect(exampleState).toHaveLength(4);
-    expect(exampleState).toContain(state);
-
-    unit.addGoalState(new State(0, "d", true));
+    unit.addGoalState(property);
 
     expect(exampleState).toHaveLength(4);
-    expect(exampleState).toContain(state);
+    expect(exampleState).toContain(property);
+
+    unit.addGoalState(new Property("d", true));
+
+    expect(exampleState).toHaveLength(4);
+    expect(exampleState).toContain(property);
 
     unit.removeGoalState("d");
 
     expect(exampleState).toHaveLength(3);
-    expect(exampleState).not.toContain(state);
+    expect(exampleState).not.toContain(property);
 
     unit.removeGoalState("d");
 
     expect(exampleState).toHaveLength(3);
-    expect(exampleState).not.toContain(state);
+    expect(exampleState).not.toContain(property);
 
     unit.removeGoalState("a");
     unit.removeGoalState("b");
@@ -170,7 +170,7 @@ describe("AbstractUnit class", () => {
 
   it("should correctly emit events", () => {
     const unit: Unit = new Unit();
-    const state: State = new State(0, "a", true);
+    const property: Property = new Property("a", true);
     const listener: IImportantUnitChangeEventListener = {
       onImportantUnitGoalChange: jest.fn(),
       onImportantUnitStackReset: jest.fn(),
@@ -183,27 +183,27 @@ describe("AbstractUnit class", () => {
     expect(listener.onImportantUnitStackReset).toHaveBeenCalledTimes(1);
     expect(listener.onImportantUnitGoalChange).toHaveBeenCalledTimes(0);
 
-    unit.dispatchNewImportantUnitGoalChangeEvent(state);
+    unit.dispatchNewImportantUnitGoalChangeEvent(property);
 
     expect(listener.onImportantUnitStackReset).toHaveBeenCalledTimes(1);
     expect(listener.onImportantUnitGoalChange).toHaveBeenCalledTimes(1);
-    expect(listener.onImportantUnitGoalChange).toHaveBeenCalledWith(state);
+    expect(listener.onImportantUnitGoalChange).toHaveBeenCalledWith(property);
   });
 
   it("should correctly change goal", () => {
     const unit: Unit = new Unit();
-    const state: State = new State(0, "a", false);
+    const property: Property = new Property("a", false);
     const listener: IImportantUnitChangeEventListener = {
       onImportantUnitGoalChange: jest.fn(),
       onImportantUnitStackReset: jest.fn(),
     };
 
     unit.addListener(listener);
-    unit.changeGoalImmediately(state);
+    unit.changeGoalImmediately(property);
 
     expect(listener.onImportantUnitGoalChange).toHaveBeenCalledTimes(1);
-    expect(listener.onImportantUnitGoalChange).toHaveBeenCalledWith(state);
+    expect(listener.onImportantUnitGoalChange).toHaveBeenCalledWith(property);
     expect(unit.getGoalState()).toHaveLength(1);
-    expect(unit.getGoalState()).toContain(state);
+    expect(unit.getGoalState()).toContain(property);
   });
 });

@@ -1,6 +1,6 @@
 import { AbstractAction } from "@/AbstractAction";
 import { GraphNode } from "@/planner/GraphNode";
-import { State } from "@/State";
+import { Property } from "@/Property";
 import { Optional, Queue } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 import { IWeightedGraph, WeightedEdge, WeightedPath } from "@/utils/graph";
@@ -56,7 +56,7 @@ export abstract class AbstractPlanner {
     this.endNodes = [];
 
     try {
-      const goal: Array<State> = this.unit.getGoalState();
+      const goal: Array<Property> = this.unit.getGoalState();
 
       goal.sort((first, second) => first.importance - second.importance);
 
@@ -89,7 +89,9 @@ export abstract class AbstractPlanner {
    * @param goalState - list of states the action queue has to fulfill
    * @returns a DirectedWeightedGraph generated from all possible unit actions for a goal
    */
-  protected createGraph(goalState: Array<State> = this.unit.getGoalState()): IWeightedGraph<GraphNode, WeightedEdge> {
+  protected createGraph(
+    goalState: Array<Property> = this.unit.getGoalState()
+  ): IWeightedGraph<GraphNode, WeightedEdge> {
     const generatedGraph: IWeightedGraph<GraphNode, WeightedEdge> = this.createBaseGraph();
 
     this.addVertices(generatedGraph, goalState);
@@ -104,7 +106,7 @@ export abstract class AbstractPlanner {
    * @param graph - the graph the vertices are being added to
    * @param goalState - list of States the unit has listed as their goals
    */
-  protected addVertices(graph: IWeightedGraph<GraphNode, WeightedEdge>, goalState: Array<State>): void {
+  protected addVertices(graph: IWeightedGraph<GraphNode, WeightedEdge>, goalState: Array<Property>): void {
     // The effects from the world state as well as the precondition of each
     // goal have to be set at the beginning, since these are the effects the
     // unit tries to archive with its actions. Also the startNode has to
@@ -115,7 +117,7 @@ export abstract class AbstractPlanner {
     graph.addVertex(this.startNode);
 
     for (const state of goalState) {
-      const goalStateHash: Set<State> = new Set();
+      const goalStateHash: Set<Property> = new Set();
 
       goalStateHash.add(state);
 
@@ -226,7 +228,7 @@ export abstract class AbstractPlanner {
    * @param effects - set of states which are required
    * @return if all preconditions are met with the given effects
    */
-  protected static areAllPreconditionsMet(preconditions: Set<State>, effects: Set<State>): boolean {
+  protected static areAllPreconditionsMet(preconditions: Set<Property>, effects: Set<Property>): boolean {
     let preconditionsMet: boolean = true;
 
     for (const precondition of preconditions) {

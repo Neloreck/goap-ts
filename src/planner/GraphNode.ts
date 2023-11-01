@@ -1,5 +1,5 @@
 import { AbstractAction } from "@/AbstractAction";
-import { State } from "@/State";
+import { Property } from "@/Property";
 import { Optional } from "@/types";
 import { WeightedEdge, WeightedPath } from "@/utils/graph";
 
@@ -8,11 +8,11 @@ import { WeightedEdge, WeightedPath } from "@/utils/graph";
  */
 export class GraphNode {
   public action: Optional<AbstractAction>;
-  public preconditions: Set<State>;
-  public effects: Set<State>;
+  public preconditions: Set<Property>;
+  public effects: Set<Property>;
 
   public pathsToThisNode: Array<WeightedPath<GraphNode, WeightedEdge>> = [];
-  private states: Map<WeightedPath<GraphNode, WeightedEdge>, Set<State>> = new Map();
+  private states: Map<WeightedPath<GraphNode, WeightedEdge>, Set<Property>> = new Map();
 
   /**
    * @param preconditions - the set of preconditions the node has,
@@ -21,7 +21,7 @@ export class GraphNode {
    *   effects get added together along the graph to hopefully meet a goalState
    * @param action - action needed to perform for reaching of next state
    */
-  public constructor(preconditions: Set<State>, effects: Set<State>, action: Optional<AbstractAction> = null) {
+  public constructor(preconditions: Set<Property>, effects: Set<Property>, action: Optional<AbstractAction> = null) {
     this.preconditions = preconditions;
     this.effects = effects;
     this.action = action;
@@ -94,11 +94,11 @@ export class GraphNode {
   private addPathEffectsTogether(
     pathToPreviousNode: Optional<WeightedPath<GraphNode, WeightedEdge>>,
     path: WeightedPath<GraphNode, WeightedEdge>
-  ): Set<State> {
-    const statesToBeRemoved: Array<State> = [];
+  ): Set<Property> {
+    const statesToBeRemoved: Array<Property> = [];
 
     // No path leading to the previous node = node is starting point => sublist of all effects.
-    const combinedNodeEffects: Set<State> =
+    const combinedNodeEffects: Set<Property> =
       pathToPreviousNode === null
         ? new Set(path.getStartVertex().effects)
         : new Set(pathToPreviousNode.getEndVertex().getEffectState(pathToPreviousNode));
@@ -129,7 +129,7 @@ export class GraphNode {
    * @param path - path to get effects state for
    * @returns effects for provided path
    */
-  public getEffectState(path: WeightedPath<GraphNode, WeightedEdge>): Set<State> {
-    return this.states.get(path) as Set<State>;
+  public getEffectState(path: WeightedPath<GraphNode, WeightedEdge>): Set<Property> {
+    return this.states.get(path) as Set<Property>;
   }
 }

@@ -6,7 +6,7 @@ import { AbstractAction } from "@/AbstractAction";
 import { AbstractAgent } from "@/agent/AbstractAgent";
 import { GenericPlanner } from "@/planner/GenericPlanner";
 import { IPlanner } from "@/planner/IPlanner";
-import { State } from "@/State";
+import { Property } from "@/Property";
 import { FiniteStateMachine } from "@/state_machine/FiniteStateMachine";
 import { IdleState } from "@/state_machine/IdleState";
 import { MoveToState } from "@/state_machine/MoveToState";
@@ -85,11 +85,11 @@ describe("AbstractAgent class", () => {
   it("should correctly handle important goal change", () => {
     const unit: TestUnit = new TestUnit();
     const agent: Agent = new Agent(unit);
-    const state: State = new State(10, "test", true);
+    const property: Property = new Property("test", true);
 
-    agent.onImportantUnitGoalChange(state);
+    agent.onImportantUnitGoalChange(property);
 
-    expect(state.importance).toBe(Infinity);
+    expect(property.importance).toBe(Infinity);
     expect(agent.fsm.getStack()).toEqual([agent.idleState]);
   });
 

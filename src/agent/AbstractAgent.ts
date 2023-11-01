@@ -1,7 +1,7 @@
 import { AbstractAction } from "@/AbstractAction";
 import { IAgent } from "@/agent/IAgent";
 import { IPlanner } from "@/planner/IPlanner";
-import { State } from "@/State";
+import { Property } from "@/Property";
 import { FiniteStateMachine } from "@/state_machine/FiniteStateMachine";
 import { IdleState } from "@/state_machine/IdleState";
 import { RunActionState } from "@/state_machine/RunActionState";
@@ -67,10 +67,10 @@ export abstract class AbstractAgent implements IAgent {
   /**
    * Handle goal change and event that requires re-planning of the actions queue.
    *
-   * @param state - new state that is marked as top-priority
+   * @param property - new state that is marked as top-priority
    */
-  public onImportantUnitGoalChange(state: State): void {
-    state.importance = Infinity;
+  public onImportantUnitGoalChange(property: Property): void {
+    property.importance = Infinity;
     this.fsm.push(this.idleState);
   }
 
