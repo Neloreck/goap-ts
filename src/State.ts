@@ -1,5 +1,7 @@
 /**
  * States which the GOAP actions use to build a graph.
+ *
+ * todo: Probably should be `Property`.
  */
 export class State<T = any> {
   public importance: number = 0;

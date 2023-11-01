@@ -1,5 +1,4 @@
 import { State } from "@/State";
-import { Optional } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 
 /**
@@ -19,10 +18,18 @@ export abstract class AbstractAction<T = any> {
   }
 
   /**
-   * Function used to reset an action. Gets called once the Action finishes or, if the unit class was used,
-   * when the Stack on the FSM gets reset.
+   * @returns list of action preconditions
    */
-  public abstract reset(): void;
+  public getPreconditions(): Set<State> {
+    return this.preconditions;
+  }
+
+  /**
+   * @returns list of action effects
+   */
+  public getEffects(): Set<State> {
+    return this.effects;
+  }
 
   /**
    * Checks if the current action of the action queue is finished. Gets called until it returns true.
@@ -31,6 +38,12 @@ export abstract class AbstractAction<T = any> {
    * @returns success of the action, returning true causes the swap to the next action in the queue
    */
   public abstract isFinished(unit: IUnit): boolean;
+
+  /**
+   * Function used to reset an action. Gets called once the Action finishes or, if the unit class was used,
+   * when the Stack on the FSM gets reset.
+   */
+  public abstract reset(): void;
 
   /**
    * Gets called when the action is going to be executed by the Unit.
@@ -95,39 +108,14 @@ export abstract class AbstractAction<T = any> {
    */
   public abstract isInRange(unit: IUnit): boolean;
 
-  public getPreconditions(): Set<State> {
-    return this.preconditions;
-  }
-
-  public getEffects(): Set<State> {
-    return this.effects;
-  }
-
-  public addPrecondition(precondition: State): void;
-  public addPrecondition(importance: number, effect: string, value: T): void;
-
   /**
    * Overloaded function for convenience.
    *
-   * @param importance - the importance of the precondition being added.
-   * @param effect - the effect of the precondition being added.
-   * @param value - the value of the precondition being added.
+   * @param precondition - new precondition to add
    */
-  public addPrecondition(importance: number | State, effect?: string, value?: T): void {
-    const precondition: State<T> = importance instanceof State ? importance : new State(importance, effect, value);
-
-    let alreadyInList: boolean = false;
-
-    // todo: Optimize...
-    for (const state of this.preconditions) {
-      if (state === precondition) {
-        alreadyInList = true;
-      }
-    }
-
-    if (!alreadyInList) {
-      this.preconditions.add(precondition);
-    }
+  public addPrecondition(precondition: State): void {
+    // todo: Check by `effect` field and not by reference.
+    this.preconditions.add(precondition);
   }
 
   /**
@@ -136,73 +124,45 @@ export abstract class AbstractAction<T = any> {
    * @param effect - the effect which is going to be removed
    * @returns if the precondition was removed
    */
-  protected removePrecondition(effect: string | State): boolean {
-    const target: string = typeof effect === "string" ? effect : effect.effect;
-    let stateToBeRemoved: State = null;
+  public removePrecondition(effect: string | State): boolean {
+    const preconditionId: string = typeof effect === "string" ? effect : effect.effect;
 
-    // todo: Optimize...
-    for (const state of this.effects) {
-      if (state.effect === target) {
-        stateToBeRemoved = state;
+    for (const state of this.preconditions) {
+      if (state.effect === preconditionId) {
+        this.preconditions.delete(state);
+
+        return true;
       }
     }
 
-    if (stateToBeRemoved !== null) {
-      this.preconditions.delete(stateToBeRemoved);
-
-      return true;
-    } else {
-      return false;
-    }
+    return false;
   }
-
-  public addEffect(effect: State): void;
-  public addEffect(importance: number, effect: string, value: T): void;
 
   /**
    * Overloaded function for convenience.
    *
-   * @param importanceOrState - the importance of the effect being added
-   * @param effect - the effect of the effect being added
-   * @param value - the value of the effect being added
+   * @param effect - world precondition to remove from the action
    */
-  public addEffect(importanceOrState: number | State, effect?: string, value?: T): void {
-    const target: State =
-      importanceOrState instanceof State ? importanceOrState : new State(importanceOrState, effect, value);
-    let alreadyInList: boolean = false;
-
-    // Optimize...
-    for (const state of this.effects) {
-      if (state === target) {
-        alreadyInList = true;
-      }
-    }
-
-    if (!alreadyInList) {
-      this.effects.add(target);
-    }
+  public addEffect(effect: State): void {
+    // todo: Check by `effect` field and not by reference.
+    this.effects.add(effect);
   }
 
   /**
-   * @param effectOrState - the effect or state effect which is going to be removed
+   * @param effect - the effect or state effect which is going to be removed
    * @returns if the effect was removed
    */
-  public removeEffect(effectOrState: string | State): boolean {
-    const effectId: string = typeof effectOrState === "string" ? effectOrState : effectOrState.effect;
-    let stateToBeRemoved: Optional<State> = null;
+  public removeEffect(effect: string | State): boolean {
+    const effectId: string = typeof effect === "string" ? effect : effect.effect;
 
     for (const state of this.effects) {
       if (state.effect === effectId) {
-        stateToBeRemoved = state;
+        this.effects.delete(state);
+
+        return true;
       }
     }
 
-    if (stateToBeRemoved !== null) {
-      this.effects.delete(stateToBeRemoved);
-
-      return true;
-    } else {
-      return false;
-    }
+    return false;
   }
 }

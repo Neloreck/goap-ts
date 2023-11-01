@@ -71,8 +71,8 @@ describe("GenericPlanner class", () => {
 
     unit.addWorldState(new State(0, "precondition", false));
 
-    first.addPrecondition(0, "precondition", false);
-    first.addEffect(0, "precondition", true);
+    first.addPrecondition(new State(0, "precondition", false));
+    first.addEffect(new State(0, "precondition", true));
 
     second.addPrecondition(new State(0, "goal", false));
     second.addPrecondition(new State(0, "precondition", true));
@@ -101,11 +101,11 @@ describe("GenericPlanner class", () => {
 
     unit.addWorldState(new State(0, "precondition", false));
 
-    firstExpensive.addPrecondition(0, "precondition", false);
-    firstExpensive.addEffect(0, "precondition", true);
+    firstExpensive.addPrecondition(new State(0, "precondition", false));
+    firstExpensive.addEffect(new State(0, "precondition", true));
 
-    firstCheap.addPrecondition(0, "precondition", false);
-    firstCheap.addEffect(0, "precondition", true);
+    firstCheap.addPrecondition(new State(0, "precondition", false));
+    firstCheap.addEffect(new State(0, "precondition", true));
 
     second.addPrecondition(new State(0, "goal", false));
     second.addPrecondition(new State(0, "precondition", true));
