@@ -106,7 +106,7 @@ export class GraphNode {
     // Mark effects to be removed.
     for (const nodeWorldState of combinedNodeEffects) {
       for (const pathNodeEffect of this.effects) {
-        if (nodeWorldState.effect === pathNodeEffect.effect) {
+        if (nodeWorldState.id === pathNodeEffect.id) {
           statesToBeRemoved.push(nodeWorldState);
         }
       }

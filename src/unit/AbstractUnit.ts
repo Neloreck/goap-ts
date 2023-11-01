@@ -57,7 +57,7 @@ export abstract class AbstractUnit implements IUnit {
     let missing: boolean = true;
 
     for (const existing of this.state) {
-      if (property.effect === existing.effect) {
+      if (property.id === existing.id) {
         missing = false;
 
         break;
@@ -77,7 +77,7 @@ export abstract class AbstractUnit implements IUnit {
     let marked: Optional<Property> = null;
 
     for (const state of this.state) {
-      if (effect === state.effect) {
+      if (effect === state.id) {
         marked = state;
 
         break;
@@ -114,7 +114,7 @@ export abstract class AbstractUnit implements IUnit {
     let missing: boolean = true;
 
     for (const property of this.goal) {
-      if (newGoalProperty.effect === property.effect) {
+      if (newGoalProperty.id === property.id) {
         missing = false;
 
         break;
@@ -135,7 +135,7 @@ export abstract class AbstractUnit implements IUnit {
     let marked: Optional<Property> = null;
 
     for (const state of this.goal) {
-      if (effect === state.effect) {
+      if (effect === state.id) {
         marked = state;
 
         break;

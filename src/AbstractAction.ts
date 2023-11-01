@@ -41,10 +41,10 @@ export abstract class AbstractAction<T = any> {
    * @returns if the precondition was removed
    */
   public removePrecondition(effect: string | Property): boolean {
-    const preconditionId: string = typeof effect === "string" ? effect : effect.effect;
+    const preconditionId: string = typeof effect === "string" ? effect : effect.id;
 
     for (const state of this.preconditions) {
-      if (state.effect === preconditionId) {
+      if (state.id === preconditionId) {
         this.preconditions.delete(state);
 
         return true;
@@ -76,10 +76,10 @@ export abstract class AbstractAction<T = any> {
    * @returns if the effect was removed
    */
   public removeEffect(effect: string | Property): boolean {
-    const effectId: string = typeof effect === "string" ? effect : effect.effect;
+    const effectId: string = typeof effect === "string" ? effect : effect.id;
 
     for (const state of this.effects) {
-      if (state.effect === effectId) {
+      if (state.id === effectId) {
         this.effects.delete(state);
 
         return true;

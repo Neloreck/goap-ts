@@ -2,9 +2,9 @@
  * Properties which the GOAP planner use to build a graph.
  */
 export class Property<T = any> {
-  public importance: number = 0;
-  public effect: string;
-  public value: T;
+  public readonly importance: number = 0;
+  public readonly id: string;
+  public readonly value: T;
 
   /**
    * @param effect - the effect the state has
@@ -14,7 +14,7 @@ export class Property<T = any> {
    *   removed from the set by the planner
    */
   public constructor(effect: string, value: T, importance?: number) {
-    this.effect = effect;
+    this.id = effect;
     this.value = value;
     this.importance = !importance || importance < 0 ? 0 : importance;
   }

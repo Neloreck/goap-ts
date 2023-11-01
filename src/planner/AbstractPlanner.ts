@@ -235,7 +235,7 @@ export abstract class AbstractPlanner {
       let currentPreconditionMet: boolean = false;
 
       for (const effect of effects) {
-        if (precondition.effect === effect.effect) {
+        if (precondition.id === effect.id) {
           if (precondition.value === effect.value) {
             currentPreconditionMet = true;
           } else {
