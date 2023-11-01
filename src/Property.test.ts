@@ -8,7 +8,7 @@ describe("Property class", () => {
 
     expect(property).toEqual({
       importance: 10,
-      effect: "dd",
+      id: "dd",
       value: 15,
     });
   });
