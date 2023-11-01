@@ -6,8 +6,8 @@ import { IUnit } from "@/unit/IUnit";
  * Superclass for all actions a unit can perform
  */
 export abstract class AbstractAction<T = any> {
-  private readonly preconditions: Set<Property> = new Set();
-  private readonly effects: Set<Property> = new Set();
+  private readonly preconditions: Array<Property> = [];
+  private readonly effects: Array<Property> = [];
 
   public target: T;
 
@@ -21,18 +21,17 @@ export abstract class AbstractAction<T = any> {
   /**
    * @returns list of action preconditions
    */
-  public getPreconditions(): Set<Property> {
+  public getPreconditions(): Array<Property> {
     return this.preconditions;
   }
 
   /**
-   * Overloaded function for convenience.
-   *
    * @param property - new precondition property to add
    */
   public addPrecondition(property: Property): void {
-    // todo: Check by `effect` field and not by reference.
-    this.preconditions.add(property);
+    if (this.preconditions.findIndex((it) => it.id === property.id) === -1) {
+      this.preconditions.push(property);
+    }
   }
 
   /**
@@ -42,9 +41,9 @@ export abstract class AbstractAction<T = any> {
    * @returns if the precondition was removed
    */
   public removePrecondition(id: PropertyId): boolean {
-    for (const property of this.preconditions) {
-      if (property.id === id) {
-        this.preconditions.delete(property);
+    for (let it = 0; it < this.preconditions.length; it++) {
+      if (this.preconditions[it].id === id) {
+        this.preconditions.splice(it, 1);
 
         return true;
       }
@@ -56,18 +55,17 @@ export abstract class AbstractAction<T = any> {
   /**
    * @returns list of action effects
    */
-  public getEffects(): Set<Property> {
+  public getEffects(): Array<Property> {
     return this.effects;
   }
 
   /**
-   * Overloaded function for convenience.
-   *
    * @param property - world precondition to remove from the action
    */
   public addEffect(property: Property): void {
-    // todo: Check by `effect` field and not by reference.
-    this.effects.add(property);
+    if (this.effects.findIndex((it) => it.id === property.id) === -1) {
+      this.effects.push(property);
+    }
   }
 
   /**
@@ -75,9 +73,9 @@ export abstract class AbstractAction<T = any> {
    * @returns if the effect was removed
    */
   public removeEffect(id: PropertyId): boolean {
-    for (const property of this.effects) {
-      if (property.id === id) {
-        this.effects.delete(property);
+    for (let it = 0; it < this.effects.length; it++) {
+      if (this.effects[it].id === id) {
+        this.effects.splice(it, 1);
 
         return true;
       }

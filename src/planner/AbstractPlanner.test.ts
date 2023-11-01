@@ -69,8 +69,8 @@ describe("GenericPlanner class", () => {
     expect(planner.getUnit()).toBe(unit);
     expect(endNodes).toHaveLength(1);
     expect(startNode.action).toBeNull();
-    expect(startNode.preconditions.size).toBe(0);
-    expect([...startNode.effects.values()]).toEqual([new Property("goal", false), new Property("precondition", false)]);
+    expect(startNode.preconditions).toHaveLength(0);
+    expect(startNode.effects).toEqual([new Property("goal", false), new Property("precondition", false)]);
   });
 
   it("should correctly plan with connection and not possible outcome", () => {

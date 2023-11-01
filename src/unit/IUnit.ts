@@ -6,7 +6,7 @@ export interface IUnit {
   /**
    * @returns current world state of the unit
    */
-  getWorldState(): Set<Property>;
+  getWorldState(): Array<Property>;
   /**
    * @returns goal state of the unit to reach
    */
@@ -14,7 +14,7 @@ export interface IUnit {
   /**
    * @returns list of available actions for the unit
    */
-  getActions(): Set<AbstractAction>;
+  getActions(): Array<AbstractAction>;
   /**
    * General update from the Agent.
    * Called in a loop until the program ends.

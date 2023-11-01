@@ -1,7 +1,7 @@
 import { AbstractAction } from "@/AbstractAction";
 import { IImportantUnitChangeEventListener } from "@/event/IImportantUnitChangeEventListener";
 import { Property } from "@/Property";
-import { AnyObject, Optional } from "@/types";
+import { AnyObject, Optional, PropertyId } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 import { removeFromArray } from "@/utils/array";
 
@@ -10,8 +10,8 @@ import { removeFromArray } from "@/utils/array";
  */
 export abstract class AbstractUnit implements IUnit {
   private goal: Array<Property> = [];
-  private state: Set<Property> = new Set();
-  private actions: Set<AbstractAction> = new Set();
+  private state: Array<Property> = [];
+  private actions: Array<AbstractAction> = [];
   private listeners: Array<IImportantUnitChangeEventListener> = [];
 
   /**
@@ -35,7 +35,7 @@ export abstract class AbstractUnit implements IUnit {
   /**
    * @returns current world state of the unit
    */
-  public getWorldState(): Set<Property> {
+  public getWorldState(): Array<Property> {
     return this.state;
   }
 
@@ -44,7 +44,7 @@ export abstract class AbstractUnit implements IUnit {
    *
    * @param state - new state to override
    */
-  public setWorldState(state: Set<Property>): void {
+  public setWorldState(state: Array<Property>): void {
     this.state = state;
   }
 
@@ -54,39 +54,24 @@ export abstract class AbstractUnit implements IUnit {
    * @param property
    */
   public addWorldState(property: Property): void {
-    let missing: boolean = true;
-
-    for (const existing of this.state) {
-      if (property.id === existing.id) {
-        missing = false;
-
-        break;
-      }
-    }
-
-    if (missing) {
-      this.state.add(property);
+    if (this.state.findIndex((it) => it.id === property.id) === -1) {
+      this.state.push(property);
     }
   }
 
   /**
-   * @param effect - identifier of the effect to remove
+   * @param id - identifier of the effect to remove
    */
-  public removeWorldStateProperty(effect: string): void {
-    // todo: Simplify.
-    let marked: Optional<Property> = null;
+  public removeWorldStateProperty(id: PropertyId): boolean {
+    for (let it = 0; it < this.state.length; it++) {
+      if (this.state[it].id === id) {
+        this.state.splice(it, 1);
 
-    for (const state of this.state) {
-      if (effect === state.id) {
-        marked = state;
-
-        break;
+        return true;
       }
     }
 
-    if (marked !== null) {
-      this.state.delete(marked);
-    }
+    return false;
   }
 
   /**
@@ -150,7 +135,7 @@ export abstract class AbstractUnit implements IUnit {
   /**
    * @returns list of currently available actions
    */
-  public getActions(): Set<AbstractAction> {
+  public getActions(): Array<AbstractAction> {
     return this.actions;
   }
 
@@ -159,7 +144,7 @@ export abstract class AbstractUnit implements IUnit {
    *
    * @param actions - list of available actions to set as current
    */
-  public setActions(actions: Set<AbstractAction>): void {
+  public setActions(actions: Array<AbstractAction>): void {
     this.actions = actions;
   }
 
@@ -167,14 +152,14 @@ export abstract class AbstractUnit implements IUnit {
    * @param action - new action to add in current available list
    */
   public addAction(action: AbstractAction): void {
-    this.actions.add(action);
+    this.actions.push(action);
   }
 
   /**
    * @param action - new action to remove from current available list
    */
   public removeAction(action: AbstractAction): void {
-    this.actions.delete(action);
+    removeFromArray(this.actions, action);
   }
 
   /**

@@ -28,19 +28,15 @@ describe("AbstractUnit class", () => {
 
     expect(unit.getListeners()).toHaveLength(0);
     expect(unit.getGoalState()).toHaveLength(0);
-    expect(unit.getActions().size).toBe(0);
-    expect(unit.getWorldState().size).toBe(0);
+    expect(unit.getActions()).toHaveLength(0);
+    expect(unit.getWorldState()).toHaveLength(0);
   });
 
   it("should correctly handle world state", () => {
     const unit: Unit = new Unit();
-    const exampleState: Set<Property> = new Set([
-      new Property("a", true),
-      new Property("b", false),
-      new Property("c", false),
-    ]);
+    const exampleState: Array<Property> = [new Property("a", true), new Property("b", false), new Property("c", false)];
 
-    expect(unit.getWorldState().size).toBe(0);
+    expect(unit.getWorldState()).toHaveLength(0);
 
     unit.setWorldState(exampleState);
 
@@ -50,29 +46,29 @@ describe("AbstractUnit class", () => {
 
     unit.addWorldState(property);
 
-    expect(exampleState.size).toBe(4);
-    expect(exampleState.has(property)).toBe(true);
+    expect(exampleState).toHaveLength(4);
+    expect(exampleState).toContain(property);
 
     unit.addWorldState(new Property("d", true));
 
-    expect(exampleState.size).toBe(4);
-    expect(exampleState.has(property)).toBe(true);
+    expect(exampleState).toHaveLength(4);
+    expect(exampleState).toContain(property);
 
     unit.removeWorldStateProperty("d");
 
-    expect(exampleState.size).toBe(3);
-    expect(exampleState.has(property)).toBe(false);
+    expect(exampleState).toHaveLength(3);
+    expect(exampleState).not.toContain(property);
 
     unit.removeWorldStateProperty("d");
 
-    expect(exampleState.size).toBe(3);
-    expect(exampleState.has(property)).toBe(false);
+    expect(exampleState).toHaveLength(3);
+    expect(exampleState).not.toContain(property);
 
     unit.removeWorldStateProperty("a");
     unit.removeWorldStateProperty("b");
     unit.removeWorldStateProperty("c");
 
-    expect(exampleState.size).toBe(0);
+    expect(exampleState).toHaveLength(0);
   });
 
   it("should correctly handle goal state", () => {
@@ -117,26 +113,26 @@ describe("AbstractUnit class", () => {
   it("should correctly handle actions", () => {
     const unit: Unit = new Unit();
     const action: GenericAction = new GenericAction(1);
-    const actions: Set<AbstractAction> = new Set([action]);
+    const actions: Array<AbstractAction> = [action];
 
-    expect(unit.getActions().size).toBe(0);
+    expect(unit.getActions()).toHaveLength(0);
 
     unit.addAction(action);
 
     expect(unit.getActions()).not.toBe(actions);
-    expect(unit.getActions().size).toBe(1);
-    expect([...unit.getActions()]).toEqual([action]);
+    expect(unit.getActions()).toHaveLength(1);
+    expect(unit.getActions()).toEqual([action]);
 
     unit.setActions(actions);
 
     expect(unit.getActions()).toBe(actions);
-    expect(unit.getActions().size).toBe(1);
+    expect(unit.getActions()).toHaveLength(1);
 
     unit.removeAction(new GenericAction(5));
 
     unit.removeAction(action);
 
-    expect(unit.getActions().size).toBe(0);
+    expect(unit.getActions()).toHaveLength(0);
   });
 
   it("should correctly handle reset actions event", () => {

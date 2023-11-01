@@ -53,8 +53,8 @@ describe("AbstractAction class", () => {
     expect(action.requiresInRange(unit)).toBe(false);
     expect(() => action.reset()).not.toThrow();
 
-    expect([...action.getPreconditions()]).toEqual([]);
-    expect([...action.getEffects()]).toEqual([]);
+    expect(action.getPreconditions()).toEqual([]);
+    expect(action.getEffects()).toEqual([]);
   });
 
   it("should correctly handle add preconditions", () => {
@@ -63,17 +63,17 @@ describe("AbstractAction class", () => {
     const first: Property = new Property("test_1", true);
     const second: Property = new Property("test_2", false);
 
-    expect([...action.getPreconditions()]).toEqual([]);
+    expect(action.getPreconditions()).toEqual([]);
 
     action.addPrecondition(first);
     action.addPrecondition(second);
 
-    expect([...action.getPreconditions()]).toEqual([first, second]);
+    expect(action.getPreconditions()).toEqual([first, second]);
 
     action.addPrecondition(first);
     action.addPrecondition(second);
 
-    expect([...action.getPreconditions()]).toEqual([first, second]);
+    expect(action.getPreconditions()).toEqual([first, second]);
   });
 
   it("should correctly handle remove preconditions", () => {
@@ -82,28 +82,28 @@ describe("AbstractAction class", () => {
     const first: Property = new Property("test_1", true);
     const second: Property = new Property("test_2", false);
 
-    expect([...action.getPreconditions()]).toEqual([]);
+    expect(action.getPreconditions()).toEqual([]);
 
     action.addPrecondition(first);
     action.addPrecondition(second);
 
-    expect([...action.getPreconditions()]).toEqual([first, second]);
+    expect(action.getPreconditions()).toEqual([first, second]);
 
-    action.removePrecondition(second);
+    action.removePrecondition(second.id);
 
-    expect([...action.getPreconditions()]).toEqual([first]);
+    expect(action.getPreconditions()).toEqual([first]);
 
-    action.removePrecondition(second);
+    action.removePrecondition(second.id);
 
-    expect([...action.getPreconditions()]).toEqual([first]);
+    expect(action.getPreconditions()).toEqual([first]);
 
     action.removePrecondition("test_2");
 
-    expect([...action.getPreconditions()]).toEqual([first]);
+    expect(action.getPreconditions()).toEqual([first]);
 
     action.removePrecondition("test_1");
 
-    expect([...action.getPreconditions()]).toEqual([]);
+    expect(action.getPreconditions()).toEqual([]);
   });
 
   it("should correctly handle add effects", () => {
@@ -112,17 +112,17 @@ describe("AbstractAction class", () => {
     const first: Property = new Property("test_1", true);
     const second: Property = new Property("test_2", false);
 
-    expect([...action.getEffects()]).toEqual([]);
+    expect(action.getEffects()).toEqual([]);
 
     action.addEffect(first);
     action.addEffect(second);
 
-    expect([...action.getEffects()]).toEqual([first, second]);
+    expect(action.getEffects()).toEqual([first, second]);
 
     action.addEffect(first);
     action.addEffect(second);
 
-    expect([...action.getEffects()]).toEqual([first, second]);
+    expect(action.getEffects()).toEqual([first, second]);
   });
 
   it("should correctly handle remove effects", () => {
@@ -131,27 +131,27 @@ describe("AbstractAction class", () => {
     const first: Property = new Property("test_1", true);
     const second: Property = new Property("test_2", false);
 
-    expect([...action.getEffects()]).toEqual([]);
+    expect(action.getEffects()).toEqual([]);
 
     action.addEffect(first);
     action.addEffect(second);
 
-    expect([...action.getEffects()]).toEqual([first, second]);
+    expect(action.getEffects()).toEqual([first, second]);
 
-    action.removeEffect(second);
+    action.removeEffect(second.id);
 
-    expect([...action.getEffects()]).toEqual([first]);
+    expect(action.getEffects()).toEqual([first]);
 
-    action.removeEffect(second);
+    action.removeEffect(second.id);
 
-    expect([...action.getEffects()]).toEqual([first]);
+    expect(action.getEffects()).toEqual([first]);
 
     action.removeEffect("test_2");
 
-    expect([...action.getEffects()]).toEqual([first]);
+    expect(action.getEffects()).toEqual([first]);
 
     action.removeEffect("test_1");
 
-    expect([...action.getEffects()]).toEqual([]);
+    expect(action.getEffects()).toEqual([]);
   });
 });

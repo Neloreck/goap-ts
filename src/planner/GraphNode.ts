@@ -1,6 +1,7 @@
 import { AbstractAction } from "@/AbstractAction";
 import { Property } from "@/Property";
 import { Optional } from "@/types";
+import { removeFromArray } from "@/utils/array";
 import { WeightedEdge, WeightedPath } from "@/utils/graph";
 
 /**
@@ -8,11 +9,11 @@ import { WeightedEdge, WeightedPath } from "@/utils/graph";
  */
 export class GraphNode {
   public action: Optional<AbstractAction>;
-  public preconditions: Set<Property>;
-  public effects: Set<Property>;
+  public preconditions: Array<Property>;
+  public effects: Array<Property>;
 
   public pathsToThisNode: Array<WeightedPath<GraphNode, WeightedEdge>> = [];
-  private states: Map<WeightedPath<GraphNode, WeightedEdge>, Set<Property>> = new Map();
+  private states: Map<WeightedPath<GraphNode, WeightedEdge>, Array<Property>> = new Map();
 
   /**
    * @param preconditions - the set of preconditions the node has,
@@ -21,7 +22,11 @@ export class GraphNode {
    *   effects get added together along the graph to hopefully meet a goalState
    * @param action - action needed to perform for reaching of next state
    */
-  public constructor(preconditions: Set<Property>, effects: Set<Property>, action: Optional<AbstractAction> = null) {
+  public constructor(
+    preconditions: Array<Property>,
+    effects: Array<Property>,
+    action: Optional<AbstractAction> = null
+  ) {
     this.preconditions = preconditions;
     this.effects = effects;
     this.action = action;
@@ -94,14 +99,14 @@ export class GraphNode {
   private addPathEffectsTogether(
     pathToPreviousNode: Optional<WeightedPath<GraphNode, WeightedEdge>>,
     path: WeightedPath<GraphNode, WeightedEdge>
-  ): Set<Property> {
+  ): Array<Property> {
     const statesToBeRemoved: Array<Property> = [];
 
     // No path leading to the previous node = node is starting point => sublist of all effects.
-    const combinedNodeEffects: Set<Property> =
+    const combinedNodeEffects: Array<Property> =
       pathToPreviousNode === null
-        ? new Set(path.getStartVertex().effects)
-        : new Set(pathToPreviousNode.getEndVertex().getEffectState(pathToPreviousNode));
+        ? Array.from(path.getStartVertex().effects)
+        : Array.from(pathToPreviousNode.getEndVertex().getEffectState(pathToPreviousNode));
 
     // Mark effects to be removed.
     for (const nodeWorldState of combinedNodeEffects) {
@@ -114,22 +119,17 @@ export class GraphNode {
 
     // Remove marked effects from the state.
     for (const state of statesToBeRemoved) {
-      combinedNodeEffects.delete(state);
+      removeFromArray(combinedNodeEffects, state);
     }
 
-    // Add all effects from the current node to the HashSet
-    for (const effect of this.effects) {
-      combinedNodeEffects.add(effect);
-    }
-
-    return combinedNodeEffects;
+    return combinedNodeEffects.concat(this.effects);
   }
 
   /**
    * @param path - path to get effects state for
    * @returns effects for provided path
    */
-  public getEffectState(path: WeightedPath<GraphNode, WeightedEdge>): Set<Property> {
-    return this.states.get(path) as Set<Property>;
+  public getEffectState(path: WeightedPath<GraphNode, WeightedEdge>): Array<Property> {
+    return this.states.get(path) as Array<Property>;
   }
 }

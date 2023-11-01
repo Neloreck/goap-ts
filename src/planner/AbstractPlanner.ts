@@ -52,7 +52,7 @@ export abstract class AbstractPlanner {
    */
   public plan(unit: IUnit): Optional<Queue<AbstractAction>> {
     this.unit = unit;
-    this.startNode = new GraphNode(new Set(), new Set());
+    this.startNode = new GraphNode([], []);
     this.endNodes = [];
 
     try {
@@ -112,16 +112,12 @@ export abstract class AbstractPlanner {
     // unit tries to archive with its actions. Also the startNode has to
     // overwrite the existing GraphNode as an initialization of a new Object
     // would not be reflected to the function caller.
-    this.startNode.copyFrom(new GraphNode(new Set(), this.unit.getWorldState()));
+    this.startNode.copyFrom(new GraphNode([], this.unit.getWorldState()));
 
     graph.addVertex(this.startNode);
 
     for (const state of goalState) {
-      const goalStateHash: Set<Property> = new Set();
-
-      goalStateHash.add(state);
-
-      const end: GraphNode = new GraphNode(goalStateHash, new Set());
+      const end: GraphNode = new GraphNode([state], []);
 
       graph.addVertex(end);
       this.endNodes.push(end);
@@ -196,7 +192,7 @@ export abstract class AbstractPlanner {
       if (
         this.startNode !== graphNode &&
         graphNode.action !== null &&
-        (graphNode.preconditions.size === 0 ||
+        (graphNode.preconditions.length === 0 ||
           AbstractPlanner.areAllPreconditionsMet(graphNode.preconditions, this.startNode.effects))
       ) {
         AbstractPlanner.addEgdeWithWeigth(graph, this.startNode, graphNode, new WeightedEdge(), 0);
@@ -228,7 +224,7 @@ export abstract class AbstractPlanner {
    * @param effects - set of states which are required
    * @return if all preconditions are met with the given effects
    */
-  protected static areAllPreconditionsMet(preconditions: Set<Property>, effects: Set<Property>): boolean {
+  protected static areAllPreconditionsMet(preconditions: Array<Property>, effects: Array<Property>): boolean {
     let preconditionsMet: boolean = true;
 
     for (const precondition of preconditions) {
