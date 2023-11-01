@@ -5,6 +5,12 @@ import { Optional, Queue } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 import { IWeightedGraph, WeightedEdge, WeightedPath } from "@/utils/graph";
 import { createWeightedPath } from "@/utils/path";
+import {
+  addEgdeWithWeigth,
+  addNodeToGraphPath,
+  areAllPreconditionsMet,
+  extractActionsFromGraphPath,
+} from "@/utils/planner";
 
 /**
  * Class for generating a queue of goap actions.
@@ -56,9 +62,9 @@ export abstract class AbstractPlanner {
     this.endNodes = [];
 
     try {
-      const goal: Array<Property> = this.unit.getGoalState();
-
-      goal.sort((first, second) => first.importance - second.importance);
+      const goal: Array<Property> = this.unit
+        .getGoalState()
+        .sort((first, second) => first.importance - second.importance);
 
       // The Integer.MaxValue indicates that the goal was passed by the changeGoalImmediatly function.
       // An empty Queue is returned instead of null because null would result in the IdleState to call this
@@ -76,8 +82,7 @@ export abstract class AbstractPlanner {
         return this.searchGraphForActionQueue(this.createGraph());
       }
     } catch (error) {
-      // e.printStackTrace();
-      // todo: handle error
+      // todo: [error_handler] handle error
     }
 
     return null;
@@ -130,25 +135,19 @@ export abstract class AbstractPlanner {
   }
 
   /**
-   * Needed to check if the available actions can actually be performed
+   * Needed to check if the available actions can actually be performed.
    *
-   * @return all possible actions which are actually available for the unit.
+   * @return all possible actions which are actually available for the unit
    */
-  protected extractPossibleActions(): Set<AbstractAction> {
-    const possibleActions: Set<AbstractAction> = new Set();
-
+  protected extractPossibleActions(): Array<AbstractAction> {
     try {
-      for (const action of this.unit.getActions()) {
-        if (action.checkProceduralPrecondition(this.unit)) {
-          possibleActions.add(action);
-        }
-      }
+      return this.unit.getActions().filter((it) => it.checkProceduralPrecondition(this.unit));
     } catch (error) {
       // e.printStackTrace();
-      // todo: Print error
-    }
+      // todo: [error_handler] Print error
 
-    return possibleActions;
+      return [];
+    }
   }
 
   /**
@@ -193,9 +192,9 @@ export abstract class AbstractPlanner {
         this.startNode !== graphNode &&
         graphNode.action !== null &&
         (graphNode.preconditions.length === 0 ||
-          AbstractPlanner.areAllPreconditionsMet(graphNode.preconditions, this.startNode.effects))
+          areAllPreconditionsMet(graphNode.preconditions, this.startNode.effects))
       ) {
-        AbstractPlanner.addEgdeWithWeigth(graph, this.startNode, graphNode, new WeightedEdge(), 0);
+        addEgdeWithWeigth(graph, this.startNode, graphNode, new WeightedEdge(), 0);
 
         if (!nodesToWorkOn.includes(graphNode)) {
           nodesToWorkOn.push(graphNode);
@@ -203,79 +202,17 @@ export abstract class AbstractPlanner {
 
         // Add the path to the node to the GraphPath list in the node
         // since this is the first step inside the graph.
-        // todo: Can be null?
-        const graphPathToDefaultNode: WeightedPath<GraphNode, WeightedEdge> = createWeightedPath(
-          graph,
-          this.startNode,
-          graphNode,
-          [this.startNode, graphNode],
-          [graph.getEdge(this.startNode, graphNode) as WeightedEdge]
-        ) as WeightedPath<GraphNode, WeightedEdge>;
-
-        graphNode.addGraphPath(null, graphPathToDefaultNode);
+        graphNode.addGraphPath(
+          null,
+          createWeightedPath(
+            graph,
+            this.startNode,
+            graphNode,
+            [this.startNode, graphNode],
+            [graph.getEdge(this.startNode, graphNode) as WeightedEdge]
+          ) as WeightedPath<GraphNode, WeightedEdge>
+        );
       }
-    }
-  }
-
-  /**
-   * Function for testing if all preconditions in a given set are also in another set (effects) with the same values.
-   *
-   * @param preconditions - set of states which are present
-   * @param effects - set of states which are required
-   * @return if all preconditions are met with the given effects
-   */
-  protected static areAllPreconditionsMet(preconditions: Array<Property>, effects: Array<Property>): boolean {
-    let preconditionsMet: boolean = true;
-
-    for (const precondition of preconditions) {
-      let currentPreconditionMet: boolean = false;
-
-      for (const effect of effects) {
-        if (precondition.id === effect.id) {
-          if (precondition.value === effect.value) {
-            currentPreconditionMet = true;
-          } else {
-            preconditionsMet = false;
-          }
-        }
-      }
-
-      if (!preconditionsMet || !currentPreconditionMet) {
-        preconditionsMet = false;
-
-        break;
-      }
-    }
-
-    return preconditionsMet;
-  }
-
-  /**
-   * Convenience function for adding a weighted edge to an existing Graph.
-   *
-   * @param graph - the Graph the edge is added to
-   * @param firstVertex - start vertex
-   * @param secondVertex - target vertex
-   * @param edge - edge reference
-   * @param weight - the weight of the edge being created
-   * @return if the creation of the edge was successful or not
-   */
-  protected static addEgdeWithWeigth<V, E extends WeightedEdge>(
-    graph: IWeightedGraph<V, E>,
-    firstVertex: V,
-    secondVertex: V,
-    edge: E,
-    weight: number
-  ): boolean {
-    try {
-      graph.addEdge(firstVertex, secondVertex, edge);
-      graph.setEdgeWeight(graph.getEdge(firstVertex, secondVertex) as WeightedEdge, weight);
-
-      return true;
-    } catch (error) {
-      // e.printStackTrace();
-
-      return false;
     }
   }
 
@@ -311,12 +248,10 @@ export abstract class AbstractPlanner {
         // produce a suitable effect set regarding the preconditions of
         // the current node.
         for (const pathToListNode of node.pathsToThisNode) {
-          if (
-            AbstractPlanner.areAllPreconditionsMet(otherNodeInGraph.preconditions, node.getEffectState(pathToListNode))
-          ) {
+          if (areAllPreconditionsMet(otherNodeInGraph.preconditions, node.getEffectState(pathToListNode))) {
             connected = true;
 
-            AbstractPlanner.addEgdeWithWeigth(
+            addEgdeWithWeigth(
               graph,
               node,
               otherNodeInGraph,
@@ -326,10 +261,7 @@ export abstract class AbstractPlanner {
 
             otherNodeInGraph.addGraphPath(
               pathToListNode,
-              AbstractPlanner.addNodeToGraphPath(graph, pathToListNode, otherNodeInGraph) as WeightedPath<
-                GraphNode,
-                WeightedEdge
-              >
+              addNodeToGraphPath(graph, pathToListNode, otherNodeInGraph) as WeightedPath<GraphNode, WeightedEdge>
             );
 
             nodesToWorkOn.push(otherNodeInGraph);
@@ -347,29 +279,6 @@ export abstract class AbstractPlanner {
   }
 
   /**
-   * Function for adding a new node to a given GraphPath. The new node is
-   * added to a sublist of the provided path vertexSet.
-   *
-   * @param graph - the graph the path is located in
-   * @param baseGraphPath - the path to which a node is being added
-   * @param nodeToAdd - the node which shall be added
-   * @return a graphPath with a given node as the end element, updated vertexSet, edgeSet and weight
-   */
-  protected static addNodeToGraphPath(
-    graph: IWeightedGraph<GraphNode, WeightedEdge>,
-    baseGraphPath: WeightedPath<GraphNode, WeightedEdge>,
-    nodeToAdd: GraphNode
-  ): Optional<WeightedPath<GraphNode, WeightedEdge>> {
-    const vertices: Array<GraphNode> = Array.from(baseGraphPath.getVertexList());
-    const edges: Array<WeightedEdge> = Array.from(baseGraphPath.getEdgeList());
-
-    vertices.push(nodeToAdd);
-    edges.push(graph.getEdge(baseGraphPath.getEndVertex(), nodeToAdd) as WeightedEdge);
-
-    return createWeightedPath(graph, baseGraphPath.getStartVertex(), nodeToAdd, vertices, edges);
-  }
-
-  /**
    * Function for searching a graph for the lowest cost of a series of actions
    * which have to be taken to archive a certain goal which has most certainly
    * the highest importance.
@@ -382,38 +291,10 @@ export abstract class AbstractPlanner {
       this.endNodes[i].pathsToThisNode.sort((first, second) => first.getTotalWeight() - second.getTotalWeight());
 
       for (let j = 0; j < this.endNodes[i].pathsToThisNode.length; j++) {
-        return AbstractPlanner.extractActionsFromGraphPath(
-          this.endNodes[i].pathsToThisNode[j],
-          this.startNode,
-          this.endNodes[i]
-        );
+        return extractActionsFromGraphPath(this.endNodes[i].pathsToThisNode[j], this.startNode, this.endNodes[i]);
       }
     }
 
     return null;
-  }
-
-  /**
-   * Function for extracting all actions from a path.
-   *
-   * @param path - the Path from which the actions are being extracted
-   * @param start - the starting node needs to be known as it contains no action
-   * @param end - the end node needs to be known since it contains no action
-   * @returns a queue in which all actions from the given path are listed
-   */
-  protected static extractActionsFromGraphPath(
-    path: WeightedPath<GraphNode, WeightedEdge>,
-    start: GraphNode,
-    end: GraphNode
-  ): Queue<AbstractAction> {
-    const actionQueue: Queue<AbstractAction> = [];
-
-    for (const node of path.getVertexList()) {
-      if (node !== start && node !== end) {
-        actionQueue.push(node.action as AbstractAction);
-      }
-    }
-
-    return actionQueue;
   }
 }

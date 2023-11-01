@@ -41,8 +41,7 @@ describe("DirectedGraph class", () => {
   });
 
   it("should correctly set vertex weight", () => {
-    const vertices: Set<AnyObject> = new Set();
-    const graph: DirectedWeightedGraph<AnyObject, WeightedEdge> = new DirectedWeightedGraph(vertices);
+    const graph: DirectedWeightedGraph<AnyObject, WeightedEdge> = new DirectedWeightedGraph([]);
 
     const first: WeightedEdge = new WeightedEdge(10);
     const second: WeightedEdge = new WeightedEdge(11);
@@ -55,8 +54,7 @@ describe("DirectedGraph class", () => {
   });
 
   it("should correctly get vertex weight", () => {
-    const vertices: Set<AnyObject> = new Set();
-    const graph: DirectedWeightedGraph<AnyObject, WeightedEdge> = new DirectedWeightedGraph(vertices);
+    const graph: DirectedWeightedGraph<AnyObject, WeightedEdge> = new DirectedWeightedGraph([]);
 
     const first: WeightedEdge = new WeightedEdge(10);
     const second: WeightedEdge = new WeightedEdge(11);

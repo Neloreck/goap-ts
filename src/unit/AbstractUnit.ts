@@ -1,7 +1,7 @@
 import { AbstractAction } from "@/AbstractAction";
 import { IImportantUnitChangeEventListener } from "@/event/IImportantUnitChangeEventListener";
 import { Property } from "@/Property";
-import { AnyObject, Optional, PropertyId } from "@/types";
+import { AnyObject, PropertyId } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 import { removeFromArray } from "@/utils/array";
 
@@ -95,41 +95,31 @@ export abstract class AbstractUnit implements IUnit {
    *
    * @param newGoalProperty - new property to add
    */
-  public addGoalState(newGoalProperty: Property): void {
-    let missing: boolean = true;
-
-    for (const property of this.goal) {
-      if (newGoalProperty.id === property.id) {
-        missing = false;
-
-        break;
-      }
-    }
-
-    if (missing) {
+  public addGoalState(newGoalProperty: Property): boolean {
+    if (this.goal.findIndex((it) => it.id === newGoalProperty.id) === -1) {
       this.goal.push(newGoalProperty);
+
+      return true;
     }
+
+    return false;
   }
 
   /**
    * Remove goal property from current goal state.
    *
-   * @param effect - identifier of the property to remove
+   * @param id - identifier of the property to remove
    */
-  public removeGoalState(effect: string): void {
-    let marked: Optional<Property> = null;
+  public removeGoalState(id: string): boolean {
+    for (let it = 0; it < this.goal.length; it++) {
+      if (this.goal[it].id === id) {
+        this.goal.splice(it, 1);
 
-    for (const state of this.goal) {
-      if (effect === state.id) {
-        marked = state;
-
-        break;
+        return true;
       }
     }
 
-    if (marked) {
-      removeFromArray(this.goal, marked);
-    }
+    return false;
   }
 
   /**
@@ -158,8 +148,8 @@ export abstract class AbstractUnit implements IUnit {
   /**
    * @param action - new action to remove from current available list
    */
-  public removeAction(action: AbstractAction): void {
-    removeFromArray(this.actions, action);
+  public removeAction(action: AbstractAction): boolean {
+    return removeFromArray(this.actions, action);
   }
 
   /**

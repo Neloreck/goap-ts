@@ -7,7 +7,7 @@ import { Edge } from "@/utils/graph/Edge";
 
 describe("DirectedGraph class", () => {
   it("should correctly initialize from set", () => {
-    const graph: DirectedGraph<number, Edge> = new DirectedGraph(new Set([1, 3, 5]));
+    const graph: DirectedGraph<number, Edge> = new DirectedGraph([1, 3, 5]);
 
     expect(graph.getEdges().size).toBe(0);
     expect(graph.getVertices().size).toBe(3);

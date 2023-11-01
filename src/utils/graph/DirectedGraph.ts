@@ -8,7 +8,7 @@ import { IGraph } from "@/utils/graph/IGraph";
 export class DirectedGraph<VertexType, EdgeType extends Edge> implements IGraph<VertexType, EdgeType> {
   protected content: Map<VertexType, Map<VertexType, EdgeType>> = new Map();
 
-  public constructor(vertices?: Set<VertexType>) {
+  public constructor(vertices?: Array<VertexType>) {
     // Link provided vertices in current graph.
     if (vertices) {
       for (const vertex of vertices) {

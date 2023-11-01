@@ -37,7 +37,7 @@ export abstract class AbstractAction<T = any> {
   /**
    * Remove a precondition from the set.
    *
-   * @param id - the effect which is going to be removed
+   * @param id - the id of precondition which is going to be removed
    * @returns if the precondition was removed
    */
   public removePrecondition(id: PropertyId): boolean {
@@ -69,7 +69,7 @@ export abstract class AbstractAction<T = any> {
   }
 
   /**
-   * @param id - the effect or state effect which is going to be removed
+   * @param id - the id of effect which is going to be removed
    * @returns if the effect was removed
    */
   public removeEffect(id: PropertyId): boolean {

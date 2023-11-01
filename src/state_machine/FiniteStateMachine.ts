@@ -124,7 +124,7 @@ export class FiniteStateMachine {
         this.dispatchNewPlanFailedEvent(state.getCurrentPlan());
       }
 
-      // todo: Print error.
+      // todo: [error_handler] Print error.
     }
   }
 }

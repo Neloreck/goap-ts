@@ -23,7 +23,7 @@ export function generatePath<VertexType, EdgeType extends Edge>(
   vertexList: Array<VertexType>,
   edgeList: Array<EdgeType>
 ): Optional<Path<VertexType, EdgeType>> {
-  return validateStartAndEnd(start, end, vertexList) && validateConnections(graph, vertexList, edgeList)
+  return validateStartAndEnd(start, end, vertexList) && validateConnections(graph, vertexList)
     ? new Path(vertexList, edgeList, start, end)
     : null;
 }
@@ -46,7 +46,7 @@ export function createWeightedPath<VertexType, EdgeType extends WeightedEdge>(
   vertexList: Array<VertexType>,
   edgeList: Array<EdgeType>
 ): Optional<WeightedPath<VertexType, EdgeType>> {
-  return validateStartAndEnd(start, end, vertexList) && validateConnections(graph, vertexList, edgeList)
+  return validateStartAndEnd(start, end, vertexList) && validateConnections(graph, vertexList)
     ? new WeightedPath<VertexType, EdgeType>(vertexList, edgeList, start, end)
     : null;
 }
@@ -72,13 +72,11 @@ export function validateStartAndEnd<VertexType>(
  *
  * @param graph - the graph the information is being checked against.
  * @param vertices - the List of all vertices of the Path being created.
- * @param edges - the List of all edges of the Path being created.
  * @returns if the provided Lists match the given Graph
  */
 export function validateConnections<VertexType, EdgeType extends Edge>(
   graph: IGraph<VertexType, EdgeType>,
-  vertices: Array<VertexType>,
-  edges: Array<EdgeType>
+  vertices: Array<VertexType>
 ): boolean {
   let previousVertex: Optional<VertexType> = null;
 
