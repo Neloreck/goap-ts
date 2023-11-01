@@ -1,3 +1,5 @@
+import { jest } from "@jest/globals";
+
 import { AbstractAction } from "@/AbstractAction";
 import { IUnit } from "@/unit/IUnit";
 
@@ -6,29 +8,29 @@ export class GenericAction<T = unknown> extends AbstractAction<T> {
     return 0;
   }
 
-  public generateCostRelativeToTarget(unit: IUnit): number {
+  public generateCostRelativeToTarget = jest.fn((unit: IUnit): number => {
     return 0;
-  }
+  });
 
-  public checkProceduralPrecondition(unit: IUnit): boolean {
+  public checkProceduralPrecondition = jest.fn((unit: IUnit): boolean => {
     return true;
-  }
+  });
 
-  public performAction(unit: IUnit): boolean {
+  public performAction = jest.fn((unit: IUnit): boolean => {
     return true;
-  }
+  });
 
-  public isDone(unit: IUnit): boolean {
+  public isFinished = jest.fn((unit: IUnit): boolean => {
     return false;
-  }
+  });
 
-  public isInRange(unit: IUnit): boolean {
+  public isInRange = jest.fn((unit: IUnit): boolean => {
     return false;
-  }
+  });
 
-  public requiresInRange(unit: IUnit): boolean {
+  public requiresInRange = jest.fn((unit: IUnit): boolean => {
     return false;
-  }
+  });
 
-  public reset(): void {}
+  public reset = jest.fn();
 }

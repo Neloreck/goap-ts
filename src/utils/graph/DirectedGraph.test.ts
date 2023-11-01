@@ -6,6 +6,17 @@ import { DirectedGraph } from "@/utils/graph/DirectedGraph";
 import { Edge } from "@/utils/graph/Edge";
 
 describe("DirectedGraph class", () => {
+  it("should correctly initialize from set", () => {
+    const graph: DirectedGraph<number, Edge> = new DirectedGraph(new Set([1, 3, 5]));
+
+    expect(graph.getEdges().size).toBe(0);
+    expect(graph.getVertices().size).toBe(3);
+
+    expect(graph.getVertices().has(1)).toBe(true);
+    expect(graph.getVertices().has(3)).toBe(true);
+    expect(graph.getVertices().has(5)).toBe(true);
+  });
+
   it("should correctly initialize basic graph", () => {
     const graph: DirectedGraph<number, Edge> = createBasicTestGraph(5);
 

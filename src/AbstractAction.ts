@@ -30,7 +30,7 @@ export abstract class AbstractAction<T = any> {
    * @param unit - the unit the action is checked for
    * @returns success of the action, returning true causes the swap to the next action in the queue
    */
-  public abstract isDone(unit: IUnit): boolean;
+  public abstract isFinished(unit: IUnit): boolean;
 
   /**
    * Gets called when the action is going to be executed by the Unit.

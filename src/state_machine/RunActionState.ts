@@ -31,15 +31,15 @@ export class RunActionState implements IFiniteStateMachineState {
   }
 
   /**
-   * Cycle through all actions until an invalid one or the end of the Queue is reached.
+   * Cycle through all actions until an invalid one or the end of the plan is reached.
    * A false return type here causes the FSM to pop the state from its stack.
    */
   public execute(unit: IUnit): boolean {
     try {
       // Find first action that is not done.
       // Shift all completed actions from the queue and reset them.
-      for (;;) {
-        if (this.plan.length && queuePeek(this.plan).isDone(unit)) {
+      while (this.plan.length) {
+        if (queuePeek(this.plan).isFinished(unit)) {
           this.plan.shift().reset();
         } else {
           break;
@@ -54,6 +54,7 @@ export class RunActionState implements IFiniteStateMachineState {
           // System.out.println("Target is null! " + currentAction.getClass().getSimpleName());
         }
 
+        // Should handle some movement conditions before continuation of execution.
         if (currentAction.requiresInRange(unit) && !currentAction.isInRange(unit)) {
           this.fsm.push(new MoveToState(currentAction));
         } else if (currentAction.checkProceduralPrecondition(unit)) {

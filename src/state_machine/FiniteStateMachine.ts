@@ -94,12 +94,12 @@ export class FiniteStateMachine {
    */
   public update(unit: IUnit): void {
     try {
-      if (this.states.length && !stackPeek(this.states).execute(unit)) {
-        if (this.states.pop() instanceof RunActionState) {
-          this.dispatchNewPlanFinishedEvent();
-        }
+      // When stack action execution is finished, pop latest action and notify listeners if needed.
+      if (this.states.length && !stackPeek(this.states).execute(unit) && this.states.pop() instanceof RunActionState) {
+        this.dispatchNewPlanFinishedEvent();
       }
     } catch (error) {
+      // Pop problematic action and notify listeners if needed.
       const state: Maybe<IFiniteStateMachineState> = this.states.pop();
 
       if (state instanceof RunActionState) {
