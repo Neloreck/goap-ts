@@ -22,7 +22,7 @@ describe("MoveToState class", () => {
     jest.spyOn(action, "requiresInRange").mockImplementation(jest.fn(() => false));
     jest.spyOn(action, "isInRange").mockImplementation(jest.fn(() => false));
 
-    expect(state.execute(unit)).toBe(false);
+    expect(state.execute(unit)).toBe(true);
     expect(action.requiresInRange).toHaveBeenCalledTimes(1);
     expect(action.requiresInRange).toHaveBeenCalledWith(unit);
     expect(action.isInRange).not.toHaveBeenCalled();
@@ -38,7 +38,7 @@ describe("MoveToState class", () => {
     jest.spyOn(action, "requiresInRange").mockImplementation(jest.fn(() => true));
     jest.spyOn(action, "isInRange").mockImplementation(jest.fn(() => false));
 
-    expect(state.execute(unit)).toBe(true);
+    expect(state.execute(unit)).toBe(false);
     expect(action.requiresInRange).toHaveBeenCalledTimes(1);
     expect(action.requiresInRange).toHaveBeenCalledWith(unit);
     expect(action.isInRange).toHaveBeenCalledTimes(1);
@@ -56,7 +56,7 @@ describe("MoveToState class", () => {
     jest.spyOn(action, "requiresInRange").mockImplementation(jest.fn(() => true));
     jest.spyOn(action, "isInRange").mockImplementation(jest.fn(() => true));
 
-    expect(state.execute(unit)).toBe(false);
+    expect(state.execute(unit)).toBe(true);
     expect(action.requiresInRange).toHaveBeenCalledTimes(1);
     expect(action.requiresInRange).toHaveBeenCalledWith(unit);
     expect(action.isInRange).toHaveBeenCalledTimes(1);
@@ -74,7 +74,7 @@ describe("MoveToState class", () => {
 
     action.target = null;
 
-    expect(state.execute(unit)).toBe(false);
+    expect(state.execute(unit)).toBe(true);
     expect(action.requiresInRange).toHaveBeenCalledTimes(1);
     expect(action.requiresInRange).toHaveBeenCalledWith(unit);
     expect(action.isInRange).toHaveBeenCalledTimes(1);

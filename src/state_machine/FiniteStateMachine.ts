@@ -111,7 +111,7 @@ export class FiniteStateMachine {
       // When stack action execution is finished, pop latest action and notify listeners if needed.
       if (
         this.states.length &&
-        !(stackPeek(this.states) as IFiniteStateMachineState).execute(unit) &&
+        (stackPeek(this.states) as IFiniteStateMachineState).execute(unit) &&
         this.states.pop() instanceof RunActionState
       ) {
         this.dispatchNewPlanFinishedEvent();

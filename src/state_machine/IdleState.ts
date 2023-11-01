@@ -29,8 +29,8 @@ export class IdleState implements IFiniteStateMachineState {
       this.dispatchPlanCreatedEvent(plan);
     }
 
-    // Returning false would result in the RunActionState, which gets added to the Stack by the Agent, to be removed.
-    return true;
+    // Returning true would result in the RunActionState, which gets added to the Stack by the Agent, to be removed.
+    return false;
   }
 
   /**

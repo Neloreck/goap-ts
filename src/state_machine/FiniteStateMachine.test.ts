@@ -87,7 +87,7 @@ describe("FiniteStateMachine class", () => {
     fsm.addEventListener(listener);
     fsm.push(actState);
 
-    jest.spyOn(actState, "execute").mockImplementation(() => true);
+    jest.spyOn(actState, "execute").mockImplementation(() => false);
 
     fsm.update(unit);
     fsm.update(unit);
@@ -96,7 +96,7 @@ describe("FiniteStateMachine class", () => {
     expect(listener.onPlanFailed).not.toHaveBeenCalled();
     expect(fsm.getStack()).toEqual([actState]);
 
-    jest.spyOn(actState, "execute").mockImplementation(() => false);
+    jest.spyOn(actState, "execute").mockImplementation(() => true);
 
     fsm.update(unit);
 

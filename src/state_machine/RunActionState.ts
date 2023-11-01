@@ -33,6 +33,8 @@ export class RunActionState implements IFiniteStateMachineState {
   /**
    * Cycle through all actions until an invalid one or the end of the plan is reached.
    * A false return type here causes the FSM to pop the state from its stack.
+   *
+   * @returns whether the action is finished
    */
   public execute(unit: IUnit): boolean {
     try {
@@ -59,13 +61,13 @@ export class RunActionState implements IFiniteStateMachineState {
           this.fsm.push(new MoveToState(currentAction));
         } else if (currentAction.checkProceduralPrecondition(unit)) {
           if (currentAction.performAction(unit)) {
-            return true;
+            return false;
           } else {
             throw new NotPerformableActionException(currentAction.constructor.name);
           }
         }
 
-        return true;
+        return false;
       }
     } catch (error) {
       // todo:  [error_handler] emit callbacks for handler.
@@ -73,6 +75,6 @@ export class RunActionState implements IFiniteStateMachineState {
       // throw new Exception();
     }
 
-    return false;
+    return true;
   }
 }

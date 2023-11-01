@@ -21,14 +21,15 @@ export class MoveToState implements IFiniteStateMachineState {
    * Move to the target of the currentAction until the unit is in range to perform the action itself.
    *
    * @param unit - target unit to execute state for
+   * @returns whether the action is finished
    */
   public execute(unit: IUnit): boolean {
     if (this.action.requiresInRange(unit) && !this.action.isInRange(unit) && this.action.target !== null) {
       unit.onMoveToTarget(this.action.target);
 
-      return true;
+      return false;
     }
 
-    return false;
+    return true;
   }
 }

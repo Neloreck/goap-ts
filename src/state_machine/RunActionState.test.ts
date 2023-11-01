@@ -26,7 +26,7 @@ describe("RunActionState class", () => {
     const state: RunActionState = new RunActionState(fsm, plan);
 
     jest.spyOn(first, "performAction").mockImplementation(() => false);
-    expect(state.execute({} as IUnit)).toBe(false);
+    expect(state.execute({} as IUnit)).toBe(true);
   });
 
   it("should correctly handle empty plan", () => {
@@ -34,7 +34,7 @@ describe("RunActionState class", () => {
     const plan: Queue<AbstractAction> = [];
     const state: RunActionState = new RunActionState(fsm, plan);
 
-    expect(state.execute({} as IUnit)).toBe(false);
+    expect(state.execute({} as IUnit)).toBe(true);
   });
 
   it("should correctly remove all actions that are done and reset them", () => {
@@ -49,7 +49,7 @@ describe("RunActionState class", () => {
     jest.spyOn(second, "isFinished").mockImplementation(() => true);
     jest.spyOn(second, "reset").mockImplementation(() => {});
 
-    expect(state.execute({} as IUnit)).toBe(false);
+    expect(state.execute({} as IUnit)).toBe(true);
     expect(state.getCurrentPlan()).toEqual([]);
 
     expect(first.isFinished).toHaveBeenCalledTimes(1);
@@ -73,7 +73,7 @@ describe("RunActionState class", () => {
     jest.spyOn(second, "requiresInRange").mockImplementation(() => true);
     jest.spyOn(second, "isInRange").mockImplementation(() => true);
 
-    expect(state.execute(unit)).toBe(true);
+    expect(state.execute(unit)).toBe(false);
     expect(state.getCurrentPlan()).toEqual([second, third]);
 
     expect(first.isFinished).toHaveBeenCalledTimes(1);
@@ -85,14 +85,14 @@ describe("RunActionState class", () => {
     expect(third.checkProceduralPrecondition).not.toHaveBeenCalled();
     expect(third.performAction).not.toHaveBeenCalled();
 
-    expect(state.execute(unit)).toBe(true);
+    expect(state.execute(unit)).toBe(false);
     expect(state.getCurrentPlan()).toEqual([second, third]);
     expect(second.performAction).toHaveBeenCalledTimes(2);
     expect(third.performAction).not.toHaveBeenCalled();
 
     jest.spyOn(second, "checkProceduralPrecondition").mockImplementation(() => false);
 
-    expect(state.execute(unit)).toBe(true);
+    expect(state.execute(unit)).toBe(false);
     expect(state.getCurrentPlan()).toEqual([second, third]);
     expect(second.performAction).toHaveBeenCalledTimes(2);
     expect(third.performAction).not.toHaveBeenCalled();
@@ -115,7 +115,7 @@ describe("RunActionState class", () => {
     jest.spyOn(second, "requiresInRange").mockImplementation(() => true);
     jest.spyOn(second, "isInRange").mockImplementation(() => false);
 
-    expect(state.execute(unit)).toBe(true);
+    expect(state.execute(unit)).toBe(false);
     expect(state.getCurrentPlan()).toEqual([second, third]);
 
     expect(first.isFinished).toHaveBeenCalledTimes(1);
