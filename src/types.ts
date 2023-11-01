@@ -4,6 +4,11 @@
 export type Optional<T> = T | null;
 
 /**
+ * Generic definable object.
+ */
+export type Definable<T> = T | undefined;
+
+/**
  * Generic maybe object.
  */
 export type Maybe<T> = T | null | undefined;

@@ -3,29 +3,32 @@ import { IUnit } from "@/unit/IUnit";
 
 import { IFiniteStateMachineState } from "./IFiniteStateMachineState";
 
+/**
+ * State on the FSM stack.
+ * Used for execution of objects moving for proper execution of actions.
+ */
 export class MoveToState implements IFiniteStateMachineState {
-  public currentAction: AbstractAction;
+  public action: AbstractAction;
 
   /**
-   * @param action -  the action which requires the unit to be in a certain range to its target
+   * @param action - the action which requires the unit to be in a certain range to its target
    */
   public constructor(action: AbstractAction) {
-    this.currentAction = action;
+    this.action = action;
   }
 
   /**
    * Move to the target of the currentAction until the unit is in range to perform the action itself.
+   *
+   * @param unit - target unit to execute state for
    */
   public execute(unit: IUnit): boolean {
-    if (
-      (this.currentAction.requiresInRange(unit) && this.currentAction.isInRange(unit)) ||
-      this.currentAction.target === null
-    ) {
-      return false;
-    } else {
-      unit.moveTo(this.currentAction.target);
+    if (this.action.requiresInRange(unit) && !this.action.isInRange(unit) && this.action.target !== null) {
+      unit.moveTo(this.action.target);
+
+      return true;
     }
 
-    return true;
+    return false;
   }
 }

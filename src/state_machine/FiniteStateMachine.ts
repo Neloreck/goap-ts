@@ -2,7 +2,7 @@ import { AbstractAction } from "@/AbstractAction";
 import { IFiniteStateMachinePlanEventListener } from "@/event/IFiniteStateMachinePlanEventListener";
 import { IFiniteStateMachineState } from "@/state_machine/IFiniteStateMachineState";
 import { RunActionState } from "@/state_machine/RunActionState";
-import { Maybe, Queue, Stack } from "@/types";
+import { Definable, Maybe, Queue, Stack } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 import { removeFromArray, stackPeek } from "@/utils/array";
 
@@ -11,30 +11,10 @@ export class FiniteStateMachine {
   private planEventListeners: Array<IFiniteStateMachinePlanEventListener> = [];
 
   /**
-   * Run through all action in the specific states.
-   * If an Exception occurs (mainly in RunActionState) the FSM assumes the plan failed.
-   * If an action state returns false the FSM assumes the plan finished.
-   *
-   * @param unit - unit whose actions are getting cycled.
+   * @returns state machine states stack
    */
-  public update(unit: IUnit): void {
-    try {
-      if (this.states.length > 0 && !stackPeek(this.states).execute(unit)) {
-        const state: IFiniteStateMachineState = this.states.pop();
-
-        if (state instanceof RunActionState) {
-          this.dispatchNewPlanFinishedEvent();
-        }
-      }
-    } catch (error) {
-      const state: Maybe<IFiniteStateMachineState> = this.states.pop();
-
-      if (state instanceof RunActionState) {
-        this.dispatchNewPlanFailedEvent(state.getCurrentActions());
-      }
-
-      // todo: Print error.
-    }
+  public getStack(): Readonly<Stack<IFiniteStateMachineState>> {
+    return this.states;
   }
 
   /**
@@ -42,28 +22,28 @@ export class FiniteStateMachine {
    *
    * @param state - state to push
    */
-  public pushStack(state: IFiniteStateMachineState): void {
+  public push(state: IFiniteStateMachineState): void {
     this.states.push(state);
   }
 
   /**
    * @returns peek element and pops it from the stack
    */
-  public popStack(): IFiniteStateMachineState {
+  public pop(): Definable<IFiniteStateMachineState> {
     return this.states.pop();
   }
 
   /**
    * Clear states stack.
    */
-  public clearStack(): void {
+  public clear(): void {
     this.states.length = 0;
   }
 
   /**
    * @returns if any states exist in the execution stack
    */
-  public hasStates(): boolean {
+  public hasAny(): boolean {
     return this.states.length > 0;
   }
 
@@ -72,7 +52,7 @@ export class FiniteStateMachine {
    *
    * @param listener - object to subscribe for listening
    */
-  public addPlanEventListener(listener: IFiniteStateMachinePlanEventListener): void {
+  public addEventListener(listener: IFiniteStateMachinePlanEventListener): void {
     this.planEventListeners.push(listener);
   }
 
@@ -81,7 +61,7 @@ export class FiniteStateMachine {
    *
    * @param listener - object to unsubscribe from listening
    */
-  public removePlanEventListener(listener: IFiniteStateMachinePlanEventListener): void {
+  public removeEventListener(listener: IFiniteStateMachinePlanEventListener): void {
     removeFromArray(this.planEventListeners, listener);
   }
 
@@ -102,6 +82,31 @@ export class FiniteStateMachine {
   private dispatchNewPlanFinishedEvent(): void {
     for (const listener of this.planEventListeners) {
       listener.onPlanFinished();
+    }
+  }
+
+  /**
+   * Run through all action in the specific states.
+   * If an Exception occurs (mainly in RunActionState) the FSM assumes the plan failed.
+   * If an action state returns false the FSM assumes the plan finished.
+   *
+   * @param unit - unit whose actions are getting cycled
+   */
+  public update(unit: IUnit): void {
+    try {
+      if (this.states.length && !stackPeek(this.states).execute(unit)) {
+        if (this.states.pop() instanceof RunActionState) {
+          this.dispatchNewPlanFinishedEvent();
+        }
+      }
+    } catch (error) {
+      const state: Maybe<IFiniteStateMachineState> = this.states.pop();
+
+      if (state instanceof RunActionState) {
+        this.dispatchNewPlanFailedEvent(state.getCurrentPlan());
+      }
+
+      // todo: Print error.
     }
   }
 }

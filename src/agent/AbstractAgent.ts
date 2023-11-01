@@ -27,15 +27,15 @@ export abstract class AbstractAgent implements IAgent {
     }
 
     this.idleState.addListener(this);
-    this.fsm.addPlanEventListener(this);
+    this.fsm.addEventListener(this);
   }
 
   /**
    * Handle update tick.
    */
   public update(): void {
-    if (!this.fsm.hasStates()) {
-      this.fsm.pushStack(this.idleState);
+    if (!this.fsm.hasAny()) {
+      this.fsm.push(this.idleState);
     }
 
     this.unit.update();
@@ -48,13 +48,13 @@ export abstract class AbstractAgent implements IAgent {
 
   public onPlanCreated(plan: Queue<AbstractAction>): void {
     this.unit.goapPlanFound(plan);
-    this.fsm.popStack();
-    this.fsm.pushStack(new RunActionState(this.fsm, plan));
+    this.fsm.pop();
+    this.fsm.push(new RunActionState(this.fsm, plan));
   }
 
   public onImportantUnitGoalChange(state: State): void {
     state.importance = Infinity;
-    this.fsm.pushStack(this.idleState);
+    this.fsm.push(this.idleState);
   }
 
   public onImportantUnitStackResetChange(): void {
@@ -63,8 +63,8 @@ export abstract class AbstractAgent implements IAgent {
       action.reset();
     }
 
-    this.fsm.clearStack();
-    this.fsm.pushStack(this.idleState);
+    this.fsm.clear();
+    this.fsm.push(this.idleState);
   }
 
   /**

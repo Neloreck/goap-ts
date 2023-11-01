@@ -24,6 +24,13 @@ export class RunActionState implements IFiniteStateMachineState {
   }
 
   /**
+   * @returns current plan that was applied when state was created
+   */
+  public getCurrentPlan(): Queue<AbstractAction> {
+    return this.plan;
+  }
+
+  /**
    * Cycle through all actions until an invalid one or the end of the Queue is reached.
    * A false return type here causes the FSM to pop the state from its stack.
    */
@@ -48,7 +55,7 @@ export class RunActionState implements IFiniteStateMachineState {
         }
 
         if (currentAction.requiresInRange(unit) && !currentAction.isInRange(unit)) {
-          this.fsm.pushStack(new MoveToState(currentAction));
+          this.fsm.push(new MoveToState(currentAction));
         } else if (currentAction.checkProceduralPrecondition(unit)) {
           if (currentAction.performAction(unit)) {
             return true;
@@ -66,9 +73,5 @@ export class RunActionState implements IFiniteStateMachineState {
     }
 
     return false;
-  }
-
-  public getCurrentActions(): Queue<AbstractAction> {
-    return this.plan;
   }
 }
