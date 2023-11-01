@@ -27,3 +27,8 @@ export type Queue<T> = Omit<Array<T>, "pop" | "unshift">;
  * Any object from JS record variant.
  */
 export type Stack<T> = Omit<Array<T>, "shift" | "unshift">;
+
+/**
+ * Generic optional object.
+ */
+export type PropertyId = string | number | symbol;

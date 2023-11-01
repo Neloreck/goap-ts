@@ -1,4 +1,5 @@
 import { Property } from "@/Property";
+import { PropertyId } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 
 /**
@@ -37,15 +38,13 @@ export abstract class AbstractAction<T = any> {
   /**
    * Remove a precondition from the set.
    *
-   * @param effect - the effect which is going to be removed
+   * @param id - the effect which is going to be removed
    * @returns if the precondition was removed
    */
-  public removePrecondition(effect: string | Property): boolean {
-    const preconditionId: string = typeof effect === "string" ? effect : effect.id;
-
-    for (const state of this.preconditions) {
-      if (state.id === preconditionId) {
-        this.preconditions.delete(state);
+  public removePrecondition(id: PropertyId): boolean {
+    for (const property of this.preconditions) {
+      if (property.id === id) {
+        this.preconditions.delete(property);
 
         return true;
       }
@@ -72,15 +71,13 @@ export abstract class AbstractAction<T = any> {
   }
 
   /**
-   * @param effect - the effect or state effect which is going to be removed
+   * @param id - the effect or state effect which is going to be removed
    * @returns if the effect was removed
    */
-  public removeEffect(effect: string | Property): boolean {
-    const effectId: string = typeof effect === "string" ? effect : effect.id;
-
-    for (const state of this.effects) {
-      if (state.id === effectId) {
-        this.effects.delete(state);
+  public removeEffect(id: PropertyId): boolean {
+    for (const property of this.effects) {
+      if (property.id === id) {
+        this.effects.delete(property);
 
         return true;
       }

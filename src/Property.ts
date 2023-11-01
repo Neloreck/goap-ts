@@ -1,7 +1,9 @@
+import { PropertyId } from "@/types";
+
 /**
  * Properties which the GOAP planner use to build a graph.
  */
-export class Property<IdType = any, ValueType = any> {
+export class Property<IdType = PropertyId, ValueType = any> {
   public readonly id: IdType;
   public readonly value: ValueType;
 
