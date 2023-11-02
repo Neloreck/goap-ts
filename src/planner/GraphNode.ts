@@ -2,7 +2,7 @@ import { AbstractAction } from "@/AbstractAction";
 import { Properties } from "@/alias";
 import { IWeightedPath } from "@/graph/IWeightedPath";
 import { Optional } from "@/types";
-import { mergePathEffectsTogether } from "@/utils/path";
+import { isOneOfPaths, mergePathEffectsTogether } from "@/utils/path";
 
 /**
  * Vertex on the used in graph for building of paths.
@@ -67,45 +67,25 @@ export class GraphNode {
     pathToPreviousNode: Optional<IWeightedPath<GraphNode>>,
     pathToThisNode: IWeightedPath<GraphNode>
   ): void {
-    const newPathNodeList: Array<GraphNode> = pathToThisNode.vertices;
-    let notInSet: boolean = true;
-
-    if (this.pathsToThisNode.length) {
-      for (const path of this.pathsToThisNode) {
-        const nodeList: Array<GraphNode> = path.vertices;
-        let isSamePath: boolean = true;
-
-        for (let i = 0; i < nodeList.length; i++) {
-          if (nodeList[i] !== newPathNodeList[i]) {
-            isSamePath = false;
-            break;
-          }
-        }
-
-        if (isSamePath) {
-          notInSet = false;
-          break;
-        }
-      }
-    } else {
-      notInSet = true;
+    // Already existing path, should not be added to current node registry.
+    if (isOneOfPaths(pathToThisNode, this.pathsToThisNode)) {
+      return;
     }
 
-    if (notInSet) {
-      this.pathsToThisNode.push(pathToThisNode);
+    this.pathsToThisNode.push(pathToThisNode);
 
-      if (pathToThisNode.end.action !== null) {
-        this.states.set(
-          pathToThisNode,
-          mergePathEffectsTogether(
-            // Has previous path -> get effects from it, otherwise -> get current node effects
-            pathToPreviousNode
-              ? (pathToPreviousNode.end.states.get(pathToPreviousNode) as Properties)
-              : pathToThisNode.start.effects,
-            this.effects
-          )
-        );
-      }
+    // Has actions that can transform world into something different.
+    if (pathToThisNode.end.action) {
+      this.states.set(
+        pathToThisNode,
+        mergePathEffectsTogether(
+          // Has previous path -> get effects from it, otherwise -> get current node effects
+          pathToPreviousNode
+            ? (pathToPreviousNode.end.states.get(pathToPreviousNode) as Properties)
+            : pathToThisNode.start.effects,
+          this.effects
+        )
+      );
     }
   }
 }

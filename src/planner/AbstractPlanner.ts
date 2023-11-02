@@ -4,7 +4,6 @@ import { AbstractAction } from "@/AbstractAction";
 import { Plan, Properties } from "@/alias";
 import { IWeightedPath } from "@/graph/IWeightedPath";
 import { GraphNode } from "@/planner/GraphNode";
-import { Property } from "@/Property";
 import { Optional, Queue } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 import { createWeightedPath } from "@/utils/path";
@@ -167,7 +166,7 @@ export abstract class AbstractPlanner {
       const node: GraphNode = nodesToWorkOn.shift() as GraphNode;
 
       // Select only node to which a path can be created (-> targets!)
-      if (node !== this.startNode && !this.endNodes.includes(node)) {
+      if (node !== this.startNode && this.endNodes.indexOf(node) === -1) {
         this.tryToConnectNode(graph, node, nodesToWorkOn);
       }
     }
@@ -207,7 +206,7 @@ export abstract class AbstractPlanner {
             graphNode,
             [this.startNode, graphNode],
             [graph.getEdge(this.startNode, graphNode) as IWeightedEdge]
-          ) as IWeightedPath<GraphNode, IWeightedEdge>
+          ) as IWeightedPath<GraphNode>
         );
       }
     }
@@ -219,7 +218,7 @@ export abstract class AbstractPlanner {
    *
    * @param graph - the graph in which the provided nodes are located
    * @param node - the node which is being connected to another node
-   * @param nodesToWorkOn - the Queue to which any connected nodes are being added to work on these connections in
+   * @param nodesToWorkOn - the queue to which any connected nodes are being added to work on these connections in
    *   further iterations
    * @return if the node was connected to another node
    */

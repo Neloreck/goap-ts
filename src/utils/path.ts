@@ -1,13 +1,12 @@
-import { IEdge, IPath, IWeightedEdge } from "src/graph";
-
 import { Properties } from "@/alias";
+import { IEdge, IPath, IWeightedEdge } from "@/graph";
 import { IGraph } from "@/graph/IGraph";
 import { IWeightedPath } from "@/graph/IWeightedPath";
 import { Optional } from "@/types";
 
 /**
- * Function for generating a simple Path.
- * The given information are being checked against the given Graph.
+ * Function for generating a simple path.
+ * The given information are being checked against the given graph.
  *
  * @param graph - the Graph the information are being checked against
  * @param start - the starting vertex of the path
@@ -29,14 +28,13 @@ export function createPath<VertexType, EdgeType extends IEdge>(
 }
 
 /**
- * Function for generating a WeightedPath. The given information are being
- * checked against the given Graph.
+ * Function for generating a path. The given information are being checked against the given graph.
  *
  * @param graph - the Graph the information are being checked against
  * @param start - the starting vertex of the path
  * @param end - the end vertex of the path
- * @param vertices - the List of all vertices of the path
- * @param edges - the List of all edges of the path
+ * @param vertices - the list of all vertices of the path
+ * @param edges - the list of all edges of the path
  * @returns a path leading from one point inside the graph to another one
  */
 export function createWeightedPath<VertexType, EdgeType extends IWeightedEdge>(
@@ -68,7 +66,7 @@ export function createWeightedPath<VertexType, EdgeType extends IWeightedEdge>(
 /**
  * @param start - the provided start vertex
  * @param end - the provided end vertex
- * @param vertices - the List of all vertices
+ * @param vertices - the list of all vertices
  * @returns if the provided vertices are indeed the start and the end vertices
  */
 export function validateStartAndEnd<VertexType>(
@@ -80,11 +78,11 @@ export function validateStartAndEnd<VertexType>(
 }
 
 /**
- * Function for validating all vertices and edges of the given Lists.
+ * Function for validating all vertices and edges of the given lists.
  *
  * @param graph - the graph the information is being checked against
- * @param vertices - the List of all vertices of the Path being created
- * @returns if the provided Lists match the given graph
+ * @param vertices - the list of all vertices of the path being created
+ * @returns if the provided list match the given graph
  */
 export function validateConnections<VertexType, EdgeType extends IEdge>(
   graph: IGraph<VertexType, EdgeType>,
@@ -136,4 +134,30 @@ export function mergePathEffectsTogether(
   }
 
   return combined;
+}
+
+/**
+ * @param path - path to check for similarities
+ * @param paths - list of paths to check inclusion with
+ * @returns whether provided path is subset of one of listed ones
+ */
+export function isOneOfPaths<T>(path: IPath<T>, paths: Array<IPath<T>>): boolean {
+  // If it is same path, then just do not add it.
+  for (const it of paths) {
+    let isSamePath: boolean = true;
+
+    for (let i = 0; i < it.vertices.length; i++) {
+      if (it.vertices[i] !== path.vertices[i]) {
+        isSamePath = false;
+        break;
+      }
+    }
+
+    // All path nodes are same.
+    if (isSamePath) {
+      return true;
+    }
+  }
+
+  return false;
 }

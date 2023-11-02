@@ -2,13 +2,11 @@ import { describe, expect, it } from "@jest/globals";
 
 import { GenericAction } from "#/fixtures/mocks";
 
-import { DirectedWeightedGraph, IEdge, IPath, IWeightedEdge } from "@/graph";
-import { IWeightedPath } from "@/graph/IWeightedPath";
+import { DirectedWeightedGraph, IEdge, IPath } from "@/graph";
 import { GraphNode } from "@/planner";
 import { Property } from "@/Property";
 import { Optional } from "@/types";
-import { createPath, createWeightedPath, mergePathEffectsTogether } from "@/utils/path";
-import { addNodeToGraphPathEnd } from "@/utils/planner";
+import { createPath, isOneOfPaths, mergePathEffectsTogether } from "@/utils/path";
 
 describe("path utils module", () => {
   it("extractActionsFromGraphPath should correctly extract actions from graph path", () => {
@@ -173,5 +171,61 @@ describe("path utils module", () => {
       new Property("same", "same"),
       new Property("c", "new"),
     ]);
+  });
+
+  it("isOneOfPaths should check path inclusion", () => {
+    const graph: DirectedWeightedGraph<number> = new DirectedWeightedGraph<number>().addVertices([1, 2, 3, 4, 9, 16]);
+
+    graph
+      .addEdge(1, 2, { weight: 1 })
+      .addEdge(2, 3, { weight: 2 })
+      .addEdge(2, 4, { weight: 2 })
+      .addEdge(3, 9, { weight: 2 })
+      .addEdge(4, 16, { weight: 2 });
+
+    const firstPath: IPath<number> = createPath(graph, 1, 2, [1, 2], [graph.getEdge(1, 2) as IEdge]) as IPath<number>;
+
+    const secondPath: IPath<number> = createPath(
+      graph,
+      1,
+      9,
+      [1, 2, 3, 9],
+      [graph.getEdge(1, 2) as IEdge, graph.getEdge(2, 3) as IEdge, graph.getEdge(3, 9) as IEdge]
+    ) as IPath<number>;
+
+    const thirdPath: IPath<number> = createPath(
+      graph,
+      1,
+      16,
+      [1, 2, 4, 16],
+      [graph.getEdge(1, 2) as IEdge, graph.getEdge(2, 4) as IEdge, graph.getEdge(4, 16) as IEdge]
+    ) as IPath<number>;
+
+    expect(isOneOfPaths(firstPath, [firstPath])).toBe(true);
+    expect(isOneOfPaths(firstPath, [thirdPath, secondPath, firstPath])).toBe(true);
+    expect(isOneOfPaths(secondPath, [thirdPath, secondPath, firstPath])).toBe(true);
+    expect(isOneOfPaths(thirdPath, [thirdPath, secondPath, firstPath])).toBe(true);
+    expect(
+      isOneOfPaths(createPath(graph, 1, 2, [1, 2], [graph.getEdge(1, 2) as IEdge]) as IPath<number>, [
+        thirdPath,
+        secondPath,
+        firstPath,
+      ])
+    ).toBe(true);
+
+    expect(isOneOfPaths(firstPath, [])).toBe(false);
+    expect(isOneOfPaths(firstPath, [secondPath, thirdPath])).toBe(false);
+    expect(
+      isOneOfPaths(
+        createPath(
+          graph,
+          1,
+          3,
+          [1, 2, 3],
+          [graph.getEdge(1, 2) as IEdge, graph.getEdge(2, 3) as IEdge]
+        ) as IPath<number>,
+        [thirdPath, secondPath, firstPath]
+      )
+    ).toBe(true);
   });
 });
