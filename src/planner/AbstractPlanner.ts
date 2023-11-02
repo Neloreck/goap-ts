@@ -1,6 +1,7 @@
 import { IWeightedEdge, IWeightedGraph } from "src/graph";
 
 import { AbstractAction } from "@/AbstractAction";
+import { Plan, Properties } from "@/alias";
 import { IWeightedPath } from "@/graph/IWeightedPath";
 import { GraphNode } from "@/planner/GraphNode";
 import { Property } from "@/Property";
@@ -59,9 +60,7 @@ export abstract class AbstractPlanner {
     this.endNodes = [];
 
     try {
-      const goal: Array<Property> = this.unit
-        .getGoalState()
-        .sort((first, second) => first.importance - second.importance);
+      const goal: Properties = this.unit.getGoalState().sort((first, second) => second.importance - first.importance);
 
       // The Integer.MaxValue indicates that the goal was passed by the changeGoalImmediatly function.
       // An empty Queue is returned instead of null because null would result in the IdleState to call this
@@ -91,7 +90,7 @@ export abstract class AbstractPlanner {
    * @param goalState - list of states the action queue has to fulfill
    * @returns a DirectedWeightedGraph generated from all possible unit actions for a goal
    */
-  protected createGraph(goalState: Array<Property> = this.unit.getGoalState()): IWeightedGraph<GraphNode> {
+  protected createGraph(goalState: Properties = this.unit.getGoalState()): IWeightedGraph<GraphNode> {
     const generatedGraph: IWeightedGraph<GraphNode> = this.createBaseGraph();
 
     this.addVertices(generatedGraph, goalState);
@@ -106,7 +105,7 @@ export abstract class AbstractPlanner {
    * @param graph - the graph the vertices are being added to
    * @param goalState - list of States the unit has listed as their goals
    */
-  protected addVertices(graph: IWeightedGraph<GraphNode>, goalState: Array<Property>): void {
+  protected addVertices(graph: IWeightedGraph<GraphNode>, goalState: Properties): void {
     // The effects from the world state as well as the precondition of each
     // goal have to be set at the beginning, since these are the effects the
     // unit tries to archive with its actions. Also the startNode has to
@@ -239,7 +238,7 @@ export abstract class AbstractPlanner {
         // produce a suitable effect set regarding the preconditions of
         // the current node.
         for (const pathToListNode of node.pathsToThisNode) {
-          if (areAllPreconditionsMet(otherNodeInGraph.preconditions, node.getEffectState(pathToListNode))) {
+          if (areAllPreconditionsMet(otherNodeInGraph.preconditions, node.states.get(pathToListNode) as Properties)) {
             connected = true;
 
             graph.addEdge(node, otherNodeInGraph, { weight: (node.action as AbstractAction).generateCost(this.unit) });
@@ -264,20 +263,19 @@ export abstract class AbstractPlanner {
   }
 
   /**
-   * Function for searching a graph for the lowest cost of a series of actions
-   * which have to be taken to archive a certain goal which has most certainly
-   * the highest importance.
+   * Function for searching a graph for the lowest cost of a series of actions which have to be taken to archive
+   * a certain goal which has most certainly the highest importance.
    *
    * @param graph - the graph of goap actions the unit has to take in order to achieve a goal
    * @returns the Queue of goap actions which has the lowest cost to archive a goal
    */
-  protected searchGraphForActionQueue(graph: IWeightedGraph<GraphNode>): Optional<Queue<AbstractAction>> {
-    for (let i = 0; i < this.endNodes.length; i++) {
-      this.endNodes[i].pathsToThisNode.sort((first, second) => first.totalWeight - second.totalWeight);
+  protected searchGraphForActionQueue(graph: IWeightedGraph<GraphNode>): Optional<Plan> {
+    if (this.endNodes.length) {
+      // Sort by cost to find the most efficient way.
+      this.endNodes[0].pathsToThisNode.sort((first, second) => first.totalWeight - second.totalWeight);
 
-      for (let j = 0; j < this.endNodes[i].pathsToThisNode.length; j++) {
-        return extractActionsFromGraphPath(this.endNodes[i].pathsToThisNode[j], this.startNode, this.endNodes[i]);
-      }
+      // Get the most efficient for the most important goal.
+      return extractActionsFromGraphPath(this.endNodes[0].pathsToThisNode[0], this.startNode, this.endNodes[0]) ?? null;
     }
 
     return null;

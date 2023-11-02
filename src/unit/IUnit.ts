@@ -1,16 +1,16 @@
 import { AbstractAction } from "@/AbstractAction";
-import { Property } from "@/Property";
-import { AnyObject, Queue } from "@/types";
+import { Plan, Properties } from "@/alias";
+import { AnyObject } from "@/types";
 
 export interface IUnit {
   /**
    * @returns current world state of the unit
    */
-  getWorldState(): Array<Property>;
+  getWorldState(): Properties;
   /**
    * @returns goal state of the unit to reach
    */
-  getGoalState(): Array<Property>;
+  getGoalState(): Properties;
   /**
    * @returns list of available actions for the unit
    */
@@ -25,13 +25,13 @@ export interface IUnit {
    *
    * @param plan - the actions the unit hat to take in order to archive the goal
    */
-  onGoapPlanFound(plan: Queue<AbstractAction>): void;
+  onGoapPlanFound(plan: Plan): void;
   /**
    * Gets called when a plan failed to execute.
    *
    * @param plan - the remaining actions in the action queue that failed
    */
-  onGoapPlanFailed(plan: Queue<AbstractAction>): void;
+  onGoapPlanFailed(plan: Plan): void;
   /**
    * Gets called when a plan was finished.
    */

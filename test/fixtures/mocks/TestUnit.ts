@@ -1,13 +1,12 @@
 import { jest } from "@jest/globals";
 
-import { AbstractAction } from "@/AbstractAction";
-import { Queue } from "@/types";
+import { Plan } from "@/alias";
 import { AbstractUnit } from "@/unit/AbstractUnit";
 
 export class TestUnit extends AbstractUnit {
-  public onGoapPlanFound = jest.fn((actions: Queue<AbstractAction>): void => {});
+  public onGoapPlanFound = jest.fn((actions: Plan): void => {});
 
-  public onGoapPlanFailed = jest.fn((actions: Queue<AbstractAction>): void => {});
+  public onGoapPlanFailed = jest.fn((actions: Plan): void => {});
 
   public onGoapPlanFinished = jest.fn();
 

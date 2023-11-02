@@ -3,6 +3,7 @@ import { describe, expect, it, jest } from "@jest/globals";
 import { GenericAction } from "#/fixtures/mocks";
 
 import { AbstractAction } from "@/AbstractAction";
+import { Plan, Properties } from "@/alias";
 import { IImportantUnitChangeEventListener } from "@/event/IImportantUnitChangeEventListener";
 import { Property } from "@/Property";
 import { Queue } from "@/types";
@@ -10,9 +11,9 @@ import { AbstractUnit } from "@/unit/AbstractUnit";
 
 describe("AbstractUnit class", () => {
   class Unit extends AbstractUnit {
-    public onGoapPlanFound = jest.fn((actions: Queue<AbstractAction>): void => {});
+    public onGoapPlanFound = jest.fn((actions: Plan): void => {});
 
-    public onGoapPlanFailed = jest.fn((actions: Queue<AbstractAction>): void => {});
+    public onGoapPlanFailed = jest.fn((actions: Plan): void => {});
 
     public onGoapPlanFinished = jest.fn();
 
@@ -34,7 +35,7 @@ describe("AbstractUnit class", () => {
 
   it("should correctly handle world state", () => {
     const unit: Unit = new Unit();
-    const exampleState: Array<Property> = [new Property("a", true), new Property("b", false), new Property("c", false)];
+    const exampleState: Properties = [new Property("a", true), new Property("b", false), new Property("c", false)];
 
     expect(unit.getWorldState()).toHaveLength(0);
 
@@ -49,10 +50,13 @@ describe("AbstractUnit class", () => {
     expect(exampleState).toHaveLength(4);
     expect(exampleState).toContain(property);
 
-    unit.addWorldState(new Property("d", true));
+    const propertyDOverride: Property = new Property("d", true);
+
+    unit.addWorldState(propertyDOverride);
 
     expect(exampleState).toHaveLength(4);
-    expect(exampleState).toContain(property);
+    expect(exampleState).not.toContain(property);
+    expect(exampleState).toContain(propertyDOverride);
 
     unit.removeWorldStateProperty("d");
 
@@ -73,7 +77,7 @@ describe("AbstractUnit class", () => {
 
   it("should correctly handle goal state", () => {
     const unit: Unit = new Unit();
-    const exampleState: Array<Property> = [new Property("a", true), new Property("b", false), new Property("c", false)];
+    const exampleState: Properties = [new Property("a", true), new Property("b", false), new Property("c", false)];
 
     expect(unit.getGoalState()).toHaveLength(0);
 
@@ -88,20 +92,25 @@ describe("AbstractUnit class", () => {
     expect(exampleState).toHaveLength(4);
     expect(exampleState).toContain(property);
 
-    unit.addGoalState(new Property("d", true));
+    const newDOverride: Property = new Property("d", true);
+
+    unit.addGoalState(newDOverride);
 
     expect(exampleState).toHaveLength(4);
-    expect(exampleState).toContain(property);
+    expect(exampleState).not.toContain(property);
+    expect(exampleState).toContain(newDOverride);
 
     unit.removeGoalState("d");
 
     expect(exampleState).toHaveLength(3);
     expect(exampleState).not.toContain(property);
+    expect(exampleState).not.toContain(newDOverride);
 
     unit.removeGoalState("d");
 
     expect(exampleState).toHaveLength(3);
     expect(exampleState).not.toContain(property);
+    expect(exampleState).not.toContain(newDOverride);
 
     unit.removeGoalState("a");
     unit.removeGoalState("b");

@@ -1,3 +1,4 @@
+export * from "@/alias";
 export * from "@/agent";
 export * from "@/error";
 export * from "@/event";

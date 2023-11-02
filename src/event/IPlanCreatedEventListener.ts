@@ -1,5 +1,4 @@
-import { AbstractAction } from "@/AbstractAction";
-import { Queue } from "@/types";
+import { Plan } from "@/alias";
 
 export interface IPlanCreatedEventListener {
   /**
@@ -8,5 +7,5 @@ export interface IPlanCreatedEventListener {
    *
    * @param plan - the plan that the planner has created and is ready to be executed
    */
-  onPlanCreated(plan: Queue<AbstractAction>): void;
+  onPlanCreated(plan: Plan): void;
 }

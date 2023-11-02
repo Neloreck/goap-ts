@@ -2,11 +2,10 @@ import { describe, expect, it, jest } from "@jest/globals";
 
 import { GenericAction } from "#/fixtures/mocks";
 
-import { AbstractAction } from "@/AbstractAction";
+import { Plan } from "@/alias";
 import { IPlanCreatedEventListener } from "@/event/IPlanCreatedEventListener";
 import { IPlanner } from "@/planner/IPlanner";
 import { IdleState } from "@/state_machine/IdleState";
-import { Queue } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 
 describe("IdleState class", () => {
@@ -21,7 +20,7 @@ describe("IdleState class", () => {
   });
 
   it("should correctly emit events when plan is created", () => {
-    const plan: Queue<AbstractAction> = [new GenericAction(1), new GenericAction(2)];
+    const plan: Plan = [new GenericAction(1), new GenericAction(2)];
     const planner: IPlanner = { plan: jest.fn(() => null) } as IPlanner;
     const listener: IPlanCreatedEventListener = { onPlanCreated: jest.fn() };
     const state: IdleState = new IdleState(planner);

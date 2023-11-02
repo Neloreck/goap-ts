@@ -12,7 +12,7 @@ import { createPath, createWeightedPath } from "@/utils/path";
 import { addNodeToGraphPathEnd, areAllPreconditionsMet, extractActionsFromGraphPath } from "@/utils/planner";
 
 describe("planner utils module", () => {
-  it("extractActionsFromGraphPath should correctly extract actions from graph path", async () => {
+  it("extractActionsFromGraphPath should correctly extract actions from graph path", () => {
     const start: GraphNode = new GraphNode([], [], new GenericAction(1));
     const second: GraphNode = new GraphNode([], [], new GenericAction(2));
     const third: GraphNode = new GraphNode([], [], new GenericAction(3));

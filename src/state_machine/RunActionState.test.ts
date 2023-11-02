@@ -3,16 +3,16 @@ import { describe, expect, it, jest } from "@jest/globals";
 import { GenericAction } from "#/fixtures/mocks";
 
 import { AbstractAction } from "@/AbstractAction";
+import { Plan } from "@/alias";
 import { FiniteStateMachine } from "@/state_machine/FiniteStateMachine";
 import { MoveToState } from "@/state_machine/MoveToState";
 import { RunActionState } from "@/state_machine/RunActionState";
-import { Queue } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 
 describe("RunActionState class", () => {
   it("should correctly initialize", () => {
     const fsm: FiniteStateMachine = new FiniteStateMachine();
-    const plan: Queue<AbstractAction> = [new GenericAction(1), new GenericAction(2)];
+    const plan: Plan = [new GenericAction(1), new GenericAction(2)];
     const state: RunActionState = new RunActionState(fsm, plan);
 
     expect(state.getCurrentPlan()).toBe(plan);
@@ -22,7 +22,7 @@ describe("RunActionState class", () => {
     const first: AbstractAction = new GenericAction(1);
     const second: AbstractAction = new GenericAction(1);
     const fsm: FiniteStateMachine = new FiniteStateMachine();
-    const plan: Queue<AbstractAction> = [first, second];
+    const plan: Plan = [first, second];
     const state: RunActionState = new RunActionState(fsm, plan);
 
     jest.spyOn(first, "performAction").mockImplementation(() => false);
@@ -31,7 +31,7 @@ describe("RunActionState class", () => {
 
   it("should correctly handle empty plan", () => {
     const fsm: FiniteStateMachine = new FiniteStateMachine();
-    const plan: Queue<AbstractAction> = [];
+    const plan: Plan = [];
     const state: RunActionState = new RunActionState(fsm, plan);
 
     expect(state.execute({} as IUnit)).toBe(true);
@@ -41,7 +41,7 @@ describe("RunActionState class", () => {
     const first: AbstractAction = new GenericAction(1);
     const second: AbstractAction = new GenericAction(1);
     const fsm: FiniteStateMachine = new FiniteStateMachine();
-    const plan: Queue<AbstractAction> = [first, second];
+    const plan: Plan = [first, second];
     const state: RunActionState = new RunActionState(fsm, plan);
 
     jest.spyOn(first, "isFinished").mockImplementation(() => true);
@@ -63,7 +63,7 @@ describe("RunActionState class", () => {
     const second: AbstractAction = new GenericAction(1);
     const third: AbstractAction = new GenericAction(1);
     const fsm: FiniteStateMachine = new FiniteStateMachine();
-    const plan: Queue<AbstractAction> = [first, second, third];
+    const plan: Plan = [first, second, third];
     const state: RunActionState = new RunActionState(fsm, plan);
     const unit: IUnit = {} as IUnit;
 
@@ -103,7 +103,7 @@ describe("RunActionState class", () => {
     const second: AbstractAction = new GenericAction(1);
     const third: AbstractAction = new GenericAction(1);
     const fsm: FiniteStateMachine = new FiniteStateMachine();
-    const plan: Queue<AbstractAction> = [first, second, third];
+    const plan: Plan = [first, second, third];
     const state: RunActionState = new RunActionState(fsm, plan);
     const unit: IUnit = {} as IUnit;
 

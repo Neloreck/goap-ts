@@ -1,4 +1,5 @@
 import { AbstractAction } from "@/AbstractAction";
+import { Properties } from "@/alias";
 import { IImportantUnitChangeEventListener } from "@/event/IImportantUnitChangeEventListener";
 import { Property } from "@/Property";
 import { AnyObject, PropertyId } from "@/types";
@@ -9,8 +10,8 @@ import { removeFromArray } from "@/utils/array";
  * The superclass for a unit using the agent.
  */
 export abstract class AbstractUnit implements IUnit {
-  private goal: Array<Property> = [];
-  private state: Array<Property> = [];
+  private goal: Properties = [];
+  private state: Properties = [];
   private actions: Array<AbstractAction> = [];
   private listeners: Array<IImportantUnitChangeEventListener> = [];
 
@@ -35,7 +36,7 @@ export abstract class AbstractUnit implements IUnit {
   /**
    * @returns current world state of the unit
    */
-  public getWorldState(): Array<Property> {
+  public getWorldState(): Properties {
     return this.state;
   }
 
@@ -43,41 +44,52 @@ export abstract class AbstractUnit implements IUnit {
    * Override current world state object.
    *
    * @param state - new state to override
+   * @returns this
    */
-  public setWorldState(state: Array<Property>): void {
+  public setWorldState(state: Properties): typeof this {
     this.state = state;
+
+    return this;
   }
 
   /**
    * Add new world state field.
    *
    * @param property
+   * @returns this
    */
-  public addWorldState(property: Property): void {
-    if (this.state.findIndex((it) => it.id === property.id) === -1) {
+  public addWorldState(property: Property): typeof this {
+    const index: number = this.state.findIndex((it) => it.id === property.id);
+
+    if (index === -1) {
       this.state.push(property);
+    } else {
+      this.state[index] = property;
     }
+
+    return this;
   }
 
   /**
    * @param id - identifier of the effect to remove
+   * @returns this
    */
-  public removeWorldStateProperty(id: PropertyId): boolean {
+  public removeWorldStateProperty(id: PropertyId): typeof this {
     for (let it = 0; it < this.state.length; it++) {
       if (this.state[it].id === id) {
         this.state.splice(it, 1);
 
-        return true;
+        return this;
       }
     }
 
-    return false;
+    return this;
   }
 
   /**
    * @returns current goal properties list
    */
-  public getGoalState(): Array<Property> {
+  public getGoalState(): Properties {
     return this.goal;
   }
 
@@ -85,41 +97,48 @@ export abstract class AbstractUnit implements IUnit {
    * Set new goal state.
    *
    * @param goal - new properties list to set as goal
+   * @returns this
    */
-  public setGoalState(goal: Array<Property>): void {
+  public setGoalState(goal: Properties): typeof this {
     this.goal = goal;
+
+    return this;
   }
 
   /**
    * Add property to current goal state.
    *
-   * @param newGoalProperty - new property to add
+   * @param property - new property to add
+   * @returns this
    */
-  public addGoalState(newGoalProperty: Property): boolean {
-    if (this.goal.findIndex((it) => it.id === newGoalProperty.id) === -1) {
-      this.goal.push(newGoalProperty);
+  public addGoalState(property: Property): typeof this {
+    const index: number = this.goal.findIndex((it) => it.id === property.id);
 
-      return true;
+    if (index === -1) {
+      this.goal.push(property);
+    } else {
+      this.goal[index] = property;
     }
 
-    return false;
+    return this;
   }
 
   /**
    * Remove goal property from current goal state.
    *
    * @param id - identifier of the property to remove
+   * @returns this
    */
-  public removeGoalState(id: string): boolean {
+  public removeGoalState(id: string): typeof this {
     for (let it = 0; it < this.goal.length; it++) {
       if (this.goal[it].id === id) {
         this.goal.splice(it, 1);
 
-        return true;
+        return this;
       }
     }
 
-    return false;
+    return this;
   }
 
   /**
@@ -133,16 +152,22 @@ export abstract class AbstractUnit implements IUnit {
    * Set list of currently available actions.
    *
    * @param actions - list of available actions to set as current
+   * @returns this
    */
-  public setActions(actions: Array<AbstractAction>): void {
+  public setActions(actions: Array<AbstractAction>): typeof this {
     this.actions = actions;
+
+    return this;
   }
 
   /**
    * @param action - new action to add in current available list
+   * @returns this
    */
-  public addAction(action: AbstractAction): void {
+  public addAction(action: AbstractAction): typeof this {
     this.actions.push(action);
+
+    return this;
   }
 
   /**

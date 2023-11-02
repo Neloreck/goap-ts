@@ -2,12 +2,11 @@ import { describe, expect, it, jest } from "@jest/globals";
 
 import { GenericAction, TestUnit } from "#/fixtures/mocks";
 
-import { AbstractAction } from "@/AbstractAction";
+import { Plan } from "@/alias";
 import { DirectedWeightedGraph, IWeightedEdge, IWeightedGraph } from "@/graph";
 import { AbstractPlanner } from "@/planner/AbstractPlanner";
 import { GraphNode } from "@/planner/GraphNode";
 import { Property } from "@/Property";
-import { Queue } from "@/types";
 import { AbstractUnit } from "@/unit/AbstractUnit";
 
 describe("GenericPlanner class", () => {
@@ -62,7 +61,7 @@ describe("GenericPlanner class", () => {
     expect(planner.getStartNode()).toBeUndefined();
     expect(planner.getEndNodes()).toBeUndefined();
 
-    const plan: Queue<AbstractAction> = planner.plan(unit) as Queue<AbstractAction>;
+    const plan: Plan = planner.plan(unit) as Plan;
     const startNode: GraphNode = planner.getStartNode();
     const endNodes: Array<GraphNode> = planner.getEndNodes();
 
@@ -103,7 +102,7 @@ describe("GenericPlanner class", () => {
 
     unit.addAction(action);
 
-    const plan: Queue<AbstractAction> = new Planner().plan(unit) as Queue<AbstractAction>;
+    const plan: Plan = new Planner().plan(unit) as Plan;
 
     expect(plan).not.toBeNull();
     expect(plan).toHaveLength(1);
@@ -133,7 +132,7 @@ describe("GenericPlanner class", () => {
     unit.addAction(new GenericAction(1));
 
     const planner: Planner = new Planner();
-    const plan: Queue<AbstractAction> = planner.plan(unit) as Queue<AbstractAction>;
+    const plan: Plan = planner.plan(unit) as Plan;
 
     expect(plan).not.toBeNull();
     expect(plan).toHaveLength(2);
@@ -166,7 +165,7 @@ describe("GenericPlanner class", () => {
     jest.spyOn(firstExpensive, "generateBaseCost").mockImplementation(() => 100);
     jest.spyOn(firstCheap, "generateBaseCost").mockImplementation(() => 10);
 
-    const plan: Queue<AbstractAction> = new Planner().plan(unit) as Queue<AbstractAction>;
+    const plan: Plan = new Planner().plan(unit) as Plan;
 
     expect(plan).not.toBeNull();
     expect(plan).toHaveLength(2);
@@ -206,7 +205,7 @@ describe("GenericPlanner class", () => {
     unit.addAction(collectWoodAction);
     unit.addAction(getAxeAction);
 
-    const plan: Queue<AbstractAction> = new Planner().plan(unit) as Queue<AbstractAction>;
+    const plan: Plan = new Planner().plan(unit) as Plan;
 
     expect(plan).not.toBeNull();
     expect(plan).toHaveLength(4);

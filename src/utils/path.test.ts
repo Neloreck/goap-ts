@@ -8,7 +8,7 @@ import { Optional } from "@/types";
 import { createPath } from "@/utils/path";
 
 describe("path utils module", () => {
-  it("extractActionsFromGraphPath should correctly extract actions from graph path", async () => {
+  it("extractActionsFromGraphPath should correctly extract actions from graph path", () => {
     const start: GraphNode = new GraphNode([], [], new GenericAction(1));
     const second: GraphNode = new GraphNode([], [], new GenericAction(2));
     const third: GraphNode = new GraphNode([], [], new GenericAction(3));

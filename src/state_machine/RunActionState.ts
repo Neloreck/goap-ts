@@ -1,4 +1,5 @@
 import { AbstractAction } from "@/AbstractAction";
+import { Plan } from "@/alias";
 import { NotPerformableActionException } from "@/error/NotPerformableActionException";
 import { FiniteStateMachine } from "@/state_machine/FiniteStateMachine";
 import { IFiniteStateMachineState } from "@/state_machine/IFiniteStateMachineState";
@@ -11,14 +12,14 @@ import { queuePeek } from "@/utils/array";
  * State on the FSM Stack.
  */
 export class RunActionState implements IFiniteStateMachineState {
-  private readonly plan: Queue<AbstractAction>;
+  private readonly plan: Plan;
   private readonly fsm: FiniteStateMachine;
 
   /**
    * @param fsm - the FSM on which all states are being stacked.
    * @param plan - the Queue of actions to be taken in order to archive a goal.
    */
-  public constructor(fsm: FiniteStateMachine, plan: Queue<AbstractAction>) {
+  public constructor(fsm: FiniteStateMachine, plan: Plan) {
     this.fsm = fsm;
     this.plan = plan;
   }
@@ -26,7 +27,7 @@ export class RunActionState implements IFiniteStateMachineState {
   /**
    * @returns current plan that was applied when state was created
    */
-  public getCurrentPlan(): Queue<AbstractAction> {
+  public getCurrentPlan(): Plan {
     return this.plan;
   }
 

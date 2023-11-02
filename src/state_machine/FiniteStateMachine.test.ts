@@ -2,14 +2,13 @@ import { describe, expect, it, jest } from "@jest/globals";
 
 import { GenericAction } from "#/fixtures/mocks";
 
-import { AbstractAction } from "@/AbstractAction";
+import { Plan } from "@/alias";
 import { IFiniteStateMachinePlanEventListener } from "@/event/IFiniteStateMachinePlanEventListener";
 import { AbstractPlanner } from "@/planner/AbstractPlanner";
 import { FiniteStateMachine } from "@/state_machine/FiniteStateMachine";
 import { IdleState } from "@/state_machine/IdleState";
 import { MoveToState } from "@/state_machine/MoveToState";
 import { RunActionState } from "@/state_machine/RunActionState";
-import { Queue } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 
 describe("FiniteStateMachine class", () => {
@@ -111,7 +110,7 @@ describe("FiniteStateMachine class", () => {
     const listener: IFiniteStateMachinePlanEventListener = { onPlanFailed: jest.fn(), onPlanFinished: jest.fn() };
     const unit: IUnit = {} as IUnit;
 
-    const somePlan: Queue<AbstractAction> = [new GenericAction(5), new GenericAction(32)];
+    const somePlan: Plan = [new GenericAction(5), new GenericAction(32)];
     const anotherActState: RunActionState = new RunActionState(fsm, somePlan);
     const actState: RunActionState = new RunActionState(fsm, [new GenericAction(2), new GenericAction(3)]);
     const idleState: IdleState = new IdleState({} as AbstractPlanner);

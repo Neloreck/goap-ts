@@ -1,8 +1,8 @@
-import { AbstractAction } from "@/AbstractAction";
+import { Plan } from "@/alias";
 import { IFiniteStateMachinePlanEventListener } from "@/event/IFiniteStateMachinePlanEventListener";
 import { IFiniteStateMachineState } from "@/state_machine/IFiniteStateMachineState";
 import { RunActionState } from "@/state_machine/RunActionState";
-import { Definable, Maybe, Queue, Stack } from "@/types";
+import { Definable, Maybe, Stack } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 import { removeFromArray, stackPeek } from "@/utils/array";
 
@@ -84,7 +84,7 @@ export class FiniteStateMachine {
    *
    * @param plan - remaining actions after plan fail
    */
-  private dispatchNewPlanFailedEvent(plan: Queue<AbstractAction>): void {
+  private dispatchNewPlanFailedEvent(plan: Plan): void {
     for (const listener of this.planEventListeners) {
       listener.onPlanFailed(plan);
     }

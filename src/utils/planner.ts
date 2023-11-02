@@ -1,9 +1,9 @@
 import { IPath, IWeightedEdge, IWeightedGraph } from "src/graph";
 
 import { AbstractAction } from "@/AbstractAction";
+import { Properties } from "@/alias";
 import { IWeightedPath } from "@/graph/IWeightedPath";
 import { GraphNode } from "@/planner/GraphNode";
-import { Property } from "@/Property";
 import { Optional } from "@/types";
 import { createWeightedPath } from "@/utils/path";
 
@@ -64,7 +64,7 @@ export function addNodeToGraphPathEnd<T>(
  * @param effects - set of states which are required
  * @return if all preconditions are met with the given effects
  */
-export function areAllPreconditionsMet(preconditions: Array<Property>, effects: Array<Property>): boolean {
+export function areAllPreconditionsMet(preconditions: Properties, effects: Properties): boolean {
   for (const precondition of preconditions) {
     let currentPreconditionMet: boolean = false;
 

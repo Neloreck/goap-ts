@@ -4,6 +4,7 @@ import { GenericAction, TestUnit } from "#/fixtures/mocks";
 
 import { AbstractAction } from "@/AbstractAction";
 import { AbstractAgent } from "@/agent/AbstractAgent";
+import { Plan } from "@/alias";
 import { GenericPlanner } from "@/planner/GenericPlanner";
 import { IPlanner } from "@/planner/IPlanner";
 import { Property } from "@/Property";
@@ -11,7 +12,6 @@ import { FiniteStateMachine } from "@/state_machine/FiniteStateMachine";
 import { IdleState } from "@/state_machine/IdleState";
 import { MoveToState } from "@/state_machine/MoveToState";
 import { RunActionState } from "@/state_machine/RunActionState";
-import { Queue } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 
 describe("AbstractAgent class", () => {
@@ -119,7 +119,7 @@ describe("AbstractAgent class", () => {
     const unit: TestUnit = new TestUnit();
     const agent: Agent = new Agent(unit);
     const state: MoveToState = new MoveToState(new GenericAction(55));
-    const plan: Queue<AbstractAction> = [new GenericAction(1), new GenericAction(2)];
+    const plan: Plan = [new GenericAction(1), new GenericAction(2)];
 
     agent.fsm.push(state);
     agent.fsm.push(agent.idleState);
@@ -135,7 +135,7 @@ describe("AbstractAgent class", () => {
   it("should correctly handle plan failure", () => {
     const unit: TestUnit = new TestUnit();
     const agent: Agent = new Agent(unit);
-    const plan: Queue<AbstractAction> = [new GenericAction(1), new GenericAction(2)];
+    const plan: Plan = [new GenericAction(1), new GenericAction(2)];
 
     agent.fsm.push(agent.idleState);
 

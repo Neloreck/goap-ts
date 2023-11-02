@@ -1,3 +1,4 @@
+import { Properties } from "@/alias";
 import { Property } from "@/Property";
 import { PropertyId } from "@/types";
 import { IUnit } from "@/unit/IUnit";
@@ -6,8 +7,8 @@ import { IUnit } from "@/unit/IUnit";
  * Superclass for all actions a unit can perform
  */
 export abstract class AbstractAction<T = any> {
-  private readonly preconditions: Array<Property> = [];
-  private readonly effects: Array<Property> = [];
+  private readonly preconditions: Properties = [];
+  private readonly effects: Properties = [];
 
   public target: T;
 
@@ -21,7 +22,7 @@ export abstract class AbstractAction<T = any> {
   /**
    * @returns list of action preconditions
    */
-  public getPreconditions(): Array<Property> {
+  public getPreconditions(): Properties {
     return this.preconditions;
   }
 
@@ -57,7 +58,7 @@ export abstract class AbstractAction<T = any> {
   /**
    * @returns list of action effects
    */
-  public getEffects(): Array<Property> {
+  public getEffects(): Properties {
     return this.effects;
   }
 

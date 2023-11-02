@@ -1,4 +1,5 @@
 import { AbstractAction } from "@/AbstractAction";
+import { Plan } from "@/alias";
 import { IPlanCreatedEventListener } from "@/event/IPlanCreatedEventListener";
 import { IPlanner } from "@/planner/IPlanner";
 import { IFiniteStateMachineState } from "@/state_machine/IFiniteStateMachineState";
@@ -63,7 +64,7 @@ export class IdleState implements IFiniteStateMachineState {
    *
    * @param plan - queue of events to send with event notification
    */
-  private dispatchPlanCreatedEvent(plan: Queue<AbstractAction>): void {
+  private dispatchPlanCreatedEvent(plan: Plan): void {
     for (const listener of this.planCreatedListeners) {
       listener.onPlanCreated(plan);
     }

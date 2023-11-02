@@ -1,11 +1,10 @@
-import { AbstractAction } from "@/AbstractAction";
 import { IAgent } from "@/agent/IAgent";
+import { Plan } from "@/alias";
 import { IPlanner } from "@/planner/IPlanner";
 import { Property } from "@/Property";
 import { FiniteStateMachine } from "@/state_machine/FiniteStateMachine";
 import { IdleState } from "@/state_machine/IdleState";
 import { RunActionState } from "@/state_machine/RunActionState";
-import { Queue } from "@/types";
 import { AbstractUnit } from "@/unit/AbstractUnit";
 import { IUnit } from "@/unit/IUnit";
 
@@ -94,7 +93,7 @@ export abstract class AbstractAgent implements IAgent {
    *
    * @param plan - newly created plan to work with
    */
-  public onPlanCreated(plan: Queue<AbstractAction>): void {
+  public onPlanCreated(plan: Plan): void {
     this.unit.onGoapPlanFound(plan);
 
     this.fsm.pop();
@@ -106,7 +105,7 @@ export abstract class AbstractAgent implements IAgent {
    *
    * @param plan - remaining actions in the plan after failure
    */
-  public onPlanFailed(plan: Queue<AbstractAction>): void {
+  public onPlanFailed(plan: Plan): void {
     this.unit.onGoapPlanFailed(plan);
   }
 
