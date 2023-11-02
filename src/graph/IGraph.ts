@@ -6,6 +6,10 @@ import { Optional } from "@/types";
  */
 export interface IGraph<VertexType, EdgeType extends IEdge = IEdge> {
   /**
+   * @returns vertices iterator
+   */
+  [Symbol.iterator]: () => IterableIterator<VertexType>;
+  /**
    * @returns all vertices inside the graph
    */
   getVertices(): Set<VertexType>;

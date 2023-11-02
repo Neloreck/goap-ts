@@ -183,28 +183,28 @@ export abstract class AbstractPlanner {
     const nodesToWorkOn: Array<GraphNode> = [];
 
     // graphNode.action != null -> start and ends
-    for (const graphNode of graph.getVertices()) {
+    for (const node of graph) {
       if (
-        this.startNode !== graphNode &&
-        graphNode.action !== null &&
-        (!graphNode.preconditions.length || areAllPreconditionsMet(graphNode.preconditions, this.startNode.effects))
+        this.startNode !== node &&
+        node.action !== null &&
+        (!node.preconditions.length || areAllPreconditionsMet(node.preconditions, this.startNode.effects))
       ) {
-        graph.addEdge(this.startNode, graphNode, { weight: 0 });
+        graph.addEdge(this.startNode, node, { weight: 0 });
 
-        if (!nodesToWorkOn.includes(graphNode)) {
-          nodesToWorkOn.push(graphNode);
+        if (!nodesToWorkOn.includes(node)) {
+          nodesToWorkOn.push(node);
         }
 
         // Add the path to the node to the GraphPath list in the node
         // since this is the first step inside the graph.
-        graphNode.addGraphPath(
+        node.addGraphPath(
           null,
           createWeightedPath(
             graph,
             this.startNode,
-            graphNode,
-            [this.startNode, graphNode],
-            [graph.getEdge(this.startNode, graphNode) as IWeightedEdge]
+            node,
+            [this.startNode, node],
+            [graph.getEdge(this.startNode, node) as IWeightedEdge]
           ) as IWeightedPath<GraphNode>
         );
       }
@@ -230,7 +230,7 @@ export abstract class AbstractPlanner {
   ): boolean {
     let connected: boolean = false;
 
-    for (const otherNodeInGraph of graph.getVertices()) {
+    for (const otherNodeInGraph of graph) {
       // End nodes can not have an edge towards another node and the target node must not be itself.
       // Also, there must not already be an edge in the graph.
       // && !graph.hasEdge(node, nodeInGraph) has to be added or loops occur which lead to a crash.

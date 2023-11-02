@@ -18,6 +18,13 @@ export class DirectedGraph<VertexType, EdgeType extends IEdge = IEdge> implement
   }
 
   /**
+   * @returns iterator over graph vertices
+   */
+  public [Symbol.iterator](): IterableIterator<VertexType> {
+    return this.data.keys();
+  }
+
+  /**
    * @param vertex - new vertex to add in graph
    * @returns this
    */
