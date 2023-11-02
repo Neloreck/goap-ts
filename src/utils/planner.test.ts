@@ -6,12 +6,32 @@ import { AbstractAction } from "@/AbstractAction";
 import { DirectedWeightedGraph, IEdge, IPath, IWeightedEdge } from "@/graph";
 import { IWeightedPath } from "@/graph/IWeightedPath";
 import { GraphNode } from "@/planner";
-import { Property } from "@/Property";
+import { Property } from "@/property/Property";
 import { Optional } from "@/types";
 import { createPath, createWeightedPath } from "@/utils/path";
-import { addNodeToGraphPathEnd, areAllPreconditionsMet, extractActionsFromGraphPath } from "@/utils/planner";
+import {
+  addNodeToGraphPathEnd,
+  areAllPreconditionsMet,
+  extractActionsFromGraphPath,
+  goalComparator,
+} from "@/utils/planner";
 
 describe("planner utils module", () => {
+  it("goalComparator should correctly sort properties by order", () => {
+    expect(
+      [
+        new Property("a", true, 100),
+        new Property("b", false),
+        new Property("z", false, 0),
+        new Property("c", 1, Infinity),
+        { id: "d", value: "e", importance: 1 },
+        { id: "x", value: "e", importance: -Infinity },
+      ]
+        .sort(goalComparator)
+        .map((it) => it.importance)
+    ).toEqual([Infinity, 100, 1, 0, undefined, -Infinity]);
+  });
+
   it("extractActionsFromGraphPath should correctly extract actions from graph path", () => {
     const start: GraphNode = new GraphNode([], [], new GenericAction(1));
     const second: GraphNode = new GraphNode([], [], new GenericAction(2));

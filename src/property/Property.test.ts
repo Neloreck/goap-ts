@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 
-import { Property } from "@/Property";
+import { Property } from "@/property/Property";
 
 describe("Property class", () => {
   it("should correctly initialize", () => {

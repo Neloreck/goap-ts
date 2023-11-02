@@ -1,7 +1,7 @@
 import { AbstractAction } from "@/AbstractAction";
 import { Properties } from "@/alias";
 import { IImportantUnitChangeEventListener } from "@/event/IImportantUnitChangeEventListener";
-import { Property } from "@/Property";
+import { Property } from "@/property/Property";
 import { AnyObject, PropertyId } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 import { removeFromArray } from "@/utils/array";

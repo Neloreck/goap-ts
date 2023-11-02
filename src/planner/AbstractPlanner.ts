@@ -7,7 +7,12 @@ import { GraphNode } from "@/planner/GraphNode";
 import { Optional, Queue } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 import { createWeightedPath } from "@/utils/path";
-import { addNodeToGraphPathEnd, areAllPreconditionsMet, extractActionsFromGraphPath } from "@/utils/planner";
+import {
+  addNodeToGraphPathEnd,
+  areAllPreconditionsMet,
+  extractActionsFromGraphPath,
+  goalComparator,
+} from "@/utils/planner";
 
 /**
  * Class for generating a queue of goap actions.
@@ -60,7 +65,7 @@ export abstract class AbstractPlanner {
     this.endNodes = [];
 
     try {
-      const goal: Properties = this.unit.getGoalState().sort((first, second) => second.importance - first.importance);
+      const goal: Properties = this.unit.getGoalState().sort(goalComparator);
 
       // The Integer.MaxValue indicates that the goal was passed by the changeGoalImmediatly function.
       // An empty Queue is returned instead of null because null would result in the IdleState to call this

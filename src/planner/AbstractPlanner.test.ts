@@ -6,7 +6,7 @@ import { Plan } from "@/alias";
 import { DirectedWeightedGraph, IWeightedEdge, IWeightedGraph } from "@/graph";
 import { AbstractPlanner } from "@/planner/AbstractPlanner";
 import { GraphNode } from "@/planner/GraphNode";
-import { Property } from "@/Property";
+import { Property } from "@/property/Property";
 import { AbstractUnit } from "@/unit/AbstractUnit";
 
 describe("GenericPlanner class", () => {

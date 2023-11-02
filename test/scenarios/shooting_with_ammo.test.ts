@@ -4,7 +4,7 @@ import { GenericAction, TestUnit } from "#/fixtures/mocks";
 
 import { AbstractAction } from "@/AbstractAction";
 import { GenericPlanner } from "@/planner";
-import { Property } from "@/Property";
+import { Property } from "@/property/Property";
 
 describe("shooting scenario", () => {
   const pickAmmo: AbstractAction = new GenericAction("pick_ammo");

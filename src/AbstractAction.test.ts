@@ -3,7 +3,7 @@ import { describe, expect, it, jest } from "@jest/globals";
 import { TestUnit } from "#/fixtures/mocks";
 
 import { AbstractAction } from "@/AbstractAction";
-import { Property } from "@/Property";
+import { Property } from "@/property/Property";
 import { IUnit } from "@/unit/IUnit";
 
 describe("AbstractAction class", () => {

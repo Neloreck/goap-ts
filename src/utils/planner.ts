@@ -4,8 +4,20 @@ import { AbstractAction } from "@/AbstractAction";
 import { Properties } from "@/alias";
 import { IWeightedPath } from "@/graph/IWeightedPath";
 import { GraphNode } from "@/planner/GraphNode";
+import { IProperty } from "@/property";
 import { Optional } from "@/types";
 import { createWeightedPath } from "@/utils/path";
+
+/**
+ * Sorting goal properties by importance.
+ *
+ * @param first - first property to compare
+ * @param second - second property to compare
+ * @returns comparator result for properties based on importance
+ */
+export function goalComparator(first: IProperty, second: IProperty): number {
+  return (second.importance ?? -1) - (first.importance ?? -1);
+}
 
 /**
  * Function for extracting all actions from a provided path.

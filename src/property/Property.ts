@@ -1,14 +1,10 @@
+import { IProperty } from "@/property/IProperty";
 import { PropertyId } from "@/types";
 
 /**
  * Properties which the GOAP planner use to build a graph.
  */
-export class Property<IdType = PropertyId, ValueType = any> {
-  public readonly id: IdType;
-  public readonly value: ValueType;
-
-  public importance: number = 0;
-
+export class Property<Id extends PropertyId = PropertyId, Value = any> implements IProperty<Id, Value> {
   /**
    * @param id - the id the property has
    * @param value - the value of the property
@@ -16,9 +12,9 @@ export class Property<IdType = PropertyId, ValueType = any> {
    *   a worldState. Has no effect in actions being taken. Do NOT set this to Infinity since this causes the goal to be
    *   removed from the set by the planner
    */
-  public constructor(id: IdType, value: ValueType, importance?: number) {
-    this.id = id;
-    this.value = value;
-    this.importance = !importance || importance < 0 ? 0 : importance;
-  }
+  public constructor(
+    public readonly id: Id,
+    public readonly value: Value,
+    public importance?: number
+  ) {}
 }

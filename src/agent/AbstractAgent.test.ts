@@ -7,7 +7,7 @@ import { AbstractAgent } from "@/agent/AbstractAgent";
 import { Plan } from "@/alias";
 import { GenericPlanner } from "@/planner/GenericPlanner";
 import { IPlanner } from "@/planner/IPlanner";
-import { Property } from "@/Property";
+import { Property } from "@/property/Property";
 import { FiniteStateMachine } from "@/state_machine/FiniteStateMachine";
 import { IdleState } from "@/state_machine/IdleState";
 import { MoveToState } from "@/state_machine/MoveToState";

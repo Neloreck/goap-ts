@@ -1,7 +1,7 @@
 import { IAgent } from "@/agent/IAgent";
 import { Plan } from "@/alias";
 import { IPlanner } from "@/planner/IPlanner";
-import { Property } from "@/Property";
+import { Property } from "@/property/Property";
 import { FiniteStateMachine } from "@/state_machine/FiniteStateMachine";
 import { IdleState } from "@/state_machine/IdleState";
 import { RunActionState } from "@/state_machine/RunActionState";

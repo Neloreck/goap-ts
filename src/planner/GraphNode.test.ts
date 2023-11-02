@@ -7,7 +7,7 @@ import { Properties } from "@/alias";
 import { DirectedWeightedGraph, IWeightedEdge } from "@/graph";
 import { IWeightedPath } from "@/graph/IWeightedPath";
 import { GraphNode } from "@/planner/GraphNode";
-import { Property } from "@/Property";
+import { Property } from "@/property/Property";
 import { createWeightedPath } from "@/utils/path";
 import { addNodeToGraphPathEnd } from "@/utils/planner";
 
@@ -117,7 +117,6 @@ describe("GraphNode class", () => {
     expect(weapon.states.get(pickWeaponPath)).toEqual([
       {
         id: "has_weapon",
-        importance: 0,
         value: true,
       },
     ]);
@@ -126,12 +125,10 @@ describe("GraphNode class", () => {
     expect(ammo.states.get(pickAmmoPath)).toEqual([
       {
         id: "has_weapon",
-        importance: 0,
         value: true,
       },
       {
         id: "has_ammo",
-        importance: 0,
         value: true,
       },
     ]);
@@ -139,17 +136,14 @@ describe("GraphNode class", () => {
     expect(shoot.states.get(startShootingPath)).toEqual([
       {
         id: "has_weapon",
-        importance: 0,
         value: true,
       },
       {
         id: "has_ammo",
-        importance: 0,
         value: true,
       },
       {
         id: "is_shooting",
-        importance: 0,
         value: true,
       },
     ]);

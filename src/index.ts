@@ -10,4 +10,4 @@ export * from "@/utils/path";
 export * from "@/types";
 
 export * from "@/AbstractAction";
-export * from "@/Property";
+export * from "@/property/Property";

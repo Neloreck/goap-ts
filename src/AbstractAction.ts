@@ -1,5 +1,5 @@
 import { Properties } from "@/alias";
-import { Property } from "@/Property";
+import { IProperty } from "@/property";
 import { PropertyId } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 
@@ -22,7 +22,7 @@ export abstract class AbstractAction<T = any> {
   /**
    * @param property - new precondition property to add
    */
-  public addPrecondition(property: Property): typeof this {
+  public addPrecondition(property: IProperty): typeof this {
     if (this.preconditions.findIndex((it) => it.id === property.id) === -1) {
       this.preconditions.push(property);
     }
@@ -51,7 +51,7 @@ export abstract class AbstractAction<T = any> {
   /**
    * @param property - world precondition to remove from the action
    */
-  public addEffect(property: Property): typeof this {
+  public addEffect(property: IProperty): typeof this {
     if (this.effects.findIndex((it) => it.id === property.id) === -1) {
       this.effects.push(property);
     }

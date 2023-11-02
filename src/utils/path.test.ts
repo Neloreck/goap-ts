@@ -4,7 +4,7 @@ import { GenericAction } from "#/fixtures/mocks";
 
 import { DirectedWeightedGraph, IEdge, IPath } from "@/graph";
 import { GraphNode } from "@/planner";
-import { Property } from "@/Property";
+import { Property } from "@/property/Property";
 import { Optional } from "@/types";
 import { createPath, isOneOfPaths, mergePathEffectsTogether } from "@/utils/path";
 

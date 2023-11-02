@@ -5,7 +5,7 @@ import { GenericAction } from "#/fixtures/mocks";
 import { AbstractAction } from "@/AbstractAction";
 import { Plan, Properties } from "@/alias";
 import { IImportantUnitChangeEventListener } from "@/event/IImportantUnitChangeEventListener";
-import { Property } from "@/Property";
+import { Property } from "@/property/Property";
 import { Queue } from "@/types";
 import { AbstractUnit } from "@/unit/AbstractUnit";
 
