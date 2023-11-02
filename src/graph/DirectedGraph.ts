@@ -1,6 +1,6 @@
+import { IEdge } from "@/graph/IEdge";
+import { IGraph } from "@/graph/IGraph";
 import { Optional } from "@/types";
-import { IEdge } from "@/utils/graph/IEdge";
-import { IGraph } from "@/utils/graph/IGraph";
 
 /**
  * Basic directed graph implementation.

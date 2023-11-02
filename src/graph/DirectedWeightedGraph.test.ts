@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 
-import { DirectedWeightedGraph } from "@/utils/graph/DirectedWeightedGraph";
-import { IWeightedEdge } from "@/utils/graph/IWeightedEdge";
+import { DirectedWeightedGraph } from "@/graph/DirectedWeightedGraph";
+import { IWeightedEdge } from "@/graph/IWeightedEdge";
 
 describe("DirectedGraph class", () => {
   it("should correctly initialize basic linked graph with builder", () => {

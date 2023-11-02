@@ -2,8 +2,8 @@ import { describe, expect, it } from "@jest/globals";
 
 import { createBasicConnectedTestGraph, createBasicTestGraph } from "#/fixtures/utils";
 
-import { DirectedGraph } from "@/utils/graph/DirectedGraph";
-import { IEdge } from "@/utils/graph/IEdge";
+import { DirectedGraph } from "@/graph/DirectedGraph";
+import { IEdge } from "@/graph/IEdge";
 
 describe("DirectedGraph class", () => {
   it("should correctly initialize from set", () => {

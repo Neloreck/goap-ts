@@ -3,12 +3,12 @@ import { describe, expect, it, jest } from "@jest/globals";
 import { GenericAction, TestUnit } from "#/fixtures/mocks";
 
 import { AbstractAction } from "@/AbstractAction";
+import { DirectedWeightedGraph, IWeightedEdge, IWeightedGraph } from "@/graph";
 import { AbstractPlanner } from "@/planner/AbstractPlanner";
 import { GraphNode } from "@/planner/GraphNode";
 import { Property } from "@/Property";
 import { Queue } from "@/types";
 import { AbstractUnit } from "@/unit/AbstractUnit";
-import { DirectedWeightedGraph, IWeightedEdge, IWeightedGraph } from "@/utils/graph";
 
 describe("GenericPlanner class", () => {
   const createTestUnit = () => {

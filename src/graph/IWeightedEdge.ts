@@ -1,4 +1,4 @@
-import { IEdge } from "@/utils/graph/IEdge";
+import { IEdge } from "@/graph/IEdge";
 
 export interface IWeightedEdge extends IEdge {
   weight: number;

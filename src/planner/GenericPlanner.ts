@@ -1,6 +1,6 @@
+import { DirectedWeightedGraph, IWeightedEdge, IWeightedGraph } from "@/graph";
 import { AbstractPlanner } from "@/planner/AbstractPlanner";
 import { GraphNode } from "@/planner/GraphNode";
-import { DirectedWeightedGraph, IWeightedEdge, IWeightedGraph } from "@/utils/graph";
 
 /**
  * The default implementation of the GOAP planner.

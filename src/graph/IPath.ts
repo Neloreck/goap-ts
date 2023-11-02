@@ -1,4 +1,4 @@
-import { IEdge } from "@/utils/graph/IEdge";
+import { IEdge } from "@/graph/IEdge";
 
 /**
  * Interface  for displaying a path inside a graph containing lists of vertices and edges.

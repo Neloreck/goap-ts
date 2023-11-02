@@ -1,5 +1,5 @@
+import { IEdge } from "@/graph/IEdge";
 import { Optional } from "@/types";
-import { IEdge } from "@/utils/graph/IEdge";
 
 /**
  * Basic graph interface describing public methods.

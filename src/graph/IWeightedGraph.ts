@@ -1,5 +1,5 @@
-import { IGraph } from "@/utils/graph/IGraph";
-import { IWeightedEdge } from "@/utils/graph/IWeightedEdge";
+import { IGraph } from "@/graph/IGraph";
+import { IWeightedEdge } from "@/graph/IWeightedEdge";
 
 /**
  * Interface implementing weighted edges graph.

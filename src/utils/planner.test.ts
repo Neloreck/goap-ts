@@ -3,11 +3,11 @@ import { describe, expect, it } from "@jest/globals";
 import { GenericAction } from "#/fixtures/mocks";
 
 import { AbstractAction } from "@/AbstractAction";
+import { DirectedWeightedGraph, IEdge, IPath, IWeightedEdge } from "@/graph";
+import { IWeightedPath } from "@/graph/IWeightedPath";
 import { GraphNode } from "@/planner";
 import { Property } from "@/Property";
 import { Optional } from "@/types";
-import { DirectedWeightedGraph, IEdge, IPath, IWeightedEdge } from "@/utils/graph";
-import { IWeightedPath } from "@/utils/graph/IWeightedPath";
 import { createPath, createWeightedPath } from "@/utils/path";
 import { addNodeToGraphPathEnd, areAllPreconditionsMet, extractActionsFromGraphPath } from "@/utils/planner";
 

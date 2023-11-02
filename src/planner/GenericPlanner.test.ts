@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 
+import { DirectedWeightedGraph } from "@/graph";
 import { GenericPlanner } from "@/planner/GenericPlanner";
-import { DirectedWeightedGraph } from "@/utils/graph";
 
 describe("GenericPlanner class", () => {
   it("should correctly initialize", () => {

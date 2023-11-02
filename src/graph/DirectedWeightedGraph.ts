@@ -1,6 +1,6 @@
-import { DirectedGraph } from "@/utils/graph/DirectedGraph";
-import { IWeightedEdge } from "@/utils/graph/IWeightedEdge";
-import { IWeightedGraph } from "@/utils/graph/IWeightedGraph";
+import { DirectedGraph } from "@/graph/DirectedGraph";
+import { IWeightedEdge } from "@/graph/IWeightedEdge";
+import { IWeightedGraph } from "@/graph/IWeightedGraph";
 
 /**
  * A DirectedWeightedGraph using WeightedEdges as edges.

@@ -1,9 +1,10 @@
+import { IPath, IWeightedEdge, IWeightedGraph } from "src/graph";
+
 import { AbstractAction } from "@/AbstractAction";
+import { IWeightedPath } from "@/graph/IWeightedPath";
 import { GraphNode } from "@/planner/GraphNode";
 import { Property } from "@/Property";
 import { Optional } from "@/types";
-import { IPath, IWeightedEdge, IWeightedGraph } from "@/utils/graph";
-import { IWeightedPath } from "@/utils/graph/IWeightedPath";
 import { createWeightedPath } from "@/utils/path";
 
 /**

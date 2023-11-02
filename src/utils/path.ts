@@ -1,7 +1,8 @@
+import { IEdge, IPath, IWeightedEdge } from "src/graph";
+
+import { IGraph } from "@/graph/IGraph";
+import { IWeightedPath } from "@/graph/IWeightedPath";
 import { Optional } from "@/types";
-import { IEdge, IPath, IWeightedEdge } from "@/utils/graph";
-import { IGraph } from "@/utils/graph/IGraph";
-import { IWeightedPath } from "@/utils/graph/IWeightedPath";
 
 /**
  * Function for generating a simple Path.

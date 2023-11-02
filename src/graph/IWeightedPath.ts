@@ -1,5 +1,5 @@
-import { IPath } from "@/utils/graph/IPath";
-import { IWeightedEdge } from "@/utils/graph/IWeightedEdge";
+import { IPath } from "@/graph/IPath";
+import { IWeightedEdge } from "@/graph/IWeightedEdge";
 
 /**
  * Interface  for displaying a weighted path inside a graph containing lists of vertices and edges.

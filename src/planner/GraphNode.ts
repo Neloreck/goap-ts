@@ -1,8 +1,8 @@
 import { AbstractAction } from "@/AbstractAction";
+import { IWeightedPath } from "@/graph/IWeightedPath";
 import { Property } from "@/Property";
 import { Optional } from "@/types";
 import { removeFromArray } from "@/utils/array";
-import { IWeightedPath } from "@/utils/graph/IWeightedPath";
 
 /**
  * Vertex on the used in graph for building of paths.
@@ -55,11 +55,9 @@ export class GraphNode {
     const newPathNodeList: Array<GraphNode> = newPath.vertices;
     let notInSet: boolean = true;
 
-    if (this.pathsToThisNode.length === 0) {
-      notInSet = true;
-    } else {
-      for (const storedPath of this.pathsToThisNode) {
-        const nodeList: Array<GraphNode> = storedPath.vertices;
+    if (this.pathsToThisNode.length) {
+      for (const path of this.pathsToThisNode) {
+        const nodeList: Array<GraphNode> = path.vertices;
         let isSamePath: boolean = true;
 
         for (let i = 0; i < nodeList.length && isSamePath; i++) {
@@ -74,6 +72,8 @@ export class GraphNode {
           break;
         }
       }
+    } else {
+      notInSet = true;
     }
 
     if (notInSet) {
@@ -93,17 +93,16 @@ export class GraphNode {
    * @param path - the path on which all effects are getting added together
    * @returns the set of effects at the last node in the path
    */
-  private addPathEffectsTogether(
+  public addPathEffectsTogether(
     pathToPreviousNode: Optional<IWeightedPath<GraphNode>>,
     path: IWeightedPath<GraphNode>
   ): Array<Property> {
     const statesToBeRemoved: Array<Property> = [];
 
     // No path leading to the previous node = node is starting point => sublist of all effects.
-    const combinedNodeEffects: Array<Property> =
-      pathToPreviousNode === null
-        ? Array.from(path.start.effects)
-        : Array.from(pathToPreviousNode.end.getEffectState(pathToPreviousNode));
+    const combinedNodeEffects: Array<Property> = pathToPreviousNode
+      ? [...pathToPreviousNode.end.getEffectState(pathToPreviousNode)]
+      : [...path.start.effects];
 
     // Mark effects to be removed.
     for (const nodeWorldState of combinedNodeEffects) {

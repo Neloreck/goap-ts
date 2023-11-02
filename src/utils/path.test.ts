@@ -2,9 +2,9 @@ import { describe, expect, it } from "@jest/globals";
 
 import { GenericAction } from "#/fixtures/mocks";
 
+import { DirectedWeightedGraph, IEdge, IPath } from "@/graph";
 import { GraphNode } from "@/planner";
 import { Optional } from "@/types";
-import { DirectedWeightedGraph, IEdge, IPath } from "@/utils/graph";
 import { createPath } from "@/utils/path";
 
 describe("path utils module", () => {

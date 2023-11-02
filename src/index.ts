@@ -4,7 +4,7 @@ export * from "@/event";
 export * from "@/state_machine";
 export * from "@/unit";
 export * from "@/utils/array";
-export * from "@/utils/graph";
+export * from "src/graph";
 export * from "@/utils/path";
 export * from "@/types";
 
