@@ -79,5 +79,33 @@ describe("shooting scenario", () => {
     unit.addWorldState(new Property("end", true));
 
     expect(planner.plan(unit)?.map((it) => it.target)).toEqual(["pick_junk"]);
+
+    unit.addWorldState(new Property("end", false));
+    unit.addWorldState(new Property("has_junk", false));
+    unit.addWorldState(new Property("can_pick_weapon", false));
+
+    expect(planner.plan(unit)?.map((it) => it.target)).toEqual(["pick_junk"]);
+
+    unit.addWorldState(new Property("has_junk", true));
+
+    expect(planner.plan(unit)).toBeNull();
+
+    unit.addWorldState(new Property("can_pick_weapon", true));
+    unit.addWorldState(new Property("has_weapon", true));
+
+    expect(planner.plan(unit)?.map((it) => it.target)).toEqual(["pick_ammo", "reload_weapon", "start_shooting"]);
+
+    unit.addWorldState(new Property("is_reloaded", true));
+
+    expect(planner.plan(unit)?.map((it) => it.target)).toEqual(["pick_ammo", "start_shooting"]);
+
+    unit.addWorldState(new Property("has_ammo", true));
+
+    expect(planner.plan(unit)?.map((it) => it.target)).toEqual(["start_shooting"]);
+
+    unit.addWorldState(new Property("end", true));
+    unit.addWorldState(new Property("has_junk", true));
+
+    expect(planner.plan(unit)?.map((it) => it.target)).toEqual(["start_shooting"]);
   });
 });

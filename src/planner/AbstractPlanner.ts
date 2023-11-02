@@ -54,6 +54,7 @@ export abstract class AbstractPlanner {
    *   if no plan was generated
    */
   public plan(unit: IUnit): Optional<Queue<AbstractAction>> {
+    // Reset previous planning data.
     this.unit = unit;
     this.startNode = new GraphNode([], []);
     this.endNodes = [];
@@ -87,7 +88,7 @@ export abstract class AbstractPlanner {
    * Function to create a graph based on all possible unit actions of the GoapUnit for (a) specific goal/-s.
    *
    * @param goalState - list of states the action queue has to fulfill
-   * @returns a DirectedWeightedGraph generated from all possible unit actions for a goal
+   * @returns a directed weighted graph generated from all possible unit actions for a goal
    */
   protected createGraph(goalState: Properties): IWeightedGraph<GraphNode> {
     const generatedGraph: IWeightedGraph<GraphNode> = this.createBaseGraph();
@@ -155,15 +156,13 @@ export abstract class AbstractPlanner {
    * @param graph - the graph the edges are being added to
    */
   protected addEdges(graph: IWeightedGraph<GraphNode>): void {
-    const nodesToWorkOn: Queue<GraphNode> = [];
-
-    this.addDefaultEdges(graph, nodesToWorkOn);
+    const nodesToWorkOn: Array<GraphNode> = this.createBaseEdges(graph);
 
     // Check each already connected once node against all other nodes to
     // find a possible match between the combined effects of the path + the
     // worldState and the preconditions of the current node.
     while (nodesToWorkOn.length > 0) {
-      const node: GraphNode = nodesToWorkOn.shift() as GraphNode;
+      const node: GraphNode = nodesToWorkOn.pop() as GraphNode;
 
       // Select only node to which a path can be created (-> targets!)
       if (node !== this.startNode && this.endNodes.indexOf(node) === -1) {
@@ -179,16 +178,16 @@ export abstract class AbstractPlanner {
    * as nodes in the further steps are not allowed to connect to the starting node anymore.
    *
    * @param graph - the graph the edges are getting added to
-   * @param nodesToWorkOn - the Queue in which nodes which got connected are getting added to
    */
-  protected addDefaultEdges(graph: IWeightedGraph<GraphNode>, nodesToWorkOn: Queue<GraphNode>): void {
+  protected createBaseEdges(graph: IWeightedGraph<GraphNode>): Array<GraphNode> {
+    const nodesToWorkOn: Array<GraphNode> = [];
+
     // graphNode.action != null -> start and ends
     for (const graphNode of graph.getVertices()) {
       if (
         this.startNode !== graphNode &&
         graphNode.action !== null &&
-        (graphNode.preconditions.length === 0 ||
-          areAllPreconditionsMet(graphNode.preconditions, this.startNode.effects))
+        (!graphNode.preconditions.length || areAllPreconditionsMet(graphNode.preconditions, this.startNode.effects))
       ) {
         graph.addEdge(this.startNode, graphNode, { weight: 0 });
 
@@ -210,6 +209,8 @@ export abstract class AbstractPlanner {
         );
       }
     }
+
+    return nodesToWorkOn;
   }
 
   /**
@@ -272,12 +273,14 @@ export abstract class AbstractPlanner {
    * @returns the Queue of goap actions which has the lowest cost to archive a goal
    */
   protected searchGraphForActionQueue(graph: IWeightedGraph<GraphNode>): Optional<Plan> {
-    if (this.endNodes.length) {
-      // Sort by cost to find the most efficient way.
-      this.endNodes[0].pathsToThisNode.sort((first, second) => first.totalWeight - second.totalWeight);
+    for (const node of this.endNodes) {
+      if (node.pathsToThisNode.length) {
+        // Sort by cost to find the most efficient way.
+        node.pathsToThisNode.sort((first, second) => first.totalWeight - second.totalWeight);
 
-      // Get the most efficient for the most important goal.
-      return extractActionsFromGraphPath(this.endNodes[0].pathsToThisNode[0], this.startNode, this.endNodes[0]) ?? null;
+        // Get the most efficient for the most important goal.
+        return extractActionsFromGraphPath(node.pathsToThisNode[0], this.startNode, node) ?? null;
+      }
     }
 
     return null;
