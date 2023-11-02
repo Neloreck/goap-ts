@@ -6,7 +6,6 @@ import { FiniteStateMachine } from "@/state_machine/FiniteStateMachine";
 import { IFiniteStateMachineState } from "@/state_machine/IFiniteStateMachineState";
 import { MoveToState } from "@/state_machine/MoveToState";
 import { IUnit } from "@/unit/IUnit";
-import { queuePeek } from "@/utils/array";
 
 /**
  * State on the FSM Stack.
@@ -46,7 +45,7 @@ export class RunActionState implements IFiniteStateMachineState {
       // Find first action that is not done.
       // Shift all completed actions from the queue and reset them.
       while (this.plan.length) {
-        if ((queuePeek(this.plan) as AbstractAction).isFinished(unit)) {
+        if ((this.plan[0] as AbstractAction).isFinished(unit)) {
           (this.plan.shift() as AbstractAction).reset();
         } else {
           break;
@@ -54,7 +53,7 @@ export class RunActionState implements IFiniteStateMachineState {
       }
 
       if (this.plan.length) {
-        const currentAction: AbstractAction = queuePeek(this.plan) as AbstractAction;
+        const currentAction: AbstractAction = this.plan[0] as AbstractAction;
 
         if (currentAction.target === null) {
           // todo: Propagate event with error handler?
