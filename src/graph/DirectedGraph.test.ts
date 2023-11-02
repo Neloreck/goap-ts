@@ -59,6 +59,8 @@ describe("DirectedGraph class", () => {
     const graph: DirectedGraph<number> = createBasicConnectedTestGraph(3, 2);
 
     expect(graph.getEdges()).toEqual([{}, {}]);
+    expect([...graph.edges()]).toEqual([{}, {}]);
+    expect([...graph.edges()]).toEqual(graph.getEdges());
     expect(graph.getVertices()).toEqual([0, 1, 2]);
 
     expect(graph.hasEdge(0, 1)).toBe(true);
