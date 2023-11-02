@@ -75,7 +75,7 @@ export abstract class AbstractPlanner {
 
         return createdPlan ?? [];
       } else {
-        return this.searchGraphForActionQueue(this.createGraph());
+        return this.searchGraphForActionQueue(this.createGraph(this.unit.getGoalState()));
       }
     } catch (error) {
       // todo: [error_handler] handle error
@@ -90,7 +90,7 @@ export abstract class AbstractPlanner {
    * @param goalState - list of states the action queue has to fulfill
    * @returns a DirectedWeightedGraph generated from all possible unit actions for a goal
    */
-  protected createGraph(goalState: Properties = this.unit.getGoalState()): IWeightedGraph<GraphNode> {
+  protected createGraph(goalState: Properties): IWeightedGraph<GraphNode> {
     const generatedGraph: IWeightedGraph<GraphNode> = this.createBaseGraph();
 
     this.addVertices(generatedGraph, goalState);
@@ -102,28 +102,31 @@ export abstract class AbstractPlanner {
   /**
    * Function for adding vertices to a graph.
    *
+   * Current state is start node.
+   * Goal states are end nodes.
+   * Each action is separate vertex.
+   *
    * @param graph - the graph the vertices are being added to
-   * @param goalState - list of States the unit has listed as their goals
+   * @param goals - list of properties the unit has listed as their goals
    */
-  protected addVertices(graph: IWeightedGraph<GraphNode>, goalState: Properties): void {
-    // The effects from the world state as well as the precondition of each
-    // goal have to be set at the beginning, since these are the effects the
-    // unit tries to archive with its actions. Also the startNode has to
-    // overwrite the existing GraphNode as an initialization of a new Object
-    // would not be reflected to the function caller.
-    this.startNode.copyFrom(new GraphNode([], this.unit.getWorldState()));
+  protected addVertices(graph: IWeightedGraph<GraphNode>, goals: Properties): void {
+    // The effects from the world state as well as the precondition of each goal have to be set at the beginning,
+    // since these are the effects the unit tries to archive with its actions. Also, the startNode has to overwrite
+    // the existing GraphNode as an initialization of a new Object would not be reflected to the function caller.
 
-    graph.addVertex(this.startNode);
+    // Beginning of the graph.
+    graph.addVertex(this.startNode.apply([], this.unit.getWorldState()));
 
-    for (const state of goalState) {
-      const end: GraphNode = new GraphNode([state], []);
+    // End points of the graph.
+    for (const goal of goals) {
+      const end: GraphNode = new GraphNode([goal], []);
 
       graph.addVertex(end);
       this.endNodes.push(end);
     }
 
-    // Afterward all other possible actions have to be added as well.
-    for (const action of this.extractPossibleActions()) {
+    // All actions are separate vertices to reach goals.
+    for (const action of this.getPossibleActions()) {
       graph.addVertex(new GraphNode(action.getPreconditions(), action.getEffects(), action));
     }
   }
@@ -133,9 +136,9 @@ export abstract class AbstractPlanner {
    *
    * @return all possible actions which are actually available for the unit
    */
-  protected extractPossibleActions(): Array<AbstractAction> {
+  protected getPossibleActions(): Array<AbstractAction> {
     try {
-      return this.unit.getActions().filter((it) => it.checkProceduralPrecondition(this.unit));
+      return this.unit.getActions().filter((it) => it.isAvailable(this.unit));
     } catch (error) {
       // e.printStackTrace();
       // todo: [error_handler] Print error

@@ -1,7 +1,6 @@
 import { AbstractAction } from "@/AbstractAction";
 import { Properties } from "@/alias";
 import { IWeightedPath } from "@/graph/IWeightedPath";
-import { Property } from "@/Property";
 import { Optional } from "@/types";
 import { removeFromArray } from "@/utils/array";
 
@@ -30,14 +29,21 @@ export class GraphNode {
   }
 
   /**
-   * Function for inserting existing GraphNodes values into the current one.
+   * Function for inserting existing new values and overriding current data.
    *
-   * @param node - the node whose properties are going to be copied
+   * @param preconditions - the set of preconditions the node has,
+   *   each precondition has to be met before another node can be connected to this node
+   * @param effects - the set of effects the node has on the graph,
+   *   effects get added together along the graph to hopefully meet a goalState
+   * @param action - action needed to perform for reaching of next state
+   * @returns this
    */
-  public copyFrom(node: GraphNode): void {
-    this.action = node.action;
-    this.preconditions = node.preconditions;
-    this.effects = node.effects;
+  public apply(preconditions: Properties, effects: Properties, action: Optional<AbstractAction> = null): typeof this {
+    this.preconditions = preconditions;
+    this.effects = effects;
+    this.action = action;
+
+    return this;
   }
 
   /**

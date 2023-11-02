@@ -15,7 +15,7 @@ export class GenericAction<T = unknown> extends AbstractAction<T> {
     return 0;
   });
 
-  public checkProceduralPrecondition = jest.fn((unit: IUnit): boolean => {
+  public isAvailable = jest.fn((unit: IUnit): boolean => {
     return true;
   });
 

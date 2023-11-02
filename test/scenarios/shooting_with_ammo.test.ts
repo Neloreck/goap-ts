@@ -19,7 +19,10 @@ describe("shooting scenario", () => {
   jest.spyOn(startShooting, "generateCost").mockImplementation(() => 2);
   jest.spyOn(reload, "generateCost").mockImplementation(() => 3);
 
-  pickWeapon.addPrecondition(new Property("has_weapon", false)).addEffect(new Property("has_weapon", true));
+  pickWeapon
+    .addPrecondition(new Property("can_pick_weapon", true))
+    .addPrecondition(new Property("has_weapon", false))
+    .addEffect(new Property("has_weapon", true));
 
   pickAmmo
     .addPrecondition(new Property("has_ammo", false))
@@ -44,6 +47,7 @@ describe("shooting scenario", () => {
     const unit: TestUnit = new TestUnit();
 
     unit.addWorldState(new Property("end", false));
+    unit.addWorldState(new Property("can_pick_weapon", true));
     unit.addWorldState(new Property("has_ammo", false));
     unit.addWorldState(new Property("has_junk", false));
     unit.addWorldState(new Property("has_weapon", false));

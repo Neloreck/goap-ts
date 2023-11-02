@@ -10,8 +10,9 @@ import { removeFromArray } from "@/utils/array";
  * The superclass for a unit using the agent.
  */
 export abstract class AbstractUnit implements IUnit {
-  private goal: Properties = [];
-  private state: Properties = [];
+  private goalState: Properties = [];
+  private worldState: Properties = [];
+
   private actions: Array<AbstractAction> = [];
   private listeners: Array<IImportantUnitChangeEventListener> = [];
 
@@ -29,7 +30,7 @@ export abstract class AbstractUnit implements IUnit {
    * @param property - the new goal the unit tries to archive
    */
   public changeGoalImmediately(property: Property): void {
-    this.goal.push(property);
+    this.addGoalState(property);
     this.dispatchNewImportantUnitGoalChangeEvent(property);
   }
 
@@ -37,7 +38,7 @@ export abstract class AbstractUnit implements IUnit {
    * @returns current world state of the unit
    */
   public getWorldState(): Properties {
-    return this.state;
+    return this.worldState;
   }
 
   /**
@@ -47,7 +48,7 @@ export abstract class AbstractUnit implements IUnit {
    * @returns this
    */
   public setWorldState(state: Properties): typeof this {
-    this.state = state;
+    this.worldState = state;
 
     return this;
   }
@@ -59,12 +60,12 @@ export abstract class AbstractUnit implements IUnit {
    * @returns this
    */
   public addWorldState(property: Property): typeof this {
-    const index: number = this.state.findIndex((it) => it.id === property.id);
+    const index: number = this.worldState.findIndex((it) => it.id === property.id);
 
     if (index === -1) {
-      this.state.push(property);
+      this.worldState.push(property);
     } else {
-      this.state[index] = property;
+      this.worldState[index] = property;
     }
 
     return this;
@@ -75,9 +76,9 @@ export abstract class AbstractUnit implements IUnit {
    * @returns this
    */
   public removeWorldStateProperty(id: PropertyId): typeof this {
-    for (let it = 0; it < this.state.length; it++) {
-      if (this.state[it].id === id) {
-        this.state.splice(it, 1);
+    for (let it = 0; it < this.worldState.length; it++) {
+      if (this.worldState[it].id === id) {
+        this.worldState.splice(it, 1);
 
         return this;
       }
@@ -90,7 +91,7 @@ export abstract class AbstractUnit implements IUnit {
    * @returns current goal properties list
    */
   public getGoalState(): Properties {
-    return this.goal;
+    return this.goalState;
   }
 
   /**
@@ -100,7 +101,7 @@ export abstract class AbstractUnit implements IUnit {
    * @returns this
    */
   public setGoalState(goal: Properties): typeof this {
-    this.goal = goal;
+    this.goalState = goal;
 
     return this;
   }
@@ -112,12 +113,12 @@ export abstract class AbstractUnit implements IUnit {
    * @returns this
    */
   public addGoalState(property: Property): typeof this {
-    const index: number = this.goal.findIndex((it) => it.id === property.id);
+    const index: number = this.goalState.findIndex((it) => it.id === property.id);
 
     if (index === -1) {
-      this.goal.push(property);
+      this.goalState.push(property);
     } else {
-      this.goal[index] = property;
+      this.goalState[index] = property;
     }
 
     return this;
@@ -130,9 +131,9 @@ export abstract class AbstractUnit implements IUnit {
    * @returns this
    */
   public removeGoalState(id: string): typeof this {
-    for (let it = 0; it < this.goal.length; it++) {
-      if (this.goal[it].id === id) {
-        this.goal.splice(it, 1);
+    for (let it = 0; it < this.goalState.length; it++) {
+      if (this.goalState[it].id === id) {
+        this.goalState.splice(it, 1);
 
         return this;
       }

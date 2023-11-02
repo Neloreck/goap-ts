@@ -78,11 +78,11 @@ describe("RunActionState class", () => {
 
     expect(first.isFinished).toHaveBeenCalledTimes(1);
     expect(first.reset).toHaveBeenCalledTimes(1);
-    expect(second.checkProceduralPrecondition).toHaveBeenCalledTimes(1);
-    expect(second.checkProceduralPrecondition).toHaveBeenCalledWith(unit);
+    expect(second.isAvailable).toHaveBeenCalledTimes(1);
+    expect(second.isAvailable).toHaveBeenCalledWith(unit);
     expect(second.performAction).toHaveBeenCalledTimes(1);
     expect(second.performAction).toHaveBeenCalledWith(unit);
-    expect(third.checkProceduralPrecondition).not.toHaveBeenCalled();
+    expect(third.isAvailable).not.toHaveBeenCalled();
     expect(third.performAction).not.toHaveBeenCalled();
 
     expect(state.execute(unit)).toBe(false);
@@ -90,7 +90,7 @@ describe("RunActionState class", () => {
     expect(second.performAction).toHaveBeenCalledTimes(2);
     expect(third.performAction).not.toHaveBeenCalled();
 
-    jest.spyOn(second, "checkProceduralPrecondition").mockImplementation(() => false);
+    jest.spyOn(second, "isAvailable").mockImplementation(() => false);
 
     expect(state.execute(unit)).toBe(false);
     expect(state.getCurrentPlan()).toEqual([second, third]);
@@ -120,9 +120,9 @@ describe("RunActionState class", () => {
 
     expect(first.isFinished).toHaveBeenCalledTimes(1);
     expect(first.reset).toHaveBeenCalledTimes(1);
-    expect(second.checkProceduralPrecondition).not.toHaveBeenCalled();
+    expect(second.isAvailable).not.toHaveBeenCalled();
     expect(second.performAction).not.toHaveBeenCalled();
-    expect(third.checkProceduralPrecondition).not.toHaveBeenCalled();
+    expect(third.isAvailable).not.toHaveBeenCalled();
     expect(third.performAction).not.toHaveBeenCalled();
 
     // Verify that move to target state is pushed.

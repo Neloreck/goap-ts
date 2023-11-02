@@ -38,13 +38,12 @@ describe("GraphNode class", () => {
     const action: AbstractAction = new GenericAction(1000);
 
     const base: GraphNode = new GraphNode([], []);
-    const from: GraphNode = new GraphNode(preconditions, effects, action);
 
     expect(base.preconditions).toEqual([]);
     expect(base.effects).toEqual([]);
     expect(base.action).toBeNull();
 
-    base.copyFrom(from);
+    base.apply(preconditions, effects, action);
 
     expect(base.preconditions).toBe(preconditions);
     expect(base.effects).toBe(effects);

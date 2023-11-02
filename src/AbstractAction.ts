@@ -144,9 +144,9 @@ export abstract class AbstractAction<T = any> {
    * If they are not, the action will not be taken in consideration for the generation of the action graph.
    *
    * @param unit - the unit the action is being executed from
-   * @returns if the action can be taken in the first place
+   * @returns if the action can be taken in the first place for planning of decisions
    */
-  public abstract checkProceduralPrecondition(unit: IUnit): boolean;
+  public abstract isAvailable(unit: IUnit): boolean;
 
   /**
    * Defines if the unit needs to be in a certain range in relation to the target to execute the action.

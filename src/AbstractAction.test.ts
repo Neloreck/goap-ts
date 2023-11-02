@@ -16,7 +16,7 @@ describe("AbstractAction class", () => {
       return 2;
     });
 
-    public checkProceduralPrecondition = jest.fn((unit: IUnit): boolean => {
+    public isAvailable = jest.fn((unit: IUnit): boolean => {
       return true;
     });
 
@@ -46,7 +46,7 @@ describe("AbstractAction class", () => {
     expect(action.target).toBe(unit);
     expect(action.generateBaseCost(unit)).toBe(1);
     expect(action.generateCostRelativeToTarget(unit)).toBe(2);
-    expect(action.checkProceduralPrecondition(unit)).toBe(true);
+    expect(action.isAvailable(unit)).toBe(true);
     expect(action.performAction(unit)).toBe(true);
     expect(action.isFinished(unit)).toBe(false);
     expect(action.isInRange(unit)).toBe(false);
