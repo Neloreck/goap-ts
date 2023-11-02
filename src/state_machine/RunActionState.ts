@@ -72,6 +72,9 @@ export class RunActionState implements IFiniteStateMachineState {
           }
         }
 
+        // todo: Probably should consider action as done if it is not available anymore
+        // todo: It will force FSM to go idle and rebuild the plan.
+
         return false;
       }
     } catch (error) {
