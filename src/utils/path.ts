@@ -4,18 +4,17 @@ import { Properties } from "@/alias";
 import { IGraph } from "@/graph/IGraph";
 import { IWeightedPath } from "@/graph/IWeightedPath";
 import { Optional } from "@/types";
-import { removeFromArray } from "@/utils/array";
 
 /**
  * Function for generating a simple Path.
  * The given information are being checked against the given Graph.
  *
  * @param graph - the Graph the information are being checked against
- * @param start - the starting vertex of the Path
- * @param end - the end vertex of the Path
- * @param vertices - the List of all vertices of the Path
- * @param edges - the List of all edges of the Path
- * @returns a Path leading from one point inside the Graph to another one
+ * @param start - the starting vertex of the path
+ * @param end - the end vertex of the path
+ * @param vertices - the List of all vertices of the path
+ * @param edges - the List of all edges of the path
+ * @returns a path leading from one point inside the graph to another one
  */
 export function createPath<VertexType, EdgeType extends IEdge>(
   graph: IGraph<VertexType, EdgeType>,
@@ -34,11 +33,11 @@ export function createPath<VertexType, EdgeType extends IEdge>(
  * checked against the given Graph.
  *
  * @param graph - the Graph the information are being checked against
- * @param start - the starting vertex of the WeightedPath
- * @param end - the end vertex of the WeightedPath
- * @param vertices - the List of all vertices of the WeightedPath
- * @param edges - the List of all edges of the WeightedPath
- * @returns a WeightedPath leading from one point inside the Graph to another one
+ * @param start - the starting vertex of the path
+ * @param end - the end vertex of the path
+ * @param vertices - the List of all vertices of the path
+ * @param edges - the List of all edges of the path
+ * @returns a path leading from one point inside the graph to another one
  */
 export function createWeightedPath<VertexType, EdgeType extends IWeightedEdge>(
   graph: IGraph<VertexType, EdgeType>,
@@ -115,22 +114,26 @@ export function mergePathEffectsTogether(
   pathEffects: Readonly<Properties>,
   nodeEffects: Readonly<Properties>
 ): Properties {
+  // New immutable set of effects.
   const combined: Properties = [...pathEffects];
-  const statesToBeRemoved: Properties = [];
 
-  // Mark effects to be removed.
-  for (const nodeWorldState of combined) {
-    for (const pathNodeEffect of nodeEffects) {
-      if (nodeWorldState.id === pathNodeEffect.id) {
-        statesToBeRemoved.push(nodeWorldState);
+  for (let i = 0; i < nodeEffects.length; i++) {
+    let isMissing: boolean = true;
+
+    for (let j = 0; j < pathEffects.length; j++) {
+      if (nodeEffects[i].id === pathEffects[j].id) {
+        isMissing = false;
+        combined[j] = nodeEffects[i];
+
+        break;
       }
+    }
+
+    // New effect, not accounted in previous state.
+    if (isMissing) {
+      combined.push(nodeEffects[i]);
     }
   }
 
-  // Remove marked effects from the state.
-  for (const state of statesToBeRemoved) {
-    removeFromArray(combined, state);
-  }
-
-  return combined.concat(nodeEffects);
+  return combined;
 }

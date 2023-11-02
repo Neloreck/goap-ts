@@ -136,7 +136,7 @@ describe("path utils module", () => {
         [new Property("has_weapon", false), new Property("has_ammo", false)],
         [new Property("has_weapon", true)]
       )
-    ).toEqual([new Property("has_ammo", false), new Property("has_weapon", true)]);
+    ).toEqual([new Property("has_weapon", true), new Property("has_ammo", false)]);
 
     expect(
       mergePathEffectsTogether(
@@ -168,9 +168,9 @@ describe("path utils module", () => {
         [new Property(1, 50), new Property("a", "result"), new Property("c", "new")]
       )
     ).toEqual([
-      new Property("same", "same"),
       new Property(1, 50),
       new Property("a", "result"),
+      new Property("same", "same"),
       new Property("c", "new"),
     ]);
   });
