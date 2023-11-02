@@ -7,8 +7,8 @@ import { IUnit } from "@/unit/IUnit";
  * Superclass for all actions a unit can perform
  */
 export abstract class AbstractAction<T = any> {
-  private readonly preconditions: Properties = [];
-  private readonly effects: Properties = [];
+  public readonly preconditions: Properties = [];
+  public readonly effects: Properties = [];
 
   public target: T;
 
@@ -17,13 +17,6 @@ export abstract class AbstractAction<T = any> {
    */
   public constructor(target: T) {
     this.target = target;
-  }
-
-  /**
-   * @returns list of action preconditions
-   */
-  public getPreconditions(): Properties {
-    return this.preconditions;
   }
 
   /**
@@ -56,13 +49,6 @@ export abstract class AbstractAction<T = any> {
   }
 
   /**
-   * @returns list of action effects
-   */
-  public getEffects(): Properties {
-    return this.effects;
-  }
-
-  /**
    * @param property - world precondition to remove from the action
    */
   public addEffect(property: Property): typeof this {
@@ -88,6 +74,16 @@ export abstract class AbstractAction<T = any> {
 
     return this;
   }
+
+  /**
+   * Gets called to determine if the preconditions of an action are met.
+   * If they are not, the action will not be taken in consideration for the generation of the action graph.
+   *
+   * @param unit - the unit the action is being executed from
+   * @returns if the action can be taken in the first place for planning of decisions
+   */
+  public abstract isAvailable(unit: IUnit): boolean;
+
   /**
    * Checks if the current action of the action queue is finished. Gets called until it returns true.
    *
@@ -138,15 +134,6 @@ export abstract class AbstractAction<T = any> {
    * @returns the relative cost of the action in relation to the current target, which is added to the base cost
    */
   public abstract generateCostRelativeToTarget(unit: IUnit): number;
-
-  /**
-   * Gets called to determine if the preconditions of an action are met.
-   * If they are not, the action will not be taken in consideration for the generation of the action graph.
-   *
-   * @param unit - the unit the action is being executed from
-   * @returns if the action can be taken in the first place for planning of decisions
-   */
-  public abstract isAvailable(unit: IUnit): boolean;
 
   /**
    * Defines if the unit needs to be in a certain range in relation to the target to execute the action.

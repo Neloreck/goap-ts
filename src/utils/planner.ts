@@ -64,7 +64,7 @@ export function addNodeToGraphPathEnd<T>(
  * @param effects - set of states which are required
  * @return if all preconditions are met with the given effects
  */
-export function areAllPreconditionsMet(preconditions: Properties, effects: Properties): boolean {
+export function areAllPreconditionsMet(preconditions: Readonly<Properties>, effects: Readonly<Properties>): boolean {
   for (const precondition of preconditions) {
     let currentPreconditionMet: boolean = false;
 

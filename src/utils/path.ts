@@ -1,8 +1,10 @@
 import { IEdge, IPath, IWeightedEdge } from "src/graph";
 
+import { Properties } from "@/alias";
 import { IGraph } from "@/graph/IGraph";
 import { IWeightedPath } from "@/graph/IWeightedPath";
 import { Optional } from "@/types";
+import { removeFromArray } from "@/utils/array";
 
 /**
  * Function for generating a simple Path.
@@ -100,4 +102,35 @@ export function validateConnections<VertexType, EdgeType extends IEdge>(
   }
 
   return true;
+}
+
+/**
+ * Function for adding all effects in a path together to get the effect at the last node in the path.
+ *
+ * @param pathEffects - list of properties from path to previous node
+ * @param nodeEffects - list of properties from current path node
+ * @returns new set of effects which reflects application of node effects to path effects
+ */
+export function mergePathEffectsTogether(
+  pathEffects: Readonly<Properties>,
+  nodeEffects: Readonly<Properties>
+): Properties {
+  const combined: Properties = [...pathEffects];
+  const statesToBeRemoved: Properties = [];
+
+  // Mark effects to be removed.
+  for (const nodeWorldState of combined) {
+    for (const pathNodeEffect of nodeEffects) {
+      if (nodeWorldState.id === pathNodeEffect.id) {
+        statesToBeRemoved.push(nodeWorldState);
+      }
+    }
+  }
+
+  // Remove marked effects from the state.
+  for (const state of statesToBeRemoved) {
+    removeFromArray(combined, state);
+  }
+
+  return combined.concat(nodeEffects);
 }

@@ -53,8 +53,8 @@ describe("AbstractAction class", () => {
     expect(action.requiresInRange(unit)).toBe(false);
     expect(() => action.reset()).not.toThrow();
 
-    expect(action.getPreconditions()).toEqual([]);
-    expect(action.getEffects()).toEqual([]);
+    expect(action.preconditions).toEqual([]);
+    expect(action.effects).toEqual([]);
   });
 
   it("should correctly handle add preconditions", () => {
@@ -63,15 +63,15 @@ describe("AbstractAction class", () => {
     const first: Property = new Property("test_1", true);
     const second: Property = new Property("test_2", false);
 
-    expect(action.getPreconditions()).toEqual([]);
+    expect(action.preconditions).toEqual([]);
 
     action.addPrecondition(first).addPrecondition(second);
 
-    expect(action.getPreconditions()).toEqual([first, second]);
+    expect(action.preconditions).toEqual([first, second]);
 
     action.addPrecondition(first).addPrecondition(second);
 
-    expect(action.getPreconditions()).toEqual([first, second]);
+    expect(action.preconditions).toEqual([first, second]);
   });
 
   it("should correctly handle remove preconditions", () => {
@@ -80,27 +80,27 @@ describe("AbstractAction class", () => {
     const first: Property = new Property("test_1", true);
     const second: Property = new Property("test_2", false);
 
-    expect(action.getPreconditions()).toEqual([]);
+    expect(action.preconditions).toEqual([]);
 
     action.addPrecondition(first).addPrecondition(second);
 
-    expect(action.getPreconditions()).toEqual([first, second]);
+    expect(action.preconditions).toEqual([first, second]);
 
     action.removePrecondition(second.id);
 
-    expect(action.getPreconditions()).toEqual([first]);
+    expect(action.preconditions).toEqual([first]);
 
     action.removePrecondition(second.id);
 
-    expect(action.getPreconditions()).toEqual([first]);
+    expect(action.preconditions).toEqual([first]);
 
     action.removePrecondition("test_2");
 
-    expect(action.getPreconditions()).toEqual([first]);
+    expect(action.preconditions).toEqual([first]);
 
     action.removePrecondition("test_1");
 
-    expect(action.getPreconditions()).toEqual([]);
+    expect(action.preconditions).toEqual([]);
   });
 
   it("should correctly handle add effects", () => {
@@ -109,15 +109,15 @@ describe("AbstractAction class", () => {
     const first: Property = new Property("test_1", true);
     const second: Property = new Property("test_2", false);
 
-    expect(action.getEffects()).toEqual([]);
+    expect(action.effects).toEqual([]);
 
     action.addEffect(first).addEffect(second);
 
-    expect(action.getEffects()).toEqual([first, second]);
+    expect(action.effects).toEqual([first, second]);
 
     action.addEffect(first).addEffect(second);
 
-    expect(action.getEffects()).toEqual([first, second]);
+    expect(action.effects).toEqual([first, second]);
   });
 
   it("should correctly handle remove effects", () => {
@@ -126,26 +126,26 @@ describe("AbstractAction class", () => {
     const first: Property = new Property("test_1", true);
     const second: Property = new Property("test_2", false);
 
-    expect(action.getEffects()).toEqual([]);
+    expect(action.effects).toEqual([]);
 
     action.addEffect(first).addEffect(second);
 
-    expect(action.getEffects()).toEqual([first, second]);
+    expect(action.effects).toEqual([first, second]);
 
     action.removeEffect(second.id);
 
-    expect(action.getEffects()).toEqual([first]);
+    expect(action.effects).toEqual([first]);
 
     action.removeEffect(second.id).removeEffect(second.id);
 
-    expect(action.getEffects()).toEqual([first]);
+    expect(action.effects).toEqual([first]);
 
     action.removeEffect("test_2");
 
-    expect(action.getEffects()).toEqual([first]);
+    expect(action.effects).toEqual([first]);
 
     action.removeEffect("test_1");
 
-    expect(action.getEffects()).toEqual([]);
+    expect(action.effects).toEqual([]);
   });
 });

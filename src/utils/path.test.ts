@@ -2,10 +2,13 @@ import { describe, expect, it } from "@jest/globals";
 
 import { GenericAction } from "#/fixtures/mocks";
 
-import { DirectedWeightedGraph, IEdge, IPath } from "@/graph";
+import { DirectedWeightedGraph, IEdge, IPath, IWeightedEdge } from "@/graph";
+import { IWeightedPath } from "@/graph/IWeightedPath";
 import { GraphNode } from "@/planner";
+import { Property } from "@/Property";
 import { Optional } from "@/types";
-import { createPath } from "@/utils/path";
+import { createPath, createWeightedPath, mergePathEffectsTogether } from "@/utils/path";
+import { addNodeToGraphPathEnd } from "@/utils/planner";
 
 describe("path utils module", () => {
   it("extractActionsFromGraphPath should correctly extract actions from graph path", () => {
@@ -125,5 +128,50 @@ describe("path utils module", () => {
         ]
       )
     ).toBeNull();
+  });
+
+  it("mergePathEffectsTogether should combine effects of previous node and current", () => {
+    expect(
+      mergePathEffectsTogether(
+        [new Property("has_weapon", false), new Property("has_ammo", false)],
+        [new Property("has_weapon", true)]
+      )
+    ).toEqual([new Property("has_ammo", false), new Property("has_weapon", true)]);
+
+    expect(
+      mergePathEffectsTogether(
+        [new Property("has_weapon", false), new Property("has_ammo", false)],
+        [new Property("has_weapon", false), new Property("has_ammo", false)]
+      )
+    ).toEqual([new Property("has_weapon", false), new Property("has_ammo", false)]);
+
+    expect(
+      mergePathEffectsTogether(
+        [new Property("has_weapon", false), new Property("has_ammo", false)],
+        [new Property("has_weapon", true), new Property("has_ammo", true)]
+      )
+    ).toEqual([new Property("has_weapon", true), new Property("has_ammo", true)]);
+
+    expect(mergePathEffectsTogether([new Property("has_weapon", false), new Property("has_ammo", false)], [])).toEqual([
+      new Property("has_weapon", false),
+      new Property("has_ammo", false),
+    ]);
+
+    expect(mergePathEffectsTogether([], [new Property("has_weapon", false), new Property("has_ammo", false)])).toEqual([
+      new Property("has_weapon", false),
+      new Property("has_ammo", false),
+    ]);
+
+    expect(
+      mergePathEffectsTogether(
+        [new Property(1, 40), new Property("a", "test"), new Property("same", "same")],
+        [new Property(1, 50), new Property("a", "result"), new Property("c", "new")]
+      )
+    ).toEqual([
+      new Property("same", "same"),
+      new Property(1, 50),
+      new Property("a", "result"),
+      new Property("c", "new"),
+    ]);
   });
 });

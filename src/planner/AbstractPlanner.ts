@@ -127,7 +127,7 @@ export abstract class AbstractPlanner {
 
     // All actions are separate vertices to reach goals.
     for (const action of this.getPossibleActions()) {
-      graph.addVertex(new GraphNode(action.getPreconditions(), action.getEffects(), action));
+      graph.addVertex(new GraphNode(action.preconditions, action.effects, action));
     }
   }
 
