@@ -13,6 +13,7 @@ import {
   areAllPreconditionsMet,
   extractActionsFromGraphPath,
   goalComparator,
+  pathComparator,
 } from "@/utils/planner";
 
 /**
@@ -289,8 +290,8 @@ export abstract class AbstractPlanner {
   protected searchGraphForActionQueue(graph: IWeightedGraph<GraphNode>): Optional<Plan> {
     for (const node of this.endNodes) {
       if (node.pathsToThisNode.length) {
-        // Sort by cost to find the most efficient way.
-        node.pathsToThisNode.sort((first, second) => first.totalWeight - second.totalWeight);
+        // Sort by cost to find the most efficient way with less cost.
+        node.pathsToThisNode.sort(pathComparator);
 
         // Get the most efficient for the most important goal.
         return extractActionsFromGraphPath(node.pathsToThisNode[0], this.startNode, node) ?? null;

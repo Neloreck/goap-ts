@@ -14,6 +14,7 @@ import {
   areAllPreconditionsMet,
   extractActionsFromGraphPath,
   goalComparator,
+  pathComparator,
 } from "@/utils/planner";
 
 describe("planner utils module", () => {
@@ -30,6 +31,20 @@ describe("planner utils module", () => {
         .sort(goalComparator)
         .map((it) => it.importance)
     ).toEqual([Infinity, 100, 1, 0, undefined, -Infinity]);
+  });
+
+  it("pathComparator should correctly sort paths by weight", () => {
+    expect(
+      [
+        { totalWeight: 10 } as IWeightedPath<unknown>,
+        { totalWeight: 14 } as IWeightedPath<unknown>,
+        { totalWeight: 4 } as IWeightedPath<unknown>,
+        { totalWeight: 55 } as IWeightedPath<unknown>,
+        { totalWeight: 70 } as IWeightedPath<unknown>,
+      ]
+        .sort(pathComparator)
+        .map((it) => it.totalWeight)
+    ).toEqual([4, 10, 14, 55, 70]);
   });
 
   it("extractActionsFromGraphPath should correctly extract actions from graph path", () => {

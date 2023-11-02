@@ -20,6 +20,17 @@ export function goalComparator(first: IProperty, second: IProperty): number {
 }
 
 /**
+ * Sorting weighted path by ascending order to find the most efficient one.
+ *
+ * @param first - first property to compare
+ * @param second - second property to compare
+ * @returns comparator result for weighted path
+ */
+export function pathComparator(first: IWeightedPath<unknown>, second: IWeightedPath<unknown>): number {
+  return first.totalWeight - second.totalWeight;
+}
+
+/**
  * Function for extracting all actions from a provided path.
  *
  * @param path - the Path from which the actions are being extracted
