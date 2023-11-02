@@ -8,7 +8,7 @@ import { GraphNode } from "@/planner/GraphNode";
 import { Property } from "@/Property";
 import { Queue } from "@/types";
 import { AbstractUnit } from "@/unit/AbstractUnit";
-import { DirectedWeightedGraph, IWeightedGraph, WeightedEdge } from "@/utils/graph";
+import { DirectedWeightedGraph, IWeightedEdge, IWeightedGraph } from "@/utils/graph";
 
 describe("GenericPlanner class", () => {
   const createTestUnit = () => {
@@ -21,7 +21,7 @@ describe("GenericPlanner class", () => {
   };
 
   class Planner extends AbstractPlanner {
-    protected override createBaseGraph<EdgeType extends WeightedEdge>(): IWeightedGraph<GraphNode, EdgeType> {
+    protected override createBaseGraph<EdgeType extends IWeightedEdge>(): IWeightedGraph<GraphNode, EdgeType> {
       return new DirectedWeightedGraph<GraphNode, EdgeType>();
     }
   }

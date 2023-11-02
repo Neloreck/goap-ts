@@ -1,11 +1,11 @@
 import { Optional } from "@/types";
-import { Edge } from "@/utils/graph/Edge";
+import { IEdge } from "@/utils/graph/IEdge";
 import { IGraph } from "@/utils/graph/IGraph";
 
 /**
  * Basic directed graph implementation.
  */
-export class DirectedGraph<VertexType, EdgeType extends Edge> implements IGraph<VertexType, EdgeType> {
+export class DirectedGraph<VertexType, EdgeType extends IEdge = IEdge> implements IGraph<VertexType, EdgeType> {
   protected data: Map<VertexType, Map<VertexType, EdgeType>> = new Map();
 
   public constructor(vertices?: Array<VertexType>) {

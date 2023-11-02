@@ -1,9 +1,10 @@
 import { Optional } from "@/types";
+import { IEdge } from "@/utils/graph/IEdge";
 
 /**
  * Basic graph interface describing public methods.
  */
-export interface IGraph<VertexType, EdgeType> {
+export interface IGraph<VertexType, EdgeType extends IEdge = IEdge> {
   /**
    * @returns all vertices inside the graph
    */

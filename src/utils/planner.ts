@@ -2,7 +2,7 @@ import { AbstractAction } from "@/AbstractAction";
 import { GraphNode } from "@/planner/GraphNode";
 import { Property } from "@/Property";
 import { Optional } from "@/types";
-import { IPath, IWeightedGraph, WeightedEdge } from "@/utils/graph";
+import { IPath, IWeightedEdge, IWeightedGraph } from "@/utils/graph";
 import { IWeightedPath } from "@/utils/graph/IWeightedPath";
 import { createWeightedPath } from "@/utils/path";
 
@@ -52,7 +52,7 @@ export function addNodeToGraphPathEnd<T>(
     // Add new node to the end.
     [...path.vertices, node],
     // Link path end and new node.
-    [...path.edges, graph.getEdge(path.end, node) as WeightedEdge]
+    [...path.edges, graph.getEdge(path.end, node) as IWeightedEdge]
   );
 }
 

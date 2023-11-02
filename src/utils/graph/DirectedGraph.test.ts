@@ -3,11 +3,11 @@ import { describe, expect, it } from "@jest/globals";
 import { createBasicConnectedTestGraph, createBasicTestGraph } from "#/fixtures/utils";
 
 import { DirectedGraph } from "@/utils/graph/DirectedGraph";
-import { Edge } from "@/utils/graph/Edge";
+import { IEdge } from "@/utils/graph/IEdge";
 
 describe("DirectedGraph class", () => {
   it("should correctly initialize from set", () => {
-    const graph: DirectedGraph<number, Edge> = new DirectedGraph([1, 3, 5]);
+    const graph: DirectedGraph<number> = new DirectedGraph([1, 3, 5]);
 
     expect(graph.getEdges().size).toBe(0);
     expect(graph.getVertices().size).toBe(3);
@@ -18,7 +18,7 @@ describe("DirectedGraph class", () => {
   });
 
   it("should correctly initialize basic graph", () => {
-    const graph: DirectedGraph<number, Edge> = createBasicTestGraph(5);
+    const graph: DirectedGraph<number> = createBasicTestGraph(5);
 
     expect([...graph.getEdges().values()]).toEqual([]);
     expect([...graph.getVertices().values()]).toEqual([0, 1, 2, 3, 4]);
@@ -30,12 +30,12 @@ describe("DirectedGraph class", () => {
   });
 
   it("should correctly initialize basic linked graph with builder", () => {
-    const oneThree: Edge = new Edge();
-    const threeOne: Edge = new Edge();
-    const twoThree: Edge = new Edge();
-    const threeTwo: Edge = new Edge();
+    const oneThree: IEdge = {};
+    const threeOne: IEdge = {};
+    const twoThree: IEdge = {};
+    const threeTwo: IEdge = {};
 
-    const graph: DirectedGraph<number, Edge> = new DirectedGraph<number, Edge>()
+    const graph: DirectedGraph<number> = new DirectedGraph<number>()
       .addVertex(1)
       .addVertex(2)
       .addVertex(3)
@@ -56,9 +56,9 @@ describe("DirectedGraph class", () => {
   });
 
   it("should correctly initialize linked graph", () => {
-    const graph: DirectedGraph<number, Edge> = createBasicConnectedTestGraph(3, 2);
+    const graph: DirectedGraph<number> = createBasicConnectedTestGraph(3, 2);
 
-    expect([...graph.getEdges().values()]).toEqual([new Edge(), new Edge()]);
+    expect([...graph.getEdges().values()]).toEqual([{}, {}]);
     expect([...graph.getVertices().values()]).toEqual([0, 1, 2]);
 
     expect(graph.hasEdge(0, 1)).toBe(true);
@@ -67,8 +67,8 @@ describe("DirectedGraph class", () => {
   });
 
   it("should correctly add/remove edges", () => {
-    const graph: DirectedGraph<number, Edge> = createBasicTestGraph(3);
-    const edge: Edge = new Edge();
+    const graph: DirectedGraph<number> = createBasicTestGraph(3);
+    const edge: IEdge = {};
 
     graph.addEdge(0, 1, edge);
 
@@ -90,7 +90,7 @@ describe("DirectedGraph class", () => {
   });
 
   it("should correctly add many vertices", () => {
-    const graph: DirectedGraph<number, Edge> = new DirectedGraph();
+    const graph: DirectedGraph<number> = new DirectedGraph();
 
     graph.addVertex(1).addVertex(2).addVertices([3, 4, 5]);
 

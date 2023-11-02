@@ -6,7 +6,7 @@ import { AbstractAction } from "@/AbstractAction";
 import { GraphNode } from "@/planner";
 import { Property } from "@/Property";
 import { Optional } from "@/types";
-import { DirectedWeightedGraph, Edge, IPath, WeightedEdge } from "@/utils/graph";
+import { DirectedWeightedGraph, IEdge, IPath, IWeightedEdge } from "@/utils/graph";
 import { IWeightedPath } from "@/utils/graph/IWeightedPath";
 import { createPath, createWeightedPath } from "@/utils/path";
 import { addNodeToGraphPathEnd, areAllPreconditionsMet, extractActionsFromGraphPath } from "@/utils/planner";
@@ -21,7 +21,7 @@ describe("planner utils module", () => {
     const firstEnd: GraphNode = new GraphNode([], [], new GenericAction(5));
     const secondEnd: GraphNode = new GraphNode([], [], new GenericAction(6));
 
-    const graph: DirectedWeightedGraph<GraphNode> = new DirectedWeightedGraph<GraphNode, WeightedEdge>().addVertices([
+    const graph: DirectedWeightedGraph<GraphNode> = new DirectedWeightedGraph<GraphNode>().addVertices([
       start,
       second,
       third,
@@ -31,14 +31,14 @@ describe("planner utils module", () => {
     ]);
 
     graph
-      .addEdge(start, second, new WeightedEdge(1))
-      .addEdge(second, third, new WeightedEdge(2))
-      .addEdge(second, fifth, new WeightedEdge(2))
-      .addEdge(third, firstEnd, new WeightedEdge(2))
-      .addEdge(fifth, secondEnd, new WeightedEdge(2));
+      .addEdge(start, second, { weight: 1 })
+      .addEdge(second, third, { weight: 2 })
+      .addEdge(second, fifth, { weight: 2 })
+      .addEdge(third, firstEnd, { weight: 2 })
+      .addEdge(fifth, secondEnd, { weight: 2 });
 
     const halfActions: Array<AbstractAction> = extractActionsFromGraphPath(
-      createPath(graph, start, second, [start, second], [graph.getEdge(start, second) as Edge]) as IPath<GraphNode>,
+      createPath(graph, start, second, [start, second], [graph.getEdge(start, second) as IEdge]) as IPath<GraphNode>,
       start,
       second
     );
@@ -49,9 +49,9 @@ describe("planner utils module", () => {
         firstEnd,
         [start, second, third, firstEnd],
         [
-          graph.getEdge(start, second) as Edge,
-          graph.getEdge(second, third) as Edge,
-          graph.getEdge(third, firstEnd) as Edge,
+          graph.getEdge(start, second) as IEdge,
+          graph.getEdge(second, third) as IEdge,
+          graph.getEdge(third, firstEnd) as IEdge,
         ]
       ) as IPath<GraphNode>,
       start,
@@ -64,9 +64,9 @@ describe("planner utils module", () => {
         secondEnd,
         [start, second, fifth, secondEnd],
         [
-          graph.getEdge(start, second) as Edge,
-          graph.getEdge(second, fifth) as Edge,
-          graph.getEdge(fifth, secondEnd) as Edge,
+          graph.getEdge(start, second) as IEdge,
+          graph.getEdge(second, fifth) as IEdge,
+          graph.getEdge(fifth, secondEnd) as IEdge,
         ]
       ) as IPath<GraphNode>,
       start,
@@ -86,23 +86,23 @@ describe("planner utils module", () => {
     const third: GraphNode = new GraphNode([], [], new GenericAction(3));
     const fourth: GraphNode = new GraphNode([], [], new GenericAction(4));
 
-    const graph: DirectedWeightedGraph<GraphNode> = new DirectedWeightedGraph<GraphNode, WeightedEdge>().addVertices([
+    const graph: DirectedWeightedGraph<GraphNode> = new DirectedWeightedGraph<GraphNode>().addVertices([
       first,
       second,
       third,
       fourth,
     ]);
 
-    graph.addEdge(first, second, new WeightedEdge(10));
-    graph.addEdge(second, third, new WeightedEdge(10));
-    graph.addEdge(third, fourth, new WeightedEdge(10));
+    graph.addEdge(first, second, { weight: 10 });
+    graph.addEdge(second, third, { weight: 10 });
+    graph.addEdge(third, fourth, { weight: 10 });
 
     const path: IWeightedPath<GraphNode> = createWeightedPath(
       graph,
       first,
       second,
       [first, second],
-      [graph.getEdge(first, second) as WeightedEdge]
+      [graph.getEdge(first, second) as IWeightedEdge]
     ) as IWeightedPath<GraphNode>;
 
     const secondPath: Optional<IWeightedPath<GraphNode>> = addNodeToGraphPathEnd(graph, path, third);

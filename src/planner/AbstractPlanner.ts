@@ -3,7 +3,7 @@ import { GraphNode } from "@/planner/GraphNode";
 import { Property } from "@/Property";
 import { Optional, Queue } from "@/types";
 import { IUnit } from "@/unit/IUnit";
-import { IWeightedGraph, WeightedEdge } from "@/utils/graph";
+import { IWeightedEdge, IWeightedGraph } from "@/utils/graph";
 import { IWeightedPath } from "@/utils/graph/IWeightedPath";
 import { createWeightedPath } from "@/utils/path";
 import { addNodeToGraphPathEnd, areAllPreconditionsMet, extractActionsFromGraphPath } from "@/utils/planner";
@@ -40,7 +40,7 @@ export abstract class AbstractPlanner {
   /**
    * Method to generate base graph used for plan building.
    */
-  protected abstract createBaseGraph<EdgeType extends WeightedEdge>(): IWeightedGraph<GraphNode, EdgeType>;
+  protected abstract createBaseGraph<EdgeType extends IWeightedEdge>(): IWeightedGraph<GraphNode, EdgeType>;
 
   /**
    * Generate a plan (Queue of GoapActions) which is then performed by the assigned unit. A search algorithm is not
@@ -90,10 +90,8 @@ export abstract class AbstractPlanner {
    * @param goalState - list of states the action queue has to fulfill
    * @returns a DirectedWeightedGraph generated from all possible unit actions for a goal
    */
-  protected createGraph(
-    goalState: Array<Property> = this.unit.getGoalState()
-  ): IWeightedGraph<GraphNode, WeightedEdge> {
-    const generatedGraph: IWeightedGraph<GraphNode, WeightedEdge> = this.createBaseGraph();
+  protected createGraph(goalState: Array<Property> = this.unit.getGoalState()): IWeightedGraph<GraphNode> {
+    const generatedGraph: IWeightedGraph<GraphNode> = this.createBaseGraph();
 
     this.addVertices(generatedGraph, goalState);
     this.addEdges(generatedGraph);
@@ -107,7 +105,7 @@ export abstract class AbstractPlanner {
    * @param graph - the graph the vertices are being added to
    * @param goalState - list of States the unit has listed as their goals
    */
-  protected addVertices(graph: IWeightedGraph<GraphNode, WeightedEdge>, goalState: Array<Property>): void {
+  protected addVertices(graph: IWeightedGraph<GraphNode>, goalState: Array<Property>): void {
     // The effects from the world state as well as the precondition of each
     // goal have to be set at the beginning, since these are the effects the
     // unit tries to archive with its actions. Also the startNode has to
@@ -154,7 +152,7 @@ export abstract class AbstractPlanner {
    *
    * @param graph - the graph the edges are being added to
    */
-  protected addEdges(graph: IWeightedGraph<GraphNode, WeightedEdge>): void {
+  protected addEdges(graph: IWeightedGraph<GraphNode>): void {
     const nodesToWorkOn: Queue<GraphNode> = [];
 
     this.addDefaultEdges(graph, nodesToWorkOn);
@@ -181,7 +179,7 @@ export abstract class AbstractPlanner {
    * @param graph - the graph the edges are getting added to
    * @param nodesToWorkOn - the Queue in which nodes which got connected are getting added to
    */
-  protected addDefaultEdges(graph: IWeightedGraph<GraphNode, WeightedEdge>, nodesToWorkOn: Queue<GraphNode>): void {
+  protected addDefaultEdges(graph: IWeightedGraph<GraphNode>, nodesToWorkOn: Queue<GraphNode>): void {
     // graphNode.action != null -> start and ends
     for (const graphNode of graph.getVertices()) {
       if (
@@ -190,7 +188,7 @@ export abstract class AbstractPlanner {
         (graphNode.preconditions.length === 0 ||
           areAllPreconditionsMet(graphNode.preconditions, this.startNode.effects))
       ) {
-        graph.addEdge(this.startNode, graphNode, new WeightedEdge(0));
+        graph.addEdge(this.startNode, graphNode, { weight: 0 });
 
         if (!nodesToWorkOn.includes(graphNode)) {
           nodesToWorkOn.push(graphNode);
@@ -205,8 +203,8 @@ export abstract class AbstractPlanner {
             this.startNode,
             graphNode,
             [this.startNode, graphNode],
-            [graph.getEdge(this.startNode, graphNode) as WeightedEdge]
-          ) as IWeightedPath<GraphNode, WeightedEdge>
+            [graph.getEdge(this.startNode, graphNode) as IWeightedEdge]
+          ) as IWeightedPath<GraphNode, IWeightedEdge>
         );
       }
     }
@@ -223,7 +221,7 @@ export abstract class AbstractPlanner {
    * @return if the node was connected to another node
    */
   protected tryToConnectNode(
-    graph: IWeightedGraph<GraphNode, WeightedEdge>,
+    graph: IWeightedGraph<GraphNode>,
     node: GraphNode,
     nodesToWorkOn: Queue<GraphNode>
   ): boolean {
@@ -243,11 +241,7 @@ export abstract class AbstractPlanner {
           if (areAllPreconditionsMet(otherNodeInGraph.preconditions, node.getEffectState(pathToListNode))) {
             connected = true;
 
-            graph.addEdge(
-              node,
-              otherNodeInGraph,
-              new WeightedEdge((node.action as AbstractAction).generateCost(this.unit))
-            );
+            graph.addEdge(node, otherNodeInGraph, { weight: (node.action as AbstractAction).generateCost(this.unit) });
 
             otherNodeInGraph.addGraphPath(
               pathToListNode,
@@ -276,7 +270,7 @@ export abstract class AbstractPlanner {
    * @param graph - the graph of goap actions the unit has to take in order to achieve a goal
    * @returns the Queue of goap actions which has the lowest cost to archive a goal
    */
-  protected searchGraphForActionQueue(graph: IWeightedGraph<GraphNode, WeightedEdge>): Optional<Queue<AbstractAction>> {
+  protected searchGraphForActionQueue(graph: IWeightedGraph<GraphNode>): Optional<Queue<AbstractAction>> {
     for (let i = 0; i < this.endNodes.length; i++) {
       this.endNodes[i].pathsToThisNode.sort((first, second) => first.totalWeight - second.totalWeight);
 

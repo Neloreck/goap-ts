@@ -2,7 +2,6 @@ import { AbstractAction } from "@/AbstractAction";
 import { Property } from "@/Property";
 import { Optional } from "@/types";
 import { removeFromArray } from "@/utils/array";
-import { WeightedEdge } from "@/utils/graph";
 import { IWeightedPath } from "@/utils/graph/IWeightedPath";
 
 /**
@@ -13,8 +12,8 @@ export class GraphNode {
   public preconditions: Array<Property>;
   public effects: Array<Property>;
 
-  public pathsToThisNode: Array<IWeightedPath<GraphNode, WeightedEdge>> = [];
-  private states: Map<IWeightedPath<GraphNode, WeightedEdge>, Array<Property>> = new Map();
+  public pathsToThisNode: Array<IWeightedPath<GraphNode>> = [];
+  private states: Map<IWeightedPath<GraphNode>, Array<Property>> = new Map();
 
   /**
    * @param preconditions - the set of preconditions the node has,
@@ -52,10 +51,7 @@ export class GraphNode {
    * @param pathToPreviousNode - the path with which the previous node is accessed
    * @param newPath - the path with which the node is accessed
    */
-  public addGraphPath(
-    pathToPreviousNode: Optional<IWeightedPath<GraphNode, WeightedEdge>>,
-    newPath: IWeightedPath<GraphNode, WeightedEdge>
-  ): void {
+  public addGraphPath(pathToPreviousNode: Optional<IWeightedPath<GraphNode>>, newPath: IWeightedPath<GraphNode>): void {
     const newPathNodeList: Array<GraphNode> = newPath.vertices;
     let notInSet: boolean = true;
 
@@ -98,8 +94,8 @@ export class GraphNode {
    * @returns the set of effects at the last node in the path
    */
   private addPathEffectsTogether(
-    pathToPreviousNode: Optional<IWeightedPath<GraphNode, WeightedEdge>>,
-    path: IWeightedPath<GraphNode, WeightedEdge>
+    pathToPreviousNode: Optional<IWeightedPath<GraphNode>>,
+    path: IWeightedPath<GraphNode>
   ): Array<Property> {
     const statesToBeRemoved: Array<Property> = [];
 
@@ -130,7 +126,7 @@ export class GraphNode {
    * @param path - path to get effects state for
    * @returns effects for provided path
    */
-  public getEffectState(path: IWeightedPath<GraphNode, WeightedEdge>): Array<Property> {
+  public getEffectState(path: IWeightedPath<GraphNode>): Array<Property> {
     return this.states.get(path) as Array<Property>;
   }
 }

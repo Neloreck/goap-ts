@@ -1,9 +1,7 @@
 import { Optional } from "@/types";
-import { IPath } from "@/utils/graph";
-import { Edge } from "@/utils/graph/Edge";
+import { IEdge, IPath, IWeightedEdge } from "@/utils/graph";
 import { IGraph } from "@/utils/graph/IGraph";
 import { IWeightedPath } from "@/utils/graph/IWeightedPath";
-import { WeightedEdge } from "@/utils/graph/WeightedEdge";
 
 /**
  * Function for generating a simple Path.
@@ -16,7 +14,7 @@ import { WeightedEdge } from "@/utils/graph/WeightedEdge";
  * @param edges - the List of all edges of the Path
  * @returns a Path leading from one point inside the Graph to another one
  */
-export function createPath<VertexType, EdgeType extends Edge>(
+export function createPath<VertexType, EdgeType extends IEdge>(
   graph: IGraph<VertexType, EdgeType>,
   start: VertexType,
   end: VertexType,
@@ -39,7 +37,7 @@ export function createPath<VertexType, EdgeType extends Edge>(
  * @param edges - the List of all edges of the WeightedPath
  * @returns a WeightedPath leading from one point inside the Graph to another one
  */
-export function createWeightedPath<VertexType, EdgeType extends WeightedEdge>(
+export function createWeightedPath<VertexType, EdgeType extends IWeightedEdge>(
   graph: IGraph<VertexType, EdgeType>,
   start: VertexType,
   end: VertexType,
@@ -50,7 +48,7 @@ export function createWeightedPath<VertexType, EdgeType extends WeightedEdge>(
     let totalWeight: number = 0;
 
     for (const edge of edges) {
-      totalWeight += edge.getWeight();
+      totalWeight += edge.weight;
     }
 
     return {
@@ -86,7 +84,7 @@ export function validateStartAndEnd<VertexType>(
  * @param vertices - the List of all vertices of the Path being created
  * @returns if the provided Lists match the given graph
  */
-export function validateConnections<VertexType, EdgeType extends Edge>(
+export function validateConnections<VertexType, EdgeType extends IEdge>(
   graph: IGraph<VertexType, EdgeType>,
   vertices: Array<VertexType>
 ): boolean {

@@ -4,7 +4,7 @@ import { GenericAction } from "#/fixtures/mocks";
 
 import { GraphNode } from "@/planner";
 import { Optional } from "@/types";
-import { DirectedWeightedGraph, Edge, IPath, WeightedEdge } from "@/utils/graph";
+import { DirectedWeightedGraph, IEdge, IPath } from "@/utils/graph";
 import { createPath } from "@/utils/path";
 
 describe("path utils module", () => {
@@ -16,7 +16,7 @@ describe("path utils module", () => {
     const firstEnd: GraphNode = new GraphNode([], [], new GenericAction(5));
     const secondEnd: GraphNode = new GraphNode([], [], new GenericAction(6));
 
-    const graph: DirectedWeightedGraph<GraphNode> = new DirectedWeightedGraph<GraphNode, WeightedEdge>().addVertices([
+    const graph: DirectedWeightedGraph<GraphNode> = new DirectedWeightedGraph<GraphNode>().addVertices([
       start,
       second,
       third,
@@ -26,18 +26,18 @@ describe("path utils module", () => {
     ]);
 
     graph
-      .addEdge(start, second, new WeightedEdge(1))
-      .addEdge(second, third, new WeightedEdge(2))
-      .addEdge(second, fifth, new WeightedEdge(2))
-      .addEdge(third, firstEnd, new WeightedEdge(2))
-      .addEdge(fifth, secondEnd, new WeightedEdge(2));
+      .addEdge(start, second, { weight: 1 })
+      .addEdge(second, third, { weight: 2 })
+      .addEdge(second, fifth, { weight: 2 })
+      .addEdge(third, firstEnd, { weight: 2 })
+      .addEdge(fifth, secondEnd, { weight: 2 });
 
     const firstPath: Optional<IPath<GraphNode>> = createPath(
       graph,
       start,
       second,
       [start, second],
-      [graph.getEdge(start, second) as Edge]
+      [graph.getEdge(start, second) as IEdge]
     );
 
     const secondPath: Optional<IPath<GraphNode>> = createPath(
@@ -46,9 +46,9 @@ describe("path utils module", () => {
       firstEnd,
       [start, second, third, firstEnd],
       [
-        graph.getEdge(start, second) as Edge,
-        graph.getEdge(second, third) as Edge,
-        graph.getEdge(third, firstEnd) as Edge,
+        graph.getEdge(start, second) as IEdge,
+        graph.getEdge(second, third) as IEdge,
+        graph.getEdge(third, firstEnd) as IEdge,
       ]
     );
 
@@ -58,9 +58,9 @@ describe("path utils module", () => {
       secondEnd,
       [start, second, fifth, secondEnd],
       [
-        graph.getEdge(start, second) as Edge,
-        graph.getEdge(second, fifth) as Edge,
-        graph.getEdge(fifth, secondEnd) as Edge,
+        graph.getEdge(start, second) as IEdge,
+        graph.getEdge(second, fifth) as IEdge,
+        graph.getEdge(fifth, secondEnd) as IEdge,
       ]
     );
 
@@ -69,7 +69,7 @@ describe("path utils module", () => {
       start,
       end: second,
       vertices: [start, second],
-      edges: [graph.getEdge(start, second) as Edge],
+      edges: [graph.getEdge(start, second) as IEdge],
     });
 
     expect(secondPath).not.toBeNull();
@@ -78,9 +78,9 @@ describe("path utils module", () => {
       end: firstEnd,
       vertices: [start, second, third, firstEnd],
       edges: [
-        graph.getEdge(start, second) as Edge,
-        graph.getEdge(second, third) as Edge,
-        graph.getEdge(third, firstEnd) as Edge,
+        graph.getEdge(start, second) as IEdge,
+        graph.getEdge(second, third) as IEdge,
+        graph.getEdge(third, firstEnd) as IEdge,
       ],
     });
 
@@ -90,9 +90,9 @@ describe("path utils module", () => {
       end: secondEnd,
       vertices: [start, second, fifth, secondEnd],
       edges: [
-        graph.getEdge(start, second) as Edge,
-        graph.getEdge(second, fifth) as Edge,
-        graph.getEdge(fifth, secondEnd) as Edge,
+        graph.getEdge(start, second) as IEdge,
+        graph.getEdge(second, fifth) as IEdge,
+        graph.getEdge(fifth, secondEnd) as IEdge,
       ],
     });
 
@@ -104,9 +104,9 @@ describe("path utils module", () => {
         secondEnd,
         [start, second, third, firstEnd],
         [
-          graph.getEdge(start, second) as Edge,
-          graph.getEdge(second, third) as Edge,
-          graph.getEdge(third, firstEnd) as Edge,
+          graph.getEdge(start, second) as IEdge,
+          graph.getEdge(second, third) as IEdge,
+          graph.getEdge(third, firstEnd) as IEdge,
         ]
       )
     ).toBeNull();
@@ -119,9 +119,9 @@ describe("path utils module", () => {
         fifth,
         [start, second, third, firstEnd],
         [
-          graph.getEdge(start, second) as Edge,
-          graph.getEdge(second, third) as Edge,
-          graph.getEdge(third, firstEnd) as Edge,
+          graph.getEdge(start, second) as IEdge,
+          graph.getEdge(second, third) as IEdge,
+          graph.getEdge(third, firstEnd) as IEdge,
         ]
       )
     ).toBeNull();
