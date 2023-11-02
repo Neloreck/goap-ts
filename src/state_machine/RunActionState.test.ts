@@ -4,6 +4,7 @@ import { GenericAction } from "#/fixtures/mocks";
 
 import { AbstractAction } from "@/AbstractAction";
 import { Plan } from "@/alias";
+import { IErrorHandler, NotPerformableActionError, SilentErrorHandler } from "@/error";
 import { FiniteStateMachine } from "@/state_machine/FiniteStateMachine";
 import { MoveToState } from "@/state_machine/MoveToState";
 import { RunActionState } from "@/state_machine/RunActionState";
@@ -18,15 +19,20 @@ describe("RunActionState class", () => {
     expect(state.getCurrentPlan()).toBe(plan);
   });
 
-  it("should correctly handle throw NotPerformableActionException if action condition fails", () => {
+  it("should correctly handle throw NotPerformableActionError if action condition fails", () => {
+    const errorHandler: IErrorHandler = new SilentErrorHandler();
     const first: AbstractAction = new GenericAction(1);
     const second: AbstractAction = new GenericAction(1);
-    const fsm: FiniteStateMachine = new FiniteStateMachine();
+    const fsm: FiniteStateMachine = new FiniteStateMachine(errorHandler);
     const plan: Plan = [first, second];
-    const state: RunActionState = new RunActionState(fsm, plan);
+    const state: RunActionState = new RunActionState(fsm, plan, errorHandler);
 
     jest.spyOn(first, "performAction").mockImplementation(() => false);
+    jest.spyOn(errorHandler, "onError").mockImplementation(() => jest.fn());
+
     expect(state.execute({} as IUnit)).toBe(true);
+    expect(errorHandler.onError).toHaveBeenCalledTimes(1);
+    expect(errorHandler.onError).toHaveBeenCalledWith(new NotPerformableActionError(), "fsm_run_action_state_error");
   });
 
   it("should correctly handle empty plan", () => {

@@ -1,5 +1,6 @@
 import { IAgent } from "@/agent/IAgent";
 import { Plan } from "@/alias";
+import { IErrorHandler, SilentErrorHandler } from "@/error";
 import { IPlanner } from "@/planner/IPlanner";
 import { Property } from "@/property/Property";
 import { FiniteStateMachine } from "@/state_machine/FiniteStateMachine";
@@ -16,23 +17,28 @@ import { IUnit } from "@/unit/IUnit";
  * - It runs updates for both unit and FSM
  */
 export abstract class AbstractAgent implements IAgent {
-  protected readonly fsm: FiniteStateMachine = new FiniteStateMachine();
-  protected readonly idleState: IdleState;
+  protected readonly fsm: FiniteStateMachine;
+  protected readonly idle: IdleState;
   protected readonly unit: IUnit;
+
+  protected errorHandler: IErrorHandler;
 
   /**
    * @param unit - the unit the agent works with
+   * @param errorHandler - object handling errors of planner
    */
-  public constructor(unit: IUnit) {
+  public constructor(unit: IUnit, errorHandler: IErrorHandler = new SilentErrorHandler()) {
     this.unit = unit;
-    this.idleState = new IdleState(this.createPlannerObject());
+    this.errorHandler = errorHandler;
+    this.fsm = new FiniteStateMachine(errorHandler);
+    this.idle = new IdleState(this.createPlannerObject());
 
     // Only subclasses of the own unit are able to emit events
     if (this.unit instanceof AbstractUnit) {
       this.unit.addListener(this);
     }
 
-    this.idleState.addListener(this);
+    this.idle.addListener(this);
     this.fsm.addEventListener(this);
   }
 
@@ -56,7 +62,7 @@ export abstract class AbstractAgent implements IAgent {
    */
   public update(): void {
     if (!this.fsm.hasAny()) {
-      this.fsm.push(this.idleState);
+      this.fsm.push(this.idle);
     }
 
     this.unit.update();
@@ -70,7 +76,7 @@ export abstract class AbstractAgent implements IAgent {
    */
   public onImportantUnitGoalChange(property: Property): void {
     property.importance = Infinity;
-    this.fsm.push(this.idleState);
+    this.fsm.push(this.idle);
   }
 
   /**
@@ -84,7 +90,7 @@ export abstract class AbstractAgent implements IAgent {
     }
 
     this.fsm.clear();
-    this.fsm.push(this.idleState);
+    this.fsm.push(this.idle);
   }
 
   /**

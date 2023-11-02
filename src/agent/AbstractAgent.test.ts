@@ -5,6 +5,7 @@ import { GenericAction, TestUnit } from "#/fixtures/mocks";
 import { AbstractAction } from "@/AbstractAction";
 import { AbstractAgent } from "@/agent/AbstractAgent";
 import { Plan } from "@/alias";
+import { IErrorHandler, SilentErrorHandler } from "@/error";
 import { GenericPlanner } from "@/planner/GenericPlanner";
 import { IPlanner } from "@/planner/IPlanner";
 import { Property } from "@/property/Property";
@@ -17,11 +18,12 @@ import { IUnit } from "@/unit/IUnit";
 describe("AbstractAgent class", () => {
   class Agent extends AbstractAgent {
     public declare readonly fsm: FiniteStateMachine;
-    public declare readonly idleState: IdleState;
+    public declare readonly idle: IdleState;
     public declare readonly unit: IUnit;
+    public declare readonly errorHandler: IErrorHandler;
 
     protected override createPlannerObject(): IPlanner {
-      return new GenericPlanner();
+      return new GenericPlanner(this.errorHandler);
     }
   }
 
@@ -31,7 +33,7 @@ describe("AbstractAgent class", () => {
 
     expect(agent.getUnit()).toBe(unit);
 
-    expect(agent.idleState.getListeners()).toEqual([agent]);
+    expect(agent.idle.getListeners()).toEqual([agent]);
     expect(agent.fsm.getListeners()).toEqual([agent]);
     expect((agent.unit as TestUnit).getListeners()).toEqual([agent]);
   });
@@ -40,7 +42,12 @@ describe("AbstractAgent class", () => {
     const unit: TestUnit = new TestUnit();
     const agent: Agent = new Agent(unit);
 
-    expect(agent.idleState["planner"]).toBeInstanceOf(GenericPlanner);
+    expect(agent.idle["planner"]).toBeInstanceOf(GenericPlanner);
+    expect(agent.fsm["errorHandler"]).toBeInstanceOf(SilentErrorHandler);
+    expect(agent.fsm["errorHandler"]).toBe(agent.errorHandler);
+    expect(agent.errorHandler).toBeInstanceOf(SilentErrorHandler);
+    expect((agent.idle["planner"] as GenericPlanner)["errorHandler"]).toBeInstanceOf(SilentErrorHandler);
+    expect((agent.idle["planner"] as GenericPlanner)["errorHandler"]).toBe(agent.errorHandler);
   });
 
   it("should correctly handle initial update with empty FSM", () => {
@@ -52,14 +59,14 @@ describe("AbstractAgent class", () => {
 
     agent.update();
 
-    expect(agent.fsm.getStack()).toEqual([agent.idleState]);
+    expect(agent.fsm.getStack()).toEqual([agent.idle]);
     expect(agent.unit.update).toHaveBeenCalledTimes(1);
     expect(agent.fsm.update).toHaveBeenCalledTimes(1);
     expect(agent.fsm.update).toHaveBeenCalledWith(unit);
 
     agent.update();
 
-    expect(agent.fsm.getStack()).toEqual([agent.idleState]);
+    expect(agent.fsm.getStack()).toEqual([agent.idle]);
     expect(agent.unit.update).toHaveBeenCalledTimes(2);
     expect(agent.fsm.update).toHaveBeenCalledTimes(2);
   });
@@ -90,7 +97,7 @@ describe("AbstractAgent class", () => {
     agent.onImportantUnitGoalChange(property);
 
     expect(property.importance).toBe(Infinity);
-    expect(agent.fsm.getStack()).toEqual([agent.idleState]);
+    expect(agent.fsm.getStack()).toEqual([agent.idle]);
   });
 
   it("should correctly handle important goal stack reset", () => {
@@ -112,7 +119,7 @@ describe("AbstractAgent class", () => {
 
     expect(first.reset).toHaveBeenCalled();
     expect(second.reset).toHaveBeenCalled();
-    expect(agent.fsm.getStack()).toEqual([agent.idleState]);
+    expect(agent.fsm.getStack()).toEqual([agent.idle]);
   });
 
   it("should correctly handle plan creation", () => {
@@ -122,9 +129,9 @@ describe("AbstractAgent class", () => {
     const plan: Plan = [new GenericAction(1), new GenericAction(2)];
 
     agent.fsm.push(state);
-    agent.fsm.push(agent.idleState);
+    agent.fsm.push(agent.idle);
 
-    expect(agent.fsm.getStack()).toEqual([state, agent.idleState]);
+    expect(agent.fsm.getStack()).toEqual([state, agent.idle]);
 
     agent.onPlanCreated(plan);
 
@@ -137,23 +144,23 @@ describe("AbstractAgent class", () => {
     const agent: Agent = new Agent(unit);
     const plan: Plan = [new GenericAction(1), new GenericAction(2)];
 
-    agent.fsm.push(agent.idleState);
+    agent.fsm.push(agent.idle);
 
     agent.onPlanFailed(plan);
 
     expect(unit.onGoapPlanFailed).toHaveBeenCalledWith(plan);
-    expect(agent.fsm.getStack()).toEqual([agent.idleState]);
+    expect(agent.fsm.getStack()).toEqual([agent.idle]);
   });
 
   it("should correctly handle plan finish", () => {
     const unit: TestUnit = new TestUnit();
     const agent: Agent = new Agent(unit);
 
-    agent.fsm.push(agent.idleState);
+    agent.fsm.push(agent.idle);
 
     agent.onPlanFinished();
 
     expect(unit.onGoapPlanFinished).toHaveBeenCalledTimes(1);
-    expect(agent.fsm.getStack()).toEqual([agent.idleState]);
+    expect(agent.fsm.getStack()).toEqual([agent.idle]);
   });
 });

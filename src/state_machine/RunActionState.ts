@@ -1,10 +1,10 @@
 import { AbstractAction } from "@/AbstractAction";
 import { Plan } from "@/alias";
-import { NotPerformableActionException } from "@/error/NotPerformableActionException";
+import { IErrorHandler, SilentErrorHandler } from "@/error";
+import { NotPerformableActionError } from "@/error/NotPerformableActionError";
 import { FiniteStateMachine } from "@/state_machine/FiniteStateMachine";
 import { IFiniteStateMachineState } from "@/state_machine/IFiniteStateMachineState";
 import { MoveToState } from "@/state_machine/MoveToState";
-import { Queue } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 import { queuePeek } from "@/utils/array";
 
@@ -12,16 +12,20 @@ import { queuePeek } from "@/utils/array";
  * State on the FSM Stack.
  */
 export class RunActionState implements IFiniteStateMachineState {
-  private readonly plan: Plan;
-  private readonly fsm: FiniteStateMachine;
+  protected readonly plan: Plan;
+  protected readonly fsm: FiniteStateMachine;
+
+  protected errorHandler: IErrorHandler;
 
   /**
-   * @param fsm - the FSM on which all states are being stacked.
-   * @param plan - the Queue of actions to be taken in order to archive a goal.
+   * @param fsm - the FSM on which all states are being stacked
+   * @param plan - the queue of actions to be taken in order to archive a goal
+   * @param errorHandler - handler of run action execution errors
    */
-  public constructor(fsm: FiniteStateMachine, plan: Plan) {
+  public constructor(fsm: FiniteStateMachine, plan: Plan, errorHandler: IErrorHandler = new SilentErrorHandler()) {
     this.fsm = fsm;
     this.plan = plan;
+    this.errorHandler = errorHandler;
   }
 
   /**
@@ -53,7 +57,7 @@ export class RunActionState implements IFiniteStateMachineState {
         const currentAction: AbstractAction = queuePeek(this.plan) as AbstractAction;
 
         if (currentAction.target === null) {
-          // todo: Propagate event with error handler.
+          // todo: Propagate event with error handler?
           // System.out.println("Target is null! " + currentAction.getClass().getSimpleName());
         }
 
@@ -64,16 +68,14 @@ export class RunActionState implements IFiniteStateMachineState {
           if (currentAction.performAction(unit)) {
             return false;
           } else {
-            throw new NotPerformableActionException(currentAction.constructor.name);
+            throw new NotPerformableActionError(currentAction.constructor.name);
           }
         }
 
         return false;
       }
     } catch (error) {
-      // todo:  [error_handler] emit callbacks for handler.
-      // e.printStackTrace();
-      // throw new Exception();
+      this.errorHandler.onError(error, "fsm_run_action_state_error");
     }
 
     return true;

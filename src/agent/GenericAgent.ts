@@ -7,6 +7,6 @@ export class GenericAgent extends AbstractAgent {
    * @returns new planner object
    */
   protected override createPlannerObject(): IPlanner {
-    return new GenericPlanner();
+    return new GenericPlanner(this.errorHandler);
   }
 }

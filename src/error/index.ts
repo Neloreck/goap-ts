@@ -1,3 +1,3 @@
-export * from "@/error/ErrorHandler";
+export * from "@/error/SilentErrorHandler";
 export * from "@/error/IErrorHandler";
-export * from "@/error/NotPerformableActionException";
+export * from "@/error/NotPerformableActionError";

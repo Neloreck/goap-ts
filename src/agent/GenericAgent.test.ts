@@ -10,6 +10,6 @@ describe("GenericAgent class", () => {
     const unit: TestUnit = new TestUnit();
     const agent: GenericAgent = new GenericAgent(unit);
 
-    expect(agent["idleState"]["planner"]).toBeInstanceOf(GenericPlanner);
+    expect(agent["idle"]["planner"]).toBeInstanceOf(GenericPlanner);
   });
 });

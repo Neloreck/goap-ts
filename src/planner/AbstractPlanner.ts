@@ -2,6 +2,7 @@ import { IWeightedEdge, IWeightedGraph } from "src/graph";
 
 import { AbstractAction } from "@/AbstractAction";
 import { Plan, Properties } from "@/alias";
+import { IErrorHandler, SilentErrorHandler } from "@/error";
 import { IWeightedPath } from "@/graph/IWeightedPath";
 import { GraphNode } from "@/planner/GraphNode";
 import { Optional, Queue } from "@/types";
@@ -18,9 +19,18 @@ import {
  * Class for generating a queue of goap actions.
  */
 export abstract class AbstractPlanner {
-  private unit: IUnit;
-  private startNode: GraphNode;
-  private endNodes: Array<GraphNode>;
+  protected unit: IUnit;
+  protected startNode: GraphNode;
+  protected endNodes: Array<GraphNode>;
+
+  protected errorHandler: IErrorHandler;
+
+  /**
+   * @param errorHandler - class handling planner errors
+   */
+  public constructor(errorHandler: IErrorHandler = new SilentErrorHandler()) {
+    this.errorHandler = errorHandler;
+  }
 
   /**
    * @return unit with which planner is working
@@ -83,7 +93,7 @@ export abstract class AbstractPlanner {
         return this.searchGraphForActionQueue(this.createGraph(this.unit.getGoalState()));
       }
     } catch (error) {
-      // todo: [error_handler] handle error
+      this.errorHandler.onError(error, "planner_plan_error");
     }
 
     return null;
@@ -145,8 +155,7 @@ export abstract class AbstractPlanner {
     try {
       return this.unit.getActions().filter((it) => it.isAvailable(this.unit));
     } catch (error) {
-      // e.printStackTrace();
-      // todo: [error_handler] Print error
+      this.errorHandler.onError(error, "planner_get_possible_actions_error");
 
       return [];
     }

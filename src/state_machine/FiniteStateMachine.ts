@@ -1,5 +1,6 @@
 import { Plan } from "@/alias";
-import { IFiniteStateMachinePlanEventListener } from "@/event/IFiniteStateMachinePlanEventListener";
+import { IErrorHandler, SilentErrorHandler } from "@/error";
+import { IFiniteStateMachinePlanEventListener } from "@/event";
 import { IFiniteStateMachineState } from "@/state_machine/IFiniteStateMachineState";
 import { RunActionState } from "@/state_machine/RunActionState";
 import { Definable, Maybe, Stack } from "@/types";
@@ -7,14 +8,23 @@ import { IUnit } from "@/unit/IUnit";
 import { removeFromArray, stackPeek } from "@/utils/array";
 
 export class FiniteStateMachine {
-  private states: Stack<IFiniteStateMachineState> = [];
-  private planEventListeners: Array<IFiniteStateMachinePlanEventListener> = [];
+  private readonly stack: Stack<IFiniteStateMachineState> = [];
+  private readonly planEventListeners: Array<IFiniteStateMachinePlanEventListener> = [];
+
+  protected errorHandler: IErrorHandler;
+
+  /**
+   * @param errorHandler - class handling state machine errors
+   */
+  public constructor(errorHandler: IErrorHandler = new SilentErrorHandler()) {
+    this.errorHandler = errorHandler;
+  }
 
   /**
    * @returns state machine states stack
    */
   public getStack(): Readonly<Stack<IFiniteStateMachineState>> {
-    return this.states;
+    return this.stack;
   }
 
   /**
@@ -23,35 +33,35 @@ export class FiniteStateMachine {
    * @param state - state to push
    */
   public push(state: IFiniteStateMachineState): void {
-    this.states.push(state);
+    this.stack.push(state);
   }
 
   /**
    * @returns peek element and pops it from the stack
    */
   public pop(): Definable<IFiniteStateMachineState> {
-    return this.states.pop();
+    return this.stack.pop();
   }
 
   /**
    * Clear states stack.
    */
   public clear(): void {
-    this.states.length = 0;
+    this.stack.length = 0;
   }
 
   /**
    * @returns if any states exist in the execution stack
    */
   public hasAny(): boolean {
-    return this.states.length > 0;
+    return this.stack.length > 0;
   }
 
   /**
    * @returns if no states exist in the execution stack
    */
   public isEmpty(): boolean {
-    return this.states.length === 0;
+    return this.stack.length === 0;
   }
 
   /**
@@ -101,7 +111,7 @@ export class FiniteStateMachine {
 
   /**
    * Run through all action in the specific states.
-   * If an Exception occurs (mainly in RunActionState) the FSM assumes the plan failed.
+   * If an error occurs (mainly in RunActionState) the FSM assumes the plan failed.
    * If an action state returns false the FSM assumes the plan finished.
    *
    * @param unit - unit whose actions are getting cycled
@@ -110,21 +120,21 @@ export class FiniteStateMachine {
     try {
       // When stack action execution is finished, pop latest action and notify listeners if needed.
       if (
-        this.states.length &&
-        (stackPeek(this.states) as IFiniteStateMachineState).execute(unit) &&
-        this.states.pop() instanceof RunActionState
+        this.stack.length &&
+        (stackPeek(this.stack) as IFiniteStateMachineState).execute(unit) &&
+        this.stack.pop() instanceof RunActionState
       ) {
         this.dispatchNewPlanFinishedEvent();
       }
     } catch (error) {
       // Pop problematic action and notify listeners if needed.
-      const state: Maybe<IFiniteStateMachineState> = this.states.pop();
+      const state: Maybe<IFiniteStateMachineState> = this.stack.pop();
 
       if (state instanceof RunActionState) {
         this.dispatchNewPlanFailedEvent(state.getCurrentPlan());
       }
 
-      // todo: [error_handler] Print error.
+      this.errorHandler.onError(error, "fsm_action_execution_error");
     }
   }
 }

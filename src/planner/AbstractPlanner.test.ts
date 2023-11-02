@@ -3,6 +3,7 @@ import { describe, expect, it, jest } from "@jest/globals";
 import { GenericAction, TestUnit } from "#/fixtures/mocks";
 
 import { Plan } from "@/alias";
+import { SilentErrorHandler } from "@/error";
 import { DirectedWeightedGraph, IWeightedEdge, IWeightedGraph } from "@/graph";
 import { AbstractPlanner } from "@/planner/AbstractPlanner";
 import { GraphNode } from "@/planner/GraphNode";
@@ -26,7 +27,7 @@ describe("GenericPlanner class", () => {
   }
 
   it("should correctly initialize", () => {
-    expect(new Planner()).toEqual({});
+    expect(new Planner()).toEqual({ errorHandler: new SilentErrorHandler() });
   });
 
   it("should correctly plan without anything", () => {
