@@ -143,7 +143,7 @@ describe("planner utils module", () => {
     expect(thirdPath?.start).toBe(first);
     expect(thirdPath?.end).toBe(fourth);
     expect(thirdPath?.vertices).toEqual([first, second, third, fourth]);
-    expect(thirdPath?.edges).toEqual([...graph.getEdges()]);
+    expect(thirdPath?.edges).toEqual(graph.getEdges());
 
     expect(addNodeToGraphPathEnd(graph, path as IWeightedPath<GraphNode>, fourth)).toBeNull();
     expect(addNodeToGraphPathEnd(graph, path as IWeightedPath<GraphNode>, new GraphNode([], []))).toBeNull();

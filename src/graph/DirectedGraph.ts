@@ -20,8 +20,21 @@ export class DirectedGraph<VertexType, EdgeType extends IEdge = IEdge> implement
   /**
    * @returns iterator over graph vertices
    */
-  public [Symbol.iterator](): IterableIterator<VertexType> {
+  public vertices(): IterableIterator<VertexType> {
     return this.data.keys();
+  }
+
+  /**
+   * @returns iterator over graph vertices
+   */
+  public edges(): IterableIterator<EdgeType> {
+    const edges: Set<EdgeType> = new Set();
+
+    for (const links of this.data.values()) {
+      links.forEach((edge) => edges.add(edge));
+    }
+
+    return edges.values();
   }
 
   /**
@@ -81,21 +94,21 @@ export class DirectedGraph<VertexType, EdgeType extends IEdge = IEdge> implement
   /**
    * @returns set of vertices
    */
-  public getVertices(): Set<VertexType> {
-    return new Set(this.data.keys());
+  public getVertices(): Array<VertexType> {
+    return [...this.data.keys()];
   }
 
   /**
    * @returns set of edges in current graph
    */
-  public getEdges(): Set<EdgeType> {
+  public getEdges(): Array<EdgeType> {
     const edges: Set<EdgeType> = new Set();
 
     for (const links of this.data.values()) {
       links.forEach((edge) => edges.add(edge));
     }
 
-    return edges;
+    return [...edges.values()];
   }
 
   /**

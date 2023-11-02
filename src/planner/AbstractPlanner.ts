@@ -197,7 +197,7 @@ export abstract class AbstractPlanner {
     const nodesToWorkOn: Array<GraphNode> = [];
 
     // graphNode.action != null -> start and ends
-    for (const node of graph) {
+    for (const node of graph.vertices()) {
       if (
         this.startNode !== node &&
         node.action !== null &&
@@ -244,7 +244,7 @@ export abstract class AbstractPlanner {
   ): boolean {
     let connected: boolean = false;
 
-    for (const otherNodeInGraph of graph) {
+    for (const otherNodeInGraph of graph.vertices()) {
       // End nodes can not have an edge towards another node and the target node must not be itself.
       // Also, there must not already be an edge in the graph.
       // && !graph.hasEdge(node, nodeInGraph) has to be added or loops occur which lead to a crash.

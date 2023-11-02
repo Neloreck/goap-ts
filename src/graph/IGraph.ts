@@ -8,15 +8,19 @@ export interface IGraph<VertexType, EdgeType extends IEdge = IEdge> {
   /**
    * @returns vertices iterator
    */
-  [Symbol.iterator]: () => IterableIterator<VertexType>;
+  vertices(): IterableIterator<VertexType>;
+  /**
+   * @returns edges iterator
+   */
+  edges(): IterableIterator<EdgeType>;
   /**
    * @returns all vertices inside the graph
    */
-  getVertices(): Set<VertexType>;
+  getVertices(): Array<VertexType>;
   /**
    * @returns all edges inside the graph
    */
-  getEdges(): Set<EdgeType>;
+  getEdges(): Array<EdgeType>;
   /**
    * @param firstVertex = the vertex from which the edge is coming from
    * @param secondVertex - the vertex the edge is going to

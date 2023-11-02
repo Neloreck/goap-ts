@@ -9,19 +9,19 @@ describe("DirectedGraph class", () => {
   it("should correctly initialize from set", () => {
     const graph: DirectedGraph<number> = new DirectedGraph([1, 3, 5]);
 
-    expect(graph.getEdges().size).toBe(0);
-    expect(graph.getVertices().size).toBe(3);
+    expect(graph.getEdges()).toHaveLength(0);
+    expect(graph.getVertices()).toHaveLength(3);
 
-    expect(graph.getVertices().has(1)).toBe(true);
-    expect(graph.getVertices().has(3)).toBe(true);
-    expect(graph.getVertices().has(5)).toBe(true);
+    expect(graph.getVertices()).toContain(1);
+    expect(graph.getVertices()).toContain(3);
+    expect(graph.getVertices()).toContain(5);
   });
 
   it("should correctly initialize basic graph", () => {
     const graph: DirectedGraph<number> = createBasicTestGraph(5);
 
-    expect([...graph.getEdges().values()]).toEqual([]);
-    expect([...graph.getVertices().values()]).toEqual([0, 1, 2, 3, 4]);
+    expect(graph.getEdges()).toEqual([]);
+    expect(graph.getVertices()).toEqual([0, 1, 2, 3, 4]);
 
     expect(graph.getEdge(0, 1)).toBeNull();
     expect(graph.hasEdge(0, 1)).toBe(false);
@@ -44,8 +44,8 @@ describe("DirectedGraph class", () => {
       .addEdge(3, 2, threeTwo)
       .addEdge(2, 3, twoThree);
 
-    expect([...graph.getEdges().values()]).toEqual([oneThree, threeOne, threeTwo, twoThree]);
-    expect([...graph.getVertices().values()]).toEqual([1, 2, 3]);
+    expect(graph.getEdges()).toEqual([oneThree, threeOne, threeTwo, twoThree]);
+    expect(graph.getVertices()).toEqual([1, 2, 3]);
 
     expect(graph.getEdge(1, 2)).toBeNull();
     expect(graph.getEdge(2, 1)).toBeNull();
@@ -58,8 +58,8 @@ describe("DirectedGraph class", () => {
   it("should correctly initialize linked graph", () => {
     const graph: DirectedGraph<number> = createBasicConnectedTestGraph(3, 2);
 
-    expect([...graph.getEdges().values()]).toEqual([{}, {}]);
-    expect([...graph.getVertices().values()]).toEqual([0, 1, 2]);
+    expect(graph.getEdges()).toEqual([{}, {}]);
+    expect(graph.getVertices()).toEqual([0, 1, 2]);
 
     expect(graph.hasEdge(0, 1)).toBe(true);
     expect(graph.hasEdge(1, 2)).toBe(true);
@@ -75,18 +75,18 @@ describe("DirectedGraph class", () => {
     expect(graph.getEdge(0, 1)).toBe(edge);
     expect(graph.hasEdge(0, 1)).toBe(true);
 
-    expect([...graph.getEdges().values()]).toEqual([edge]);
-    expect([...graph.getVertices().values()]).toEqual([0, 1, 2]);
+    expect(graph.getEdges()).toEqual([edge]);
+    expect(graph.getVertices()).toEqual([0, 1, 2]);
 
     graph.removeEdge(1, 2);
 
-    expect([...graph.getEdges().values()]).toEqual([edge]);
-    expect([...graph.getVertices().values()]).toEqual([0, 1, 2]);
+    expect(graph.getEdges()).toEqual([edge]);
+    expect(graph.getVertices()).toEqual([0, 1, 2]);
 
     graph.removeEdge(0, 1);
 
-    expect([...graph.getEdges().values()]).toEqual([]);
-    expect([...graph.getVertices().values()]).toEqual([0, 1, 2]);
+    expect(graph.getEdges()).toEqual([]);
+    expect(graph.getVertices()).toEqual([0, 1, 2]);
   });
 
   it("should correctly add many vertices", () => {
@@ -94,7 +94,7 @@ describe("DirectedGraph class", () => {
 
     graph.addVertex(1).addVertex(2).addVertices([3, 4, 5]);
 
-    expect(graph.getVertices().size).toBe(5);
-    expect([...graph.getVertices().values()]).toEqual([1, 2, 3, 4, 5]);
+    expect(graph.getVertices()).toHaveLength(5);
+    expect(graph.getVertices()).toEqual([1, 2, 3, 4, 5]);
   });
 });
