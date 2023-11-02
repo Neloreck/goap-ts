@@ -75,15 +75,15 @@ export class GraphNode {
         const nodeList: Array<GraphNode> = path.vertices;
         let isSamePath: boolean = true;
 
-        for (let i = 0; i < nodeList.length && isSamePath; i++) {
+        for (let i = 0; i < nodeList.length; i++) {
           if (nodeList[i] !== newPathNodeList[i]) {
             isSamePath = false;
+            break;
           }
         }
 
         if (isSamePath) {
           notInSet = false;
-
           break;
         }
       }
