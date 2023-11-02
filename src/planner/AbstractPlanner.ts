@@ -3,9 +3,10 @@ import { GraphNode } from "@/planner/GraphNode";
 import { Property } from "@/Property";
 import { Optional, Queue } from "@/types";
 import { IUnit } from "@/unit/IUnit";
-import { IWeightedGraph, WeightedEdge, WeightedPath } from "@/utils/graph";
+import { IWeightedGraph, WeightedEdge } from "@/utils/graph";
+import { IWeightedPath } from "@/utils/graph/IWeightedPath";
 import { createWeightedPath } from "@/utils/path";
-import { addNodeToGraphPath, areAllPreconditionsMet, extractActionsFromGraphPath } from "@/utils/planner";
+import { addNodeToGraphPathEnd, areAllPreconditionsMet, extractActionsFromGraphPath } from "@/utils/planner";
 
 /**
  * Class for generating a queue of goap actions.
@@ -205,7 +206,7 @@ export abstract class AbstractPlanner {
             graphNode,
             [this.startNode, graphNode],
             [graph.getEdge(this.startNode, graphNode) as WeightedEdge]
-          ) as WeightedPath<GraphNode, WeightedEdge>
+          ) as IWeightedPath<GraphNode, WeightedEdge>
         );
       }
     }
@@ -234,11 +235,7 @@ export abstract class AbstractPlanner {
       // && !graph.hasEdge(node, nodeInGraph) has to be added or loops occur which lead to a crash.
       // This leads to the case where no alternative routes are being stored inside the pathsToThisNode list.
       // This is because of the use of a queue, which loses the memory of which nodes were already connected.
-      if (
-        node !== otherNodeInGraph &&
-        this.startNode !== otherNodeInGraph &&
-        !graph.containsEdge(node, otherNodeInGraph)
-      ) {
+      if (node !== otherNodeInGraph && this.startNode !== otherNodeInGraph && !graph.hasEdge(node, otherNodeInGraph)) {
         // Every saved path to this node is checked if any of these
         // produce a suitable effect set regarding the preconditions of
         // the current node.
@@ -254,7 +251,7 @@ export abstract class AbstractPlanner {
 
             otherNodeInGraph.addGraphPath(
               pathToListNode,
-              addNodeToGraphPath(graph, pathToListNode, otherNodeInGraph) as WeightedPath<GraphNode, WeightedEdge>
+              addNodeToGraphPathEnd(graph, pathToListNode, otherNodeInGraph) as IWeightedPath<GraphNode>
             );
 
             nodesToWorkOn.push(otherNodeInGraph);
@@ -281,7 +278,7 @@ export abstract class AbstractPlanner {
    */
   protected searchGraphForActionQueue(graph: IWeightedGraph<GraphNode, WeightedEdge>): Optional<Queue<AbstractAction>> {
     for (let i = 0; i < this.endNodes.length; i++) {
-      this.endNodes[i].pathsToThisNode.sort((first, second) => first.getTotalWeight() - second.getTotalWeight());
+      this.endNodes[i].pathsToThisNode.sort((first, second) => first.totalWeight - second.totalWeight);
 
       for (let j = 0; j < this.endNodes[i].pathsToThisNode.length; j++) {
         return extractActionsFromGraphPath(this.endNodes[i].pathsToThisNode[j], this.startNode, this.endNodes[i]);

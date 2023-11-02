@@ -2,7 +2,8 @@ import { AbstractAction } from "@/AbstractAction";
 import { Property } from "@/Property";
 import { Optional } from "@/types";
 import { removeFromArray } from "@/utils/array";
-import { WeightedEdge, WeightedPath } from "@/utils/graph";
+import { WeightedEdge } from "@/utils/graph";
+import { IWeightedPath } from "@/utils/graph/IWeightedPath";
 
 /**
  * Vertex on the used in graph for building of paths.
@@ -12,8 +13,8 @@ export class GraphNode {
   public preconditions: Array<Property>;
   public effects: Array<Property>;
 
-  public pathsToThisNode: Array<WeightedPath<GraphNode, WeightedEdge>> = [];
-  private states: Map<WeightedPath<GraphNode, WeightedEdge>, Array<Property>> = new Map();
+  public pathsToThisNode: Array<IWeightedPath<GraphNode, WeightedEdge>> = [];
+  private states: Map<IWeightedPath<GraphNode, WeightedEdge>, Array<Property>> = new Map();
 
   /**
    * @param preconditions - the set of preconditions the node has,
@@ -52,17 +53,17 @@ export class GraphNode {
    * @param newPath - the path with which the node is accessed
    */
   public addGraphPath(
-    pathToPreviousNode: Optional<WeightedPath<GraphNode, WeightedEdge>>,
-    newPath: WeightedPath<GraphNode, WeightedEdge>
+    pathToPreviousNode: Optional<IWeightedPath<GraphNode, WeightedEdge>>,
+    newPath: IWeightedPath<GraphNode, WeightedEdge>
   ): void {
-    const newPathNodeList: Array<GraphNode> = newPath.getVertexList();
+    const newPathNodeList: Array<GraphNode> = newPath.vertices;
     let notInSet: boolean = true;
 
     if (this.pathsToThisNode.length === 0) {
       notInSet = true;
     } else {
       for (const storedPath of this.pathsToThisNode) {
-        const nodeList: Array<GraphNode> = storedPath.getVertexList();
+        const nodeList: Array<GraphNode> = storedPath.vertices;
         let isSamePath: boolean = true;
 
         for (let i = 0; i < nodeList.length && isSamePath; i++) {
@@ -82,7 +83,7 @@ export class GraphNode {
     if (notInSet) {
       this.pathsToThisNode.push(newPath);
 
-      if (newPath.getEndVertex().action !== null) {
+      if (newPath.end.action !== null) {
         this.states.set(newPath, this.addPathEffectsTogether(pathToPreviousNode, newPath));
       }
     }
@@ -97,16 +98,16 @@ export class GraphNode {
    * @returns the set of effects at the last node in the path
    */
   private addPathEffectsTogether(
-    pathToPreviousNode: Optional<WeightedPath<GraphNode, WeightedEdge>>,
-    path: WeightedPath<GraphNode, WeightedEdge>
+    pathToPreviousNode: Optional<IWeightedPath<GraphNode, WeightedEdge>>,
+    path: IWeightedPath<GraphNode, WeightedEdge>
   ): Array<Property> {
     const statesToBeRemoved: Array<Property> = [];
 
     // No path leading to the previous node = node is starting point => sublist of all effects.
     const combinedNodeEffects: Array<Property> =
       pathToPreviousNode === null
-        ? Array.from(path.getStartVertex().effects)
-        : Array.from(pathToPreviousNode.getEndVertex().getEffectState(pathToPreviousNode));
+        ? Array.from(path.start.effects)
+        : Array.from(pathToPreviousNode.end.getEffectState(pathToPreviousNode));
 
     // Mark effects to be removed.
     for (const nodeWorldState of combinedNodeEffects) {
@@ -129,7 +130,7 @@ export class GraphNode {
    * @param path - path to get effects state for
    * @returns effects for provided path
    */
-  public getEffectState(path: WeightedPath<GraphNode, WeightedEdge>): Array<Property> {
+  public getEffectState(path: IWeightedPath<GraphNode, WeightedEdge>): Array<Property> {
     return this.states.get(path) as Array<Property>;
   }
 }

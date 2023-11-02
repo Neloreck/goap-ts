@@ -1,6 +1,6 @@
 import { Optional } from "@/types";
-import { DirectedGraph, Edge, Path } from "@/utils/graph";
-import { generatePath } from "@/utils/path";
+import { DirectedGraph, Edge, IPath } from "@/utils/graph";
+import { createPath } from "@/utils/path";
 
 /**
  * todo;
@@ -31,7 +31,7 @@ export function createBasicConnectedTestGraph(vertexCount: number, edgeCount: nu
 /**
  * todo;
  */
-export function createBasicTestPath(vertexCount: number, edgeCount: number): Optional<Path<number, Edge>> {
+export function createBasicTestPath(vertexCount: number, edgeCount: number): Optional<IPath<number, Edge>> {
   const graph: DirectedGraph<number, Edge> = createBasicConnectedTestGraph(vertexCount, edgeCount);
 
   // Vertices and edges retrieved with a breadthSearch or depthSearch would be better / ideal.
@@ -46,5 +46,5 @@ export function createBasicTestPath(vertexCount: number, edgeCount: number): Opt
     vertices.push(it);
   }
 
-  return generatePath(graph, vertices[0], vertices[vertices.length - 1], vertices, edges);
+  return createPath(graph, vertices[0], vertices[vertices.length - 1], vertices, edges);
 }

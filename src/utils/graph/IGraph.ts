@@ -23,7 +23,7 @@ export interface IGraph<VertexType, EdgeType> {
    * @param secondVertex - the vertex the edge is going to
    * @returns if the edge exists
    */
-  containsEdge(firstVertex: VertexType, secondVertex: VertexType): boolean;
+  hasEdge(firstVertex: VertexType, secondVertex: VertexType): boolean;
   /**
    * @param vertex - the vertex being added
    */

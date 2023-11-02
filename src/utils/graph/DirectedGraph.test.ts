@@ -24,9 +24,9 @@ describe("DirectedGraph class", () => {
     expect([...graph.getVertices().values()]).toEqual([0, 1, 2, 3, 4]);
 
     expect(graph.getEdge(0, 1)).toBeNull();
-    expect(graph.containsEdge(0, 1)).toBe(false);
+    expect(graph.hasEdge(0, 1)).toBe(false);
     expect(graph.getEdge(1, 2)).toBeNull();
-    expect(graph.containsEdge(1, 2)).toBe(false);
+    expect(graph.hasEdge(1, 2)).toBe(false);
   });
 
   it("should correctly initialize basic linked graph with builder", () => {
@@ -61,9 +61,9 @@ describe("DirectedGraph class", () => {
     expect([...graph.getEdges().values()]).toEqual([new Edge(), new Edge()]);
     expect([...graph.getVertices().values()]).toEqual([0, 1, 2]);
 
-    expect(graph.containsEdge(0, 1)).toBe(true);
-    expect(graph.containsEdge(1, 2)).toBe(true);
-    expect(graph.containsEdge(0, 2)).toBe(false);
+    expect(graph.hasEdge(0, 1)).toBe(true);
+    expect(graph.hasEdge(1, 2)).toBe(true);
+    expect(graph.hasEdge(0, 2)).toBe(false);
   });
 
   it("should correctly add/remove edges", () => {
@@ -73,7 +73,7 @@ describe("DirectedGraph class", () => {
     graph.addEdge(0, 1, edge);
 
     expect(graph.getEdge(0, 1)).toBe(edge);
-    expect(graph.containsEdge(0, 1)).toBe(true);
+    expect(graph.hasEdge(0, 1)).toBe(true);
 
     expect([...graph.getEdges().values()]).toEqual([edge]);
     expect([...graph.getVertices().values()]).toEqual([0, 1, 2]);
