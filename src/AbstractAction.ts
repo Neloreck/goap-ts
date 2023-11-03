@@ -115,7 +115,7 @@ export abstract class AbstractAction<T = any> {
    * @param unit - the unit whose action cost is being calculated
    * @returns the calculated action cost
    */
-  public generateCost(unit: IUnit): number {
+  public getCost(unit: IUnit): number {
     return this.generateBaseCost(unit) + this.generateCostRelativeToTarget(unit);
   }
 

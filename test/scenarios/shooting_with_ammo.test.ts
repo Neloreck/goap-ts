@@ -13,11 +13,11 @@ describe("shooting scenario", () => {
   const pickWeapon: AbstractAction = new GenericAction("pick_weapon");
   const startShooting: AbstractAction = new GenericAction("start_shooting");
 
-  jest.spyOn(pickWeapon, "generateCost").mockImplementation(() => 10);
-  jest.spyOn(pickJunk, "generateCost").mockImplementation(() => 5);
-  jest.spyOn(pickAmmo, "generateCost").mockImplementation(() => 8);
-  jest.spyOn(startShooting, "generateCost").mockImplementation(() => 2);
-  jest.spyOn(reload, "generateCost").mockImplementation(() => 3);
+  jest.spyOn(pickWeapon, "getCost").mockImplementation(() => 10);
+  jest.spyOn(pickJunk, "getCost").mockImplementation(() => 5);
+  jest.spyOn(pickAmmo, "getCost").mockImplementation(() => 8);
+  jest.spyOn(startShooting, "getCost").mockImplementation(() => 2);
+  jest.spyOn(reload, "getCost").mockImplementation(() => 3);
 
   pickWeapon
     .addPrecondition(new Property("can_pick_weapon", true))

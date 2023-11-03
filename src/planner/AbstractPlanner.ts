@@ -259,7 +259,7 @@ export abstract class AbstractPlanner {
           if (areAllPreconditionsMet(otherNodeInGraph.preconditions, node.states.get(pathToListNode) as Properties)) {
             connected = true;
 
-            graph.addEdge(node, otherNodeInGraph, { weight: (node.action as AbstractAction).generateCost(this.unit) });
+            graph.addEdge(node, otherNodeInGraph, { weight: (node.action as AbstractAction).getCost(this.unit) });
 
             otherNodeInGraph.addGraphPath(
               pathToListNode,
