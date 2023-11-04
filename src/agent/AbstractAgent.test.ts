@@ -22,7 +22,7 @@ describe("AbstractAgent class", () => {
     public declare readonly unit: IUnit;
     public declare readonly errorHandler: IErrorHandler;
 
-    protected override createPlannerObject(): IPlanner {
+    protected override createPlanner(): IPlanner {
       return new GenericPlanner(this.errorHandler);
     }
   }
@@ -59,14 +59,14 @@ describe("AbstractAgent class", () => {
 
     agent.update();
 
-    expect(agent.fsm.getStack()).toEqual([agent.idle]);
+    expect(agent.fsm.stack).toEqual([agent.idle]);
     expect(agent.unit.update).toHaveBeenCalledTimes(1);
     expect(agent.fsm.update).toHaveBeenCalledTimes(1);
     expect(agent.fsm.update).toHaveBeenCalledWith(unit);
 
     agent.update();
 
-    expect(agent.fsm.getStack()).toEqual([agent.idle]);
+    expect(agent.fsm.stack).toEqual([agent.idle]);
     expect(agent.unit.update).toHaveBeenCalledTimes(2);
     expect(agent.fsm.update).toHaveBeenCalledTimes(2);
   });
@@ -76,14 +76,14 @@ describe("AbstractAgent class", () => {
     const agent: Agent = new Agent(unit);
     const state: MoveToState = new MoveToState(new GenericAction(55));
 
-    agent.fsm.push(state);
+    agent.fsm.stack.push(state);
 
     jest.spyOn(unit, "update").mockImplementation(jest.fn());
     jest.spyOn(agent.fsm, "update").mockImplementation(jest.fn());
 
     agent.update();
 
-    expect(agent.fsm.getStack()).toEqual([state]);
+    expect(agent.fsm.stack).toEqual([state]);
     expect(agent.unit.update).toHaveBeenCalledTimes(1);
     expect(agent.fsm.update).toHaveBeenCalledTimes(1);
     expect(agent.fsm.update).toHaveBeenCalledWith(unit);
@@ -97,7 +97,7 @@ describe("AbstractAgent class", () => {
     agent.onImportantUnitGoalChange(property);
 
     expect(property.importance).toBe(Infinity);
-    expect(agent.fsm.getStack()).toEqual([agent.idle]);
+    expect(agent.fsm.stack).toEqual([agent.idle]);
   });
 
   it("should correctly handle important goal stack reset", () => {
@@ -108,18 +108,18 @@ describe("AbstractAgent class", () => {
     const agent: Agent = new Agent(unit);
     const state: MoveToState = new MoveToState(new GenericAction(55));
 
-    agent.fsm.push(state);
+    agent.fsm.stack.push(state);
 
     unit.addAction(first);
     unit.addAction(second);
 
-    expect(agent.fsm.getStack()).toEqual([state]);
+    expect(agent.fsm.stack).toEqual([state]);
 
     agent.onImportantUnitStackReset();
 
     expect(first.reset).toHaveBeenCalled();
     expect(second.reset).toHaveBeenCalled();
-    expect(agent.fsm.getStack()).toEqual([agent.idle]);
+    expect(agent.fsm.stack).toEqual([agent.idle]);
   });
 
   it("should correctly handle plan creation", () => {
@@ -128,15 +128,15 @@ describe("AbstractAgent class", () => {
     const state: MoveToState = new MoveToState(new GenericAction(55));
     const plan: Plan = [new GenericAction(1), new GenericAction(2)];
 
-    agent.fsm.push(state);
-    agent.fsm.push(agent.idle);
+    agent.fsm.stack.push(state);
+    agent.fsm.stack.push(agent.idle);
 
-    expect(agent.fsm.getStack()).toEqual([state, agent.idle]);
+    expect(agent.fsm.stack).toEqual([state, agent.idle]);
 
     agent.onPlanCreated(plan);
 
     expect(unit.onGoapPlanFound).toHaveBeenCalledWith(plan);
-    expect(agent.fsm.getStack()).toEqual([state, new RunActionState(agent.fsm, plan)]);
+    expect(agent.fsm.stack).toEqual([state, new RunActionState(agent.fsm, plan)]);
   });
 
   it("should correctly handle plan failure", () => {
@@ -144,23 +144,23 @@ describe("AbstractAgent class", () => {
     const agent: Agent = new Agent(unit);
     const plan: Plan = [new GenericAction(1), new GenericAction(2)];
 
-    agent.fsm.push(agent.idle);
+    agent.fsm.stack.push(agent.idle);
 
     agent.onPlanFailed(plan);
 
     expect(unit.onGoapPlanFailed).toHaveBeenCalledWith(plan);
-    expect(agent.fsm.getStack()).toEqual([agent.idle]);
+    expect(agent.fsm.stack).toEqual([agent.idle]);
   });
 
   it("should correctly handle plan finish", () => {
     const unit: TestUnit = new TestUnit();
     const agent: Agent = new Agent(unit);
 
-    agent.fsm.push(agent.idle);
+    agent.fsm.stack.push(agent.idle);
 
     agent.onPlanFinished();
 
     expect(unit.onGoapPlanFinished).toHaveBeenCalledTimes(1);
-    expect(agent.fsm.getStack()).toEqual([agent.idle]);
+    expect(agent.fsm.stack).toEqual([agent.idle]);
   });
 });

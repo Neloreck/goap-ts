@@ -62,7 +62,7 @@ export class RunActionState implements IFiniteStateMachineState {
 
         // Should handle some movement conditions before continuation of execution.
         if (currentAction.requiresInRange(unit) && !currentAction.isInRange(unit)) {
-          this.fsm.push(new MoveToState(currentAction));
+          this.fsm.stack.push(new MoveToState(currentAction));
         } else if (currentAction.isAvailable(unit)) {
           if (currentAction.performAction(unit)) {
             return false;

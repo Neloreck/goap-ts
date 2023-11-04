@@ -3,12 +3,12 @@ import { IErrorHandler, SilentErrorHandler } from "@/error";
 import { IFiniteStateMachinePlanEventListener } from "@/event";
 import { IFiniteStateMachineState } from "@/state_machine/IFiniteStateMachineState";
 import { RunActionState } from "@/state_machine/RunActionState";
-import { Definable, Maybe, Stack } from "@/types";
+import { Maybe, Stack } from "@/types";
 import { IUnit } from "@/unit/IUnit";
 import { removeFromArray, stackPeek } from "@/utils/array";
 
 export class FiniteStateMachine {
-  private readonly stack: Stack<IFiniteStateMachineState> = [];
+  public readonly stack: Stack<IFiniteStateMachineState> = [];
   private readonly planEventListeners: Array<IFiniteStateMachinePlanEventListener> = [];
 
   protected errorHandler: IErrorHandler;
@@ -18,50 +18,6 @@ export class FiniteStateMachine {
    */
   public constructor(errorHandler: IErrorHandler = new SilentErrorHandler()) {
     this.errorHandler = errorHandler;
-  }
-
-  /**
-   * @returns state machine states stack
-   */
-  public getStack(): Readonly<Stack<IFiniteStateMachineState>> {
-    return this.stack;
-  }
-
-  /**
-   * Pushes value into stack.
-   *
-   * @param state - state to push
-   */
-  public push(state: IFiniteStateMachineState): void {
-    this.stack.push(state);
-  }
-
-  /**
-   * @returns peek element and pops it from the stack
-   */
-  public pop(): Definable<IFiniteStateMachineState> {
-    return this.stack.pop();
-  }
-
-  /**
-   * Clear states stack.
-   */
-  public clear(): void {
-    this.stack.length = 0;
-  }
-
-  /**
-   * @returns if any states exist in the execution stack
-   */
-  public hasAny(): boolean {
-    return this.stack.length > 0;
-  }
-
-  /**
-   * @returns if no states exist in the execution stack
-   */
-  public isEmpty(): boolean {
-    return this.stack.length === 0;
   }
 
   /**

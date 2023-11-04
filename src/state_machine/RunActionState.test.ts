@@ -113,7 +113,7 @@ describe("RunActionState class", () => {
     const state: RunActionState = new RunActionState(fsm, plan);
     const unit: IUnit = {} as IUnit;
 
-    fsm.push(state);
+    fsm.stack.push(state);
 
     jest.spyOn(first, "isFinished").mockImplementation(() => true);
     jest.spyOn(first, "reset").mockImplementation(() => {});
@@ -132,6 +132,6 @@ describe("RunActionState class", () => {
     expect(third.performAction).not.toHaveBeenCalled();
 
     // Verify that move to target state is pushed.
-    expect(fsm.getStack()).toEqual([state, new MoveToState(second)]);
+    expect(fsm.stack).toEqual([state, new MoveToState(second)]);
   });
 });

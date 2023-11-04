@@ -15,8 +15,7 @@ describe("FiniteStateMachine class", () => {
   it("should correctly initialize", () => {
     const fsm: FiniteStateMachine = new FiniteStateMachine();
 
-    expect(fsm.getStack()).toEqual([]);
-    expect(fsm.hasAny()).toBe(false);
+    expect(fsm.stack).toEqual([]);
   });
 
   it("should correctly initialize handle pop/push/get", () => {
@@ -25,39 +24,29 @@ describe("FiniteStateMachine class", () => {
     const actState: RunActionState = new RunActionState(fsm, [new GenericAction(2), new GenericAction(3)]);
     const idleState: IdleState = new IdleState({} as AbstractPlanner);
 
-    expect(fsm.getStack()).toEqual([]);
-    expect(fsm.pop()).toBeUndefined();
-    expect(fsm.hasAny()).toBe(false);
-    expect(fsm.isEmpty()).toBe(true);
+    expect(fsm.stack).toEqual([]);
+    expect(fsm.stack.pop()).toBeUndefined();
 
-    fsm.push(idleState);
-    fsm.push(actState);
-    fsm.push(moveToState);
+    fsm.stack.push(idleState);
+    fsm.stack.push(actState);
+    fsm.stack.push(moveToState);
 
-    expect(fsm.hasAny()).toBe(true);
-    expect(fsm.isEmpty()).toBe(false);
-    expect(fsm.getStack()).toEqual([idleState, actState, moveToState]);
-    expect(fsm.pop()).toBe(moveToState);
-    expect(fsm.getStack()).toEqual([idleState, actState]);
-    expect(fsm.pop()).toBe(actState);
-    expect(fsm.getStack()).toEqual([idleState]);
-    expect(fsm.pop()).toBe(idleState);
-    expect(fsm.getStack()).toEqual([]);
-    expect(fsm.pop()).toBeUndefined();
-    expect(fsm.getStack()).toEqual([]);
+    expect(fsm.stack).toEqual([idleState, actState, moveToState]);
+    expect(fsm.stack.pop()).toBe(moveToState);
+    expect(fsm.stack).toEqual([idleState, actState]);
+    expect(fsm.stack.pop()).toBe(actState);
+    expect(fsm.stack).toEqual([idleState]);
+    expect(fsm.stack.pop()).toBe(idleState);
+    expect(fsm.stack).toEqual([]);
 
-    fsm.push(idleState);
-    fsm.push(actState);
+    fsm.stack.push(idleState);
+    fsm.stack.push(actState);
 
-    expect(fsm.isEmpty()).toBe(false);
-    expect(fsm.hasAny()).toBe(true);
-    expect(fsm.getStack()).toEqual([idleState, actState]);
+    expect(fsm.stack).toEqual([idleState, actState]);
 
-    fsm.clear();
+    fsm.stack.length = 0;
 
-    expect(fsm.isEmpty()).toBe(true);
-    expect(fsm.hasAny()).toBe(false);
-    expect(fsm.getStack()).toEqual([]);
+    expect(fsm.stack).toEqual([]);
   });
 
   it("should correctly update when empty", () => {
@@ -84,7 +73,7 @@ describe("FiniteStateMachine class", () => {
     const unit: IUnit = {} as IUnit;
 
     fsm.addEventListener(listener);
-    fsm.push(actState);
+    fsm.stack.push(actState);
 
     jest.spyOn(actState, "execute").mockImplementation(() => false);
 
@@ -93,7 +82,7 @@ describe("FiniteStateMachine class", () => {
 
     expect(listener.onPlanFinished).not.toHaveBeenCalled();
     expect(listener.onPlanFailed).not.toHaveBeenCalled();
-    expect(fsm.getStack()).toEqual([actState]);
+    expect(fsm.stack).toEqual([actState]);
 
     jest.spyOn(actState, "execute").mockImplementation(() => true);
 
@@ -102,7 +91,7 @@ describe("FiniteStateMachine class", () => {
     expect(listener.onPlanFinished).toHaveBeenCalledTimes(1);
     expect(listener.onPlanFinished).toHaveBeenCalled();
     expect(listener.onPlanFailed).not.toHaveBeenCalled();
-    expect(fsm.getStack()).toEqual([]);
+    expect(fsm.stack).toEqual([]);
   });
 
   it("should correctly update and handle errors", () => {
@@ -116,31 +105,31 @@ describe("FiniteStateMachine class", () => {
     const idleState: IdleState = new IdleState({} as AbstractPlanner);
 
     fsm.addEventListener(listener);
-    fsm.push(idleState);
-    fsm.push(actState);
-    fsm.push(anotherActState);
+    fsm.stack.push(idleState);
+    fsm.stack.push(actState);
+    fsm.stack.push(anotherActState);
 
     jest.spyOn(anotherActState, "execute").mockImplementation(() => {
       throw new Error("test-error");
     });
 
     expect(fsm.getListeners()).toEqual([listener]);
-    expect(fsm.getStack()).toEqual([idleState, actState, anotherActState]);
+    expect(fsm.stack).toEqual([idleState, actState, anotherActState]);
 
     fsm.update(unit);
 
     expect(listener.onPlanFinished).not.toHaveBeenCalled();
     expect(listener.onPlanFailed).toHaveBeenCalledWith(somePlan);
-    expect(fsm.getStack()).toEqual([idleState, actState]);
+    expect(fsm.stack).toEqual([idleState, actState]);
 
-    fsm.push(anotherActState);
+    fsm.stack.push(anotherActState);
     fsm.update(unit);
 
     expect(listener.onPlanFailed).toHaveBeenCalledTimes(2);
 
     fsm.removeEventListener(listener);
 
-    fsm.push(anotherActState);
+    fsm.stack.push(anotherActState);
     fsm.update(unit);
 
     expect(fsm.getListeners()).toEqual([]);
@@ -153,8 +142,8 @@ describe("FiniteStateMachine class", () => {
     const actState: RunActionState = new RunActionState(fsm, [new GenericAction(2), new GenericAction(3)]);
     const idleState: IdleState = new IdleState({} as AbstractPlanner);
 
-    fsm.push(idleState);
-    fsm.push(actState);
-    fsm.push(moveToState);
+    fsm.stack.push(idleState);
+    fsm.stack.push(actState);
+    fsm.stack.push(moveToState);
   });
 });

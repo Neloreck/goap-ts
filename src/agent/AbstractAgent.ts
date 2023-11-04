@@ -31,7 +31,7 @@ export abstract class AbstractAgent implements IAgent {
     this.unit = unit;
     this.errorHandler = errorHandler;
     this.fsm = new FiniteStateMachine(errorHandler);
-    this.idle = new IdleState(this.createPlannerObject());
+    this.idle = new IdleState(this.createPlanner());
 
     // Only subclasses of the own unit are able to emit events
     if (this.unit instanceof AbstractUnit) {
@@ -54,15 +54,15 @@ export abstract class AbstractAgent implements IAgent {
    *
    * @returns the used planner instance implementing planner interface
    */
-  protected abstract createPlannerObject(): IPlanner;
+  protected abstract createPlanner(): IPlanner;
 
   /**
    * Handle update tick.
    * Manages idle state and unit updates.
    */
   public update(): void {
-    if (!this.fsm.hasAny()) {
-      this.fsm.push(this.idle);
+    if (!this.fsm.stack.length) {
+      this.fsm.stack.push(this.idle);
     }
 
     this.unit.update();
@@ -76,7 +76,7 @@ export abstract class AbstractAgent implements IAgent {
    */
   public onImportantUnitGoalChange(property: Property): void {
     property.importance = Infinity;
-    this.fsm.push(this.idle);
+    this.fsm.stack.push(this.idle);
   }
 
   /**
@@ -89,8 +89,8 @@ export abstract class AbstractAgent implements IAgent {
       action.reset();
     }
 
-    this.fsm.clear();
-    this.fsm.push(this.idle);
+    this.fsm.stack.length = 0;
+    this.fsm.stack.push(this.idle);
   }
 
   /**
@@ -102,8 +102,8 @@ export abstract class AbstractAgent implements IAgent {
   public onPlanCreated(plan: Plan): void {
     this.unit.onGoapPlanFound(plan);
 
-    this.fsm.pop();
-    this.fsm.push(new RunActionState(this.fsm, plan));
+    this.fsm.stack.pop();
+    this.fsm.stack.push(new RunActionState(this.fsm, plan));
   }
 
   /**
