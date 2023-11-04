@@ -17,9 +17,10 @@ import { IUnit } from "@/unit/IUnit";
  * - It runs updates for both unit and FSM
  */
 export abstract class AbstractAgent implements IAgent {
+  public readonly unit: IUnit;
+
   protected readonly fsm: FiniteStateMachine;
   protected readonly idle: IdleState;
-  protected readonly unit: IUnit;
 
   protected errorHandler: IErrorHandler;
 
@@ -40,13 +41,6 @@ export abstract class AbstractAgent implements IAgent {
 
     this.idle.addListener(this);
     this.fsm.addEventListener(this);
-  }
-
-  /**
-   * @returns unit object with which the agent works
-   */
-  public getUnit(): IUnit {
-    return this.unit;
   }
 
   /**
@@ -75,6 +69,7 @@ export abstract class AbstractAgent implements IAgent {
    * @param property - new state that is marked as top-priority
    */
   public onImportantUnitGoalChange(property: Property): void {
+    // todo: This mutation can be handled differently.
     property.importance = Infinity;
     this.fsm.stack.push(this.idle);
   }

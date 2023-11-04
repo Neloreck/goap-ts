@@ -31,7 +31,7 @@ describe("AbstractAgent class", () => {
     const unit: TestUnit = new TestUnit();
     const agent: Agent = new Agent(unit);
 
-    expect(agent.getUnit()).toBe(unit);
+    expect(agent.unit).toBe(unit);
 
     expect(agent.idle.getListeners()).toEqual([agent]);
     expect(agent.fsm.getListeners()).toEqual([agent]);

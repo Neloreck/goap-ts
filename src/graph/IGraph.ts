@@ -4,48 +4,48 @@ import { Optional } from "@/types";
 /**
  * Basic graph interface describing public methods.
  */
-export interface IGraph<VertexType, EdgeType extends IEdge = IEdge> {
+export interface IGraph<Vertex, Edge extends IEdge = IEdge> {
   /**
    * @returns vertices iterator
    */
-  vertices(): IterableIterator<VertexType>;
+  vertices(): IterableIterator<Vertex>;
   /**
    * @returns edges iterator
    */
-  edges(): IterableIterator<EdgeType>;
+  edges(): IterableIterator<Edge>;
   /**
    * @returns all vertices inside the graph
    */
-  getVertices(): Array<VertexType>;
+  getVertices(): Array<Vertex>;
   /**
    * @returns all edges inside the graph
    */
-  getEdges(): Array<EdgeType>;
+  getEdges(): Array<Edge>;
   /**
    * @param firstVertex = the vertex from which the edge is coming from
    * @param secondVertex - the vertex the edge is going to
    * @returns the desired edge or null, if none is found
    */
-  getEdge(firstVertex: VertexType, secondVertex: VertexType): Optional<EdgeType>;
+  getEdge(firstVertex: Vertex, secondVertex: Vertex): Optional<Edge>;
   /**
    * @param firstVertex - the vertex from which the edge is coming from
    * @param secondVertex - the vertex the edge is going to
    * @returns if the edge exists
    */
-  hasEdge(firstVertex: VertexType, secondVertex: VertexType): boolean;
+  hasEdge(firstVertex: Vertex, secondVertex: Vertex): boolean;
   /**
    * @param vertex - the vertex being added
    */
-  addVertex(vertex: VertexType): IGraph<VertexType, EdgeType>;
+  addVertex(vertex: Vertex): IGraph<Vertex, Edge>;
   /**
    * @param firstVertex - the vertex from which the edge is coming from
    * @param secondVertex - the vertex the edge is going to
    * @param edge - the edge itself that is going to be added
    */
-  addEdge(firstVertex: VertexType, secondVertex: VertexType, edge: EdgeType): IGraph<VertexType, EdgeType>;
+  addEdge(firstVertex: Vertex, secondVertex: Vertex, edge: Edge): IGraph<Vertex, Edge>;
   /**
    * @param firstVertex -  the vertex from which the edge is coming from
    * @param secondVertex - the vertex the edge is going to
    */
-  removeEdge(firstVertex: VertexType, secondVertex: VertexType): IGraph<VertexType, EdgeType>;
+  removeEdge(firstVertex: Vertex, secondVertex: Vertex): IGraph<Vertex, Edge>;
 }

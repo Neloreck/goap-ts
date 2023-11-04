@@ -20,9 +20,9 @@ import {
  * Class for generating a queue of goap actions.
  */
 export abstract class AbstractPlanner {
-  protected unit: IUnit;
-  protected startNode: GraphNode;
-  protected endNodes: Array<GraphNode>;
+  public unit: IUnit;
+  public startNode: GraphNode;
+  public endNodes: Array<GraphNode>;
 
   protected errorHandler: IErrorHandler;
 
@@ -31,27 +31,6 @@ export abstract class AbstractPlanner {
    */
   public constructor(errorHandler: IErrorHandler = new SilentErrorHandler()) {
     this.errorHandler = errorHandler;
-  }
-
-  /**
-   * @return unit with which planner is working
-   */
-  public getUnit(): IUnit {
-    return this.unit;
-  }
-
-  /**
-   * @return start node of the planner path
-   */
-  public getStartNode(): GraphNode {
-    return this.startNode;
-  }
-
-  /**
-   * @return end nodes after planning
-   */
-  public getEndNodes(): Array<GraphNode> {
-    return this.endNodes;
   }
 
   /**

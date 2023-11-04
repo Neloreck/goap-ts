@@ -16,7 +16,7 @@ describe("RunActionState class", () => {
     const plan: Plan = [new GenericAction(1), new GenericAction(2)];
     const state: RunActionState = new RunActionState(fsm, plan);
 
-    expect(state.getCurrentPlan()).toBe(plan);
+    expect(state.plan).toBe(plan);
   });
 
   it("should correctly handle throw NotPerformableActionError if action condition fails", () => {
@@ -56,7 +56,7 @@ describe("RunActionState class", () => {
     jest.spyOn(second, "reset").mockImplementation(() => {});
 
     expect(state.execute({} as IUnit)).toBe(true);
-    expect(state.getCurrentPlan()).toEqual([]);
+    expect(state.plan).toEqual([]);
 
     expect(first.isFinished).toHaveBeenCalledTimes(1);
     expect(first.reset).toHaveBeenCalledTimes(1);
@@ -80,7 +80,7 @@ describe("RunActionState class", () => {
     jest.spyOn(second, "isInRange").mockImplementation(() => true);
 
     expect(state.execute(unit)).toBe(false);
-    expect(state.getCurrentPlan()).toEqual([second, third]);
+    expect(state.plan).toEqual([second, third]);
 
     expect(first.isFinished).toHaveBeenCalledTimes(1);
     expect(first.reset).toHaveBeenCalledTimes(1);
@@ -92,14 +92,14 @@ describe("RunActionState class", () => {
     expect(third.performAction).not.toHaveBeenCalled();
 
     expect(state.execute(unit)).toBe(false);
-    expect(state.getCurrentPlan()).toEqual([second, third]);
+    expect(state.plan).toEqual([second, third]);
     expect(second.performAction).toHaveBeenCalledTimes(2);
     expect(third.performAction).not.toHaveBeenCalled();
 
     jest.spyOn(second, "isAvailable").mockImplementation(() => false);
 
     expect(state.execute(unit)).toBe(false);
-    expect(state.getCurrentPlan()).toEqual([second, third]);
+    expect(state.plan).toEqual([second, third]);
     expect(second.performAction).toHaveBeenCalledTimes(2);
     expect(third.performAction).not.toHaveBeenCalled();
   });
@@ -122,7 +122,7 @@ describe("RunActionState class", () => {
     jest.spyOn(second, "isInRange").mockImplementation(() => false);
 
     expect(state.execute(unit)).toBe(false);
-    expect(state.getCurrentPlan()).toEqual([second, third]);
+    expect(state.plan).toEqual([second, third]);
 
     expect(first.isFinished).toHaveBeenCalledTimes(1);
     expect(first.reset).toHaveBeenCalledTimes(1);

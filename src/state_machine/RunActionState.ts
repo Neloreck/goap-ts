@@ -11,8 +11,8 @@ import { IUnit } from "@/unit/IUnit";
  * State on the FSM Stack.
  */
 export class RunActionState implements IFiniteStateMachineState {
-  protected readonly plan: Plan;
-  protected readonly fsm: FiniteStateMachine;
+  public readonly plan: Plan;
+  public readonly fsm: FiniteStateMachine;
 
   protected errorHandler: IErrorHandler;
 
@@ -25,13 +25,6 @@ export class RunActionState implements IFiniteStateMachineState {
     this.fsm = fsm;
     this.plan = plan;
     this.errorHandler = errorHandler;
-  }
-
-  /**
-   * @returns current plan that was applied when state was created
-   */
-  public getCurrentPlan(): Plan {
-    return this.plan;
   }
 
   /**
@@ -55,10 +48,12 @@ export class RunActionState implements IFiniteStateMachineState {
       if (this.plan.length) {
         const currentAction: AbstractAction = this.plan[0] as AbstractAction;
 
-        if (currentAction.target === null) {
-          // todo: Propagate event with error handler?
-          // System.out.println("Target is null! " + currentAction.getClass().getSimpleName());
-        }
+        /*
+         * if (currentAction.target === null) {
+         *  // todo: Propagate event with error handler?
+         *  // System.out.println("Target is null! " + currentAction.getClass().getSimpleName());
+         * }
+         */
 
         // Should handle some movement conditions before continuation of execution.
         if (currentAction.requiresInRange(unit) && !currentAction.isInRange(unit)) {

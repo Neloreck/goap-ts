@@ -5,10 +5,10 @@ import { Optional } from "@/types";
 /**
  * Basic directed graph implementation.
  */
-export class DirectedGraph<VertexType, EdgeType extends IEdge = IEdge> implements IGraph<VertexType, EdgeType> {
-  protected data: Map<VertexType, Map<VertexType, EdgeType>> = new Map();
+export class DirectedGraph<Vertex, Edge extends IEdge = IEdge> implements IGraph<Vertex, Edge> {
+  protected data: Map<Vertex, Map<Vertex, Edge>> = new Map();
 
-  public constructor(vertices?: Array<VertexType>) {
+  public constructor(vertices?: Array<Vertex>) {
     // Link provided vertices in current graph.
     if (vertices) {
       for (const vertex of vertices) {
@@ -20,18 +20,20 @@ export class DirectedGraph<VertexType, EdgeType extends IEdge = IEdge> implement
   /**
    * @returns iterator over graph vertices
    */
-  public vertices(): IterableIterator<VertexType> {
+  public vertices(): IterableIterator<Vertex> {
     return this.data.keys();
   }
 
   /**
    * @returns iterator over graph vertices
    */
-  public edges(): IterableIterator<EdgeType> {
-    const edges: Set<EdgeType> = new Set();
+  public edges(): IterableIterator<Edge> {
+    const edges: Set<Edge> = new Set();
 
     for (const links of this.data.values()) {
-      links.forEach((edge) => edges.add(edge));
+      for (const edge of links.values()) {
+        edges.add(edge);
+      }
     }
 
     return edges.values();
@@ -41,7 +43,7 @@ export class DirectedGraph<VertexType, EdgeType extends IEdge = IEdge> implement
    * @param vertex - new vertex to add in graph
    * @returns this
    */
-  public addVertex(vertex: VertexType): typeof this {
+  public addVertex(vertex: Vertex): typeof this {
     this.data.set(vertex, new Map());
 
     return this;
@@ -51,7 +53,7 @@ export class DirectedGraph<VertexType, EdgeType extends IEdge = IEdge> implement
    * @param vertices - new vertices list to add in graph
    * @returns this
    */
-  public addVertices(vertices: Array<VertexType>): typeof this {
+  public addVertices(vertices: Array<Vertex>): typeof this {
     for (const vertex of vertices) {
       this.data.set(vertex, new Map());
     }
@@ -65,8 +67,8 @@ export class DirectedGraph<VertexType, EdgeType extends IEdge = IEdge> implement
    * @param edge - edge connecting two vertexes
    * @returns this
    */
-  public addEdge(firstVertex: VertexType, secondVertex: VertexType, edge: EdgeType): typeof this {
-    (this.data.get(firstVertex) as Map<VertexType, EdgeType>).set(secondVertex, edge);
+  public addEdge(firstVertex: Vertex, secondVertex: Vertex, edge: Edge): typeof this {
+    (this.data.get(firstVertex) as Map<Vertex, Edge>).set(secondVertex, edge);
 
     return this;
   }
@@ -76,8 +78,8 @@ export class DirectedGraph<VertexType, EdgeType extends IEdge = IEdge> implement
    * @param secondVertex - vertex to remove link to
    * @returns this
    */
-  public removeEdge(firstVertex: VertexType, secondVertex: VertexType): typeof this {
-    (this.data.get(firstVertex) as Map<VertexType, EdgeType>).delete(secondVertex);
+  public removeEdge(firstVertex: Vertex, secondVertex: Vertex): typeof this {
+    (this.data.get(firstVertex) as Map<Vertex, Edge>).delete(secondVertex);
 
     return this;
   }
@@ -87,22 +89,22 @@ export class DirectedGraph<VertexType, EdgeType extends IEdge = IEdge> implement
    * @param secondVertex
    * @returns whether there is edge between two vertexes
    */
-  public hasEdge(firstVertex: VertexType, secondVertex: VertexType): boolean {
+  public hasEdge(firstVertex: Vertex, secondVertex: Vertex): boolean {
     return this.data.get(firstVertex)?.has(secondVertex) === true;
   }
 
   /**
    * @returns set of vertices
    */
-  public getVertices(): Array<VertexType> {
+  public getVertices(): Array<Vertex> {
     return [...this.data.keys()];
   }
 
   /**
    * @returns set of edges in current graph
    */
-  public getEdges(): Array<EdgeType> {
-    const edges: Set<EdgeType> = new Set();
+  public getEdges(): Array<Edge> {
+    const edges: Set<Edge> = new Set();
 
     for (const links of this.data.values()) {
       links.forEach((edge) => edges.add(edge));
@@ -116,7 +118,7 @@ export class DirectedGraph<VertexType, EdgeType extends IEdge = IEdge> implement
    * @param secondVertex - second vertex to check direction to
    * @returns edge linking first and second vertex or null
    */
-  public getEdge(firstVertex: VertexType, secondVertex: VertexType): Optional<EdgeType> {
+  public getEdge(firstVertex: Vertex, secondVertex: Vertex): Optional<Edge> {
     return this.data.get(firstVertex)?.get(secondVertex) ?? null;
   }
 }

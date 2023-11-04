@@ -8,8 +8,8 @@ import { IUnit } from "@/unit/IUnit";
 import { removeFromArray, stackPeek } from "@/utils/array";
 
 export class FiniteStateMachine {
-  public readonly stack: Stack<IFiniteStateMachineState> = [];
-  private readonly planEventListeners: Array<IFiniteStateMachinePlanEventListener> = [];
+  public readonly stack: Stack<IFiniteStateMachineState>;
+  private readonly eventListeners: Array<IFiniteStateMachinePlanEventListener>;
 
   protected errorHandler: IErrorHandler;
 
@@ -17,6 +17,8 @@ export class FiniteStateMachine {
    * @param errorHandler - class handling state machine errors
    */
   public constructor(errorHandler: IErrorHandler = new SilentErrorHandler()) {
+    this.stack = [];
+    this.eventListeners = [];
     this.errorHandler = errorHandler;
   }
 
@@ -24,7 +26,7 @@ export class FiniteStateMachine {
    * @returns list of listeners related to FSM events.
    */
   public getListeners(): Array<IFiniteStateMachinePlanEventListener> {
-    return this.planEventListeners;
+    return this.eventListeners;
   }
 
   /**
@@ -33,7 +35,7 @@ export class FiniteStateMachine {
    * @param listener - object to subscribe for listening
    */
   public addEventListener(listener: IFiniteStateMachinePlanEventListener): void {
-    this.planEventListeners.push(listener);
+    this.eventListeners.push(listener);
   }
 
   /**
@@ -42,7 +44,7 @@ export class FiniteStateMachine {
    * @param listener - object to unsubscribe from listening
    */
   public removeEventListener(listener: IFiniteStateMachinePlanEventListener): void {
-    removeFromArray(this.planEventListeners, listener);
+    removeFromArray(this.eventListeners, listener);
   }
 
   /**
@@ -50,8 +52,8 @@ export class FiniteStateMachine {
    *
    * @param plan - remaining actions after plan fail
    */
-  private dispatchNewPlanFailedEvent(plan: Plan): void {
-    for (const listener of this.planEventListeners) {
+  protected dispatchNewPlanFailedEvent(plan: Plan): void {
+    for (const listener of this.eventListeners) {
       listener.onPlanFailed(plan);
     }
   }
@@ -59,8 +61,8 @@ export class FiniteStateMachine {
   /**
    * Dispatch event notifying all listeners about plan finish.
    */
-  private dispatchNewPlanFinishedEvent(): void {
-    for (const listener of this.planEventListeners) {
+  protected dispatchNewPlanFinishedEvent(): void {
+    for (const listener of this.eventListeners) {
       listener.onPlanFinished();
     }
   }
@@ -87,7 +89,7 @@ export class FiniteStateMachine {
       const state: Maybe<IFiniteStateMachineState> = this.stack.pop();
 
       if (state instanceof RunActionState) {
-        this.dispatchNewPlanFailedEvent(state.getCurrentPlan());
+        this.dispatchNewPlanFailedEvent(state.plan);
       }
 
       this.errorHandler.onError(error, "fsm_action_execution_error");

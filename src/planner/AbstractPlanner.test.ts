@@ -58,15 +58,15 @@ describe("GenericPlanner class", () => {
 
     const planner: Planner = new Planner();
 
-    expect(planner.getUnit()).toBeUndefined();
-    expect(planner.getStartNode()).toBeUndefined();
-    expect(planner.getEndNodes()).toBeUndefined();
+    expect(planner.unit).toBeUndefined();
+    expect(planner.startNode).toBeUndefined();
+    expect(planner.endNodes).toBeUndefined();
 
     const plan: Plan = planner.plan(unit) as Plan;
-    const startNode: GraphNode = planner.getStartNode();
-    const endNodes: Array<GraphNode> = planner.getEndNodes();
+    const startNode: GraphNode = planner.startNode;
+    const endNodes: Array<GraphNode> = planner.endNodes;
 
-    expect(planner.getUnit()).toBe(unit);
+    expect(planner.unit).toBe(unit);
     expect(endNodes).toHaveLength(1);
     expect(startNode.action).toBeNull();
     expect(startNode.preconditions).toHaveLength(0);
